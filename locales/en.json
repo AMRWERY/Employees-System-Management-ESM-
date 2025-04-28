@@ -47,7 +47,6 @@
     "security_message": "Our registration process is designed to be straightforward and secure. We prioritize your privacy and data security.",
     "name": "Name",
     "name_placeholder": "Enter name",
-    "email_id": "Email Id",
     "email_placeholder": "Enter email",
     "password_placeholder": "Enter password",
     "accept_terms": "I accept the",

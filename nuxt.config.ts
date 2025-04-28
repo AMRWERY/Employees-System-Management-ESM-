@@ -41,7 +41,7 @@ export default defineNuxtConfig({
   ],
   app: {
     head: {
-      title: "Employees System Management",
+      title: "Employees Management System",
       script: [{}],
       noscript: [],
       link: [{}],

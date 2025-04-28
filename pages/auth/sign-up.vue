@@ -34,7 +34,7 @@
 
             <!-- Email Field -->
             <div class="mb-6">
-              <label for="email" class="block text-gray-700 mb-2">{{ $t('form.email_id') }}</label>
+              <label for="email" class="block text-gray-700 mb-2">{{ $t('form.email') }}</label>
               <div class="relative">
                 <input id="email" type="email"
                   class="bg-slate-100 w-full text-sm text-slate-800 px-4 py-3 rounded-md outline-none border focus:border-blue-600 focus:bg-transparent"
