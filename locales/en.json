@@ -22,7 +22,8 @@
     "my_payslips_payroll": "My Payslips/Payroll"
   },
   "btn": {
-    "go_back_home": "Go back Home"
+    "go_back_home": "Go back Home",
+    "logout": "Logout"
   },
   "error_page": {
     "you_are_all_alone_here": "You are all alone here 😁"

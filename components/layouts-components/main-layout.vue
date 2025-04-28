@@ -80,7 +80,7 @@
         <div class="px-3 py-4 bg-gray-900 border-t border-gray-800">
           <nuxt-link to="" role="button" @click.prevent="handleLogout"
             class="flex items-center justify-center p-2 text-gray-800 rounded-lg border-2 border-gray-700 hover:border-white bg-white hover:bg-gray-100 transition-colors group">
-            <span class="ms-3 whitespace-nowrap">Logout</span>
+            <span class="ms-3 whitespace-nowrap">{{ $t('btn.logout') }}</span>
           </nuxt-link>
         </div>
       </aside>
