@@ -8,9 +8,10 @@
           </h2>
           <p class="text-sm mt-6 text-slate-500 leading-relaxed">{{
             $t('form.i_streamline_workforce_management_through_our_comprehensive_employee_system_platform_track_attendance_manage_payroll_monitor_performance_and_optimize_team_structures_from_a_single_unified_interface')
-            }}</p>
+          }}</p>
           <p class="text-sm mt-6 md:mt-12 text-slate-500">{{ $t('form.do_not_have_an_account') }}
-            <nuxt-link-locale to="/auth/sign-up" class="text-blue-600 font-medium hover:underline ms-1">{{ $t('form.register_here')
+            <nuxt-link-locale to="/auth/sign-up" class="text-blue-600 font-medium hover:underline ms-1">{{
+              $t('form.register_here')
               }}</nuxt-link-locale>
           </p>
         </div>
@@ -41,9 +42,9 @@
                 </label>
               </div>
               <div class="text-sm">
-                <nuxt-link to="" class="text-blue-600 hover:text-blue-500 font-medium">
+                <nuxt-link-locale to="/auth/forget-password" class="text-blue-600 hover:text-blue-500 font-medium">
                   {{ $t('form.forgot_your_password') }}
-                </nuxt-link>
+                </nuxt-link-locale>
               </div>
             </div>
           </div>

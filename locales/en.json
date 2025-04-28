@@ -25,7 +25,8 @@
     "go_back_home": "Go back Home",
     "logout": "Logout",
     "log_in": "Log in",
-    "create_account_button": "Create an account"
+    "create_account_button": "Create an account",
+    "reset_password": "Reset password"
   },
   "form": {
     "sign_in": "Sign in",
@@ -53,11 +54,13 @@
     "terms_and_conditions": "Terms and Conditions",
     "already_have_account": "Already have an account?",
     "login_here": "Login here",
-    "create_your_account": "Create Your Account"
+    "create_your_account": "Create Your Account",
+    "forgot_password": "Forgot password"
   },
   "head": {
     "sign_in": "Sign in",
-    "sign_up": "Create new Account"
+    "sign_up": "Create new Account",
+    "reset_password":"Reset password"
   },
   "error_page": {
     "you_are_all_alone_here": "You are all alone here 😁"
