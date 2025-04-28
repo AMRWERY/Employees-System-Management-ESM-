@@ -2,7 +2,13 @@
 export default defineNuxtConfig({
   compatibilityDate: "2024-11-01",
   devtools: { enabled: true },
-  modules: ["@nuxtjs/tailwindcss", "@nuxt/icon", "@vueuse/nuxt", "@pinia/nuxt"],
+  modules: [
+    "@nuxtjs/tailwindcss",
+    "@nuxt/icon",
+    "@vueuse/nuxt",
+    "@pinia/nuxt",
+    "@nuxtjs/i18n",
+  ],
   tailwindcss: {
     cssPath: ["~/css/tailwind.css", { injectPosition: "first" }],
     viewer: true,
@@ -11,6 +17,17 @@ export default defineNuxtConfig({
   pinia: {
     storesDirs: ["./stores/**", "./custom-folder/stores/**"],
   },
+  i18n: {
+      vueI18n: "./i18n.config.ts",
+      locales: ["en", "ar"],
+      defaultLocale: "en",
+      strategy: "prefix",
+      detectBrowserLanguage: {
+        useCookie: true,
+        fallbackLocale: "en",
+        redirectOn: "all",
+      },
+    },
   css: ["~/assets/css/main.css"],
   components: [
     {

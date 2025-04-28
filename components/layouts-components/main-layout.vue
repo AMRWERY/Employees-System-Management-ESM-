@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div :class="{ 'rtl': isRTL }">
+    <div :class="{ 'rtl': localeStore.isRTL }">
       <!-- Backdrop overlay for mobile - only visible when sidebar is open -->
       <div v-if="isSidebarOpen" class="fixed inset-0 bg-gray-900 bg-opacity-50 z-30 sm:hidden"
         @click="isSidebarOpen = false"></div>
@@ -20,9 +20,17 @@
           <!-- Right side navbar items -->
           <div class="flex items-center">
             <!-- RTL Toggle -->
-            <button @click="toggleDirection"
-              class="text-gray-200 hover:bg-gray-800 focus:outline-none focus:ring-4 focus:ring-gray-700 rounded-lg text-sm p-2.5 me-1">
-              {{ isRTL ? 'LTR' : 'RTL' }}
+            <button
+              class="text-gray-200 hover:bg-gray-800 focus:outline-none focus:ring-4 focus:ring-gray-700 rounded-lg text-sm p-2.5 me-1"
+              @click="switchLocale(localeStore.isRTL ? 'en' : 'ar')">
+              <span v-if="localeStore.isRTL" class="flex items-center">
+                <icon name="heroicons:language" class="w-4 h-4 me-1.5" />
+                En
+              </span>
+              <span v-else class="flex items-center">
+                <icon name="heroicons:language" class="w-4 h-4 me-1.5" />
+                العربية
+              </span>
             </button>
 
             <!-- User menu -->
@@ -43,10 +51,10 @@
       <!-- Sidebar - now starts below the navbar -->
       <aside id="default-sidebar"
         class="fixed top-14 z-40 w-[262px] h-[calc(100vh-3.5rem)] transition-transform flex flex-col" :class="[
-          isRTL ? 'right-0' : 'left-0',
-          isSidebarOpen || isRTL ? 'translate-x-0' : '-translate-x-full',
-          isRTL && !isSidebarOpen ? 'translate-x-full' : '',
-          isRTL ? 'sm:translate-x-0' : 'sm:translate-x-0',
+          localeStore.isRTL ? 'right-0' : 'left-0',
+          isSidebarOpen || localeStore.isRTL ? 'translate-x-0' : '-translate-x-full',
+          localeStore.isRTL && !isSidebarOpen ? 'translate-x-full' : '',
+          localeStore.isRTL ? 'sm:translate-x-0' : 'sm:translate-x-0',
         ]" aria-label="Sidebar">
         <div
           class="flex-1 h-full px-3 py-4 overflow-y-auto bg-gray-900 text-white [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
@@ -78,7 +86,7 @@
       <!-- Main content container - updating to match the new layout -->
       <div :class="[
         'min-h-screen pt-16',
-        isRTL ? 'sm:mr-64' : 'sm:ml-64',
+        localeStore.isRTL ? 'sm:mr-64' : 'sm:ml-64',
       ]">
         <!-- No content here - this is just the container -->
         <slot></slot>
@@ -88,40 +96,37 @@
 </template>
 
 <script lang="ts" setup>
-const isSidebarOpen = ref(false)
-const isRTL = ref(false)
-
-// Define the type for our dropdowns
-type DropdownNames = 'dashboard' | 'users'
-
-// Track which dropdowns are open
-const openDropdowns = reactive<Record<DropdownNames, boolean>>({
-  dashboard: true, // Open by default
-  users: false
-})
+const isSidebarOpen = ref(false);
+const localeStore = useLocaleStore();
+const { setLocale } = useI18n();
 
 const toggleSidebar = () => {
-  isSidebarOpen.value = !isSidebarOpen.value
-}
-
-const toggleDirection = () => {
-  isRTL.value = !isRTL.value
-  document.documentElement.dir = isRTL.value ? 'rtl' : 'ltr'
-}
-
-const toggleDropdown = (name: DropdownNames) => {
-  openDropdowns[name] = !openDropdowns[name]
-}
+  isSidebarOpen.value = !isSidebarOpen.value;
+};
 
 const handleLogout = () => {
-  console.log('Logging out...')
+  console.log('Logging out...');
   // Close sidebar on mobile after logout action
-  isSidebarOpen.value = false
-}
+  isSidebarOpen.value = false;
+};
+
+// Watch for changes in the RTL state and update document direction
+watch(() => localeStore.isRTL, (isRTL) => {
+  document.documentElement.dir = isRTL ? 'rtl' : 'ltr';
+}, { immediate: true });
+
+const switchLocale = (value: SupportedLocale) => {
+  localeStore.updateLocale(value);
+  setLocale(value);
+};
+
+// Initialize direction on component mount
+onMounted(() => {
+  document.documentElement.dir = localeStore.isRTL ? 'rtl' : 'ltr';
+});
 </script>
 
 <style scoped>
-/* RTL fixes */
 [dir="rtl"] .ms-3 {
   margin-right: 0.75rem !important;
   margin-left: 0 !important;
