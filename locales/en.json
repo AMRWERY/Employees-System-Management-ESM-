@@ -23,7 +23,41 @@
   },
   "btn": {
     "go_back_home": "Go back Home",
-    "logout": "Logout"
+    "logout": "Logout",
+    "log_in": "Log in",
+    "create_account_button": "Create an account"
+  },
+  "form": {
+    "sign_in": "Sign in",
+    "email": "Email",
+    "enter_your_email": "Enter your Email",
+    "password": "Password",
+    "enter_your_password": "Enter your Password",
+    "remember_me": "Remember me",
+    "forgot_your_password": "Forgot your password?",
+    "or": "or",
+    "empower_your_hr_team_with_centralized_control": "Empower Your HR Team with Centralized Control",
+    "i_streamline_workforce_management_through_our_comprehensive_employee_system_platform_track_attendance_manage_payroll_monitor_performance_and_optimize_team_structures_from_a_single_unified_interface": "I Streamline workforce management through our comprehensive employee system platform. Track attendance, manage payroll, monitor performance, and optimize team structures from a single unified interface.",
+    "do_not_have_an_account": "Don't have an account",
+    "register_here": "Register here",
+    "create_account": "Create an account",
+    "welcome_message": "Welcome to our registration page! Get started by creating your account.",
+    "simple_secure": "Simple & Secure Registration",
+    "security_message": "Our registration process is designed to be straightforward and secure. We prioritize your privacy and data security.",
+    "name": "Name",
+    "name_placeholder": "Enter name",
+    "email_id": "Email Id",
+    "email_placeholder": "Enter email",
+    "password_placeholder": "Enter password",
+    "accept_terms": "I accept the",
+    "terms_and_conditions": "Terms and Conditions",
+    "already_have_account": "Already have an account?",
+    "login_here": "Login here",
+    "create_your_account": "Create Your Account"
+  },
+  "head": {
+    "sign_in": "Sign in",
+    "sign_up": "Create new Account"
   },
   "error_page": {
     "you_are_all_alone_here": "You are all alone here 😁"

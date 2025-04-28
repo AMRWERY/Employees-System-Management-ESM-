@@ -21,7 +21,7 @@
           </div>
 
           <!-- Right side navbar items -->
-          <div class="flex items-center">
+          <div class="flex items-center gap-2">
             <!-- RTL Toggle -->
             <button
               class="text-gray-200 hover:bg-gray-800 focus:outline-none focus:ring-4 focus:ring-gray-700 rounded-lg text-sm p-2.5 me-1"
