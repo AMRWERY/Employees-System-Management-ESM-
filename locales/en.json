@@ -1,5 +1,21 @@
 {
-  "home": {
-    "hello_world": "Hello World!"
+  "layouts": {
+    "dashboard": "Dashboard",
+    "management": "Management",
+    "employees": "Employees",
+    "teams": "Teams",
+    "roles_permissions": "Roles & Permissions",
+    "hr_processes": "HR Processes",
+    "attendance": "Attendance",
+    "leave_management": "Leave Management",
+    "payroll": "Payroll",
+    "performance_reviews": "Performance Reviews",
+    "settings": "Settings"
+  },
+  "btn": {
+    "go_back_home": "Go back Home"
+  },
+  "error_page": {
+    "you_are_all_alone_here": "You are all alone here 😁"
   }
 }

@@ -89,25 +89,21 @@ const numberFormats: NumberFormats = {
   },
 };
 
-type Messages = {
-  en: LocaleMessage<MessageType>;
-  ar: LocaleMessage<MessageType>;
-};
+// Make sure both locale files have identical structure
+console.log('EN locale:', en);
+console.log('AR locale:', ar);
 
-interface I18nConfig {
-  legacy: boolean;
-  locale: SupportedLocales;
-  messages: Messages;
-  datetimeFormats: DatetimeFormats;
-  numberFormats: NumberFormats;
-}
-
-export default defineI18nConfig(
-  (): I18nConfig => ({
-    legacy: false,
-    locale: "en",
-    messages: { en, ar },
-    datetimeFormats,
-    numberFormats,
-  })
-);
+export default defineI18nConfig(() => ({
+  legacy: false,
+  locale: "en",
+  fallbackLocale: "en",
+  messages: { 
+    en, 
+    ar
+  },
+  datetimeFormats,
+  numberFormats,
+  warnHtmlMessage: false,
+  missingWarn: true,
+  fallbackWarn: true,
+}));

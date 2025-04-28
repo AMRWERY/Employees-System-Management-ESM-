@@ -18,16 +18,17 @@ export default defineNuxtConfig({
     storesDirs: ["./stores/**", "./custom-folder/stores/**"],
   },
   i18n: {
-      vueI18n: "./i18n.config.ts",
-      locales: ["en", "ar"],
-      defaultLocale: "en",
-      strategy: "prefix",
-      detectBrowserLanguage: {
-        useCookie: true,
-        fallbackLocale: "en",
-        redirectOn: "all",
-      },
+    vueI18n: "./i18n.config.ts",
+    locales: ["en", "ar"],
+    defaultLocale: "en",
+    strategy: "prefix",
+    detectBrowserLanguage: {
+      useCookie: true,
+      fallbackLocale: "en",
+      redirectOn: "all",
     },
+  },
+  plugins: ["~/plugins/locale.client.ts"],
   css: ["~/assets/css/main.css"],
   components: [
     {

@@ -21,6 +21,6 @@
     </div>
 </template>
 
-<script setup>
+<script lang="ts" setup>
 defineProps(['error'])
 </script>
