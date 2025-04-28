@@ -14,7 +14,7 @@
               <span class="sr-only">Toggle sidebar</span>
               <icon name="heroicons:bars-3-bottom-left-20-solid" class="w-6 h-6" aria-hidden="true" />
             </button>
-            <span class="self-center text-xl font-semibold text-white ml-2.5">ESM</span>
+            <span class="self-center text-xl font-semibold text-white ms-2.5">ESM</span>
           </div>
 
           <!-- Right side navbar items -->
@@ -26,7 +26,7 @@
             </button>
 
             <!-- User menu -->
-            <div class="flex items-center ml-3">
+            <div class="flex items-center ms-3">
               <div>
                 <button type="button" class="flex text-sm bg-gray-800 rounded-full focus:ring-4 focus:ring-gray-700"
                   id="user-menu-button" aria-expanded="false">
