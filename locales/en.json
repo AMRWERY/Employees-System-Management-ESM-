@@ -10,7 +10,16 @@
     "leave_management": "Leave Management",
     "payroll": "Payroll",
     "performance_reviews": "Performance Reviews",
-    "settings": "Settings"
+    "settings": "Settings",
+    "team_management": "Team Management",
+    "team_members": "Team Members",
+    "attendance_records": "Attendance Records",
+    "leave_requests": "Leave Requests",
+    "personal": "Personal",
+    "my_attendance": "My Attendance",
+    "my_leave_requests": "My Leave Requests",
+    "my_performance_reviews": "My Performance Reviews",
+    "my_payslips_payroll": "My Payslips/Payroll"
   },
   "btn": {
     "go_back_home": "Go back Home"

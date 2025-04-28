@@ -10,7 +10,16 @@
     "leave_management": "إدارة الإجازات",
     "payroll": "الرواتب",
     "performance_reviews": "مراجعات الأداء",
-    "settings": "الإعدادات"
+    "settings": "الإعدادات",
+    "team_management": "إدارة الفريق",
+    "team_members": "أعضاء الفريق",
+    "attendance_records": "سجلات الحضور",
+    "leave_requests": "طلبات الإجازات",
+    "personal": "شخصي",
+    "my_attendance": "حضوري",
+    "my_leave_requests": "طلبات إجازتي",
+    "my_performance_reviews": "مراجعات أدائي",
+    "my_payslips_payroll": "كشوف المرتبات الخاصة بي"
   },
   "btn": {
     "go_back_home": "العودة إلى الصفحه الرئيسيه"

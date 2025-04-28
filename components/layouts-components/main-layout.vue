@@ -1,12 +1,15 @@
 <template>
   <div>
+    <!-- Overlay Component -->
+    <overlay :visible="localeStore.isOverlayVisible" />
+
     <div :class="{ 'rtl': localeStore.isRTL }">
       <!-- Backdrop overlay for mobile - only visible when sidebar is open -->
       <div v-if="isSidebarOpen" class="fixed inset-0 bg-gray-900 bg-opacity-50 z-30 sm:hidden"
         @click="isSidebarOpen = false"></div>
 
       <!-- Navbar - Now full width at the top -->
-      <nav class="bg-gray-900 px-4 py-2.5 fixed w-full top-0 left-0 z-30 border-b border-gray-700">
+      <nav class="bg-gray-900 px-4 py-2.5 fixed w-full top-0 start-0 z-30 border-b border-gray-700">
         <div class="flex flex-wrap justify-between items-center">
           <div class="flex items-center justify-start">
             <button @click="toggleSidebar"
@@ -67,7 +70,6 @@
 
             <!-- Mmanager-sidebar-tabs component -->
             <manager-sidebar-tabs />
-            <!-- end Manager sidebar -->
 
             <!-- employee-sidebar-tabs component -->
             <employee-sidebar-tabs />
@@ -96,9 +98,9 @@
 </template>
 
 <script lang="ts" setup>
-const isSidebarOpen = ref(false);
+const { setLocale, setLocaleMessage } = useI18n();
 const localeStore = useLocaleStore();
-const { setLocale } = useI18n();
+const isSidebarOpen = ref(false);
 
 const toggleSidebar = () => {
   isSidebarOpen.value = !isSidebarOpen.value;
@@ -115,8 +117,17 @@ watch(() => localeStore.isRTL, (isRTL) => {
   document.documentElement.dir = isRTL ? 'rtl' : 'ltr';
 }, { immediate: true });
 
-const switchLocale = (value: SupportedLocale) => {
+const switchLocale = async (value: SupportedLocale) => {
   localeStore.updateLocale(value);
+  // Get i18n instance and ensure messages are loaded
+  if (value === 'ar') {
+    const arMessages = await import('~/locales/ar.json');
+    setLocaleMessage('ar', arMessages.default || arMessages);
+  } else {
+    const enMessages = await import('~/locales/en.json');
+    setLocaleMessage('en', enMessages.default || enMessages);
+  }
+  // Now set the locale
   setLocale(value);
 };
 

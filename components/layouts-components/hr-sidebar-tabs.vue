@@ -4,7 +4,7 @@
       <nuxt-link to="" class="flex items-center p-2 text-white rounded-lg hover:bg-gray-800 group">
         <icon name="material-symbols:dashboard"
           class="w-5 h-5 text-gray-400 transition duration-75 group-hover:text-white" aria-hidden="true" />
-        <span class="flex-1 ms-3 whitespace-nowrap">Dashboard</span>
+        <span class="flex-1 ms-3 whitespace-nowrap">{{ $t('layouts.dashboard') }}</span>
       </nuxt-link>
     </li>
 
@@ -14,21 +14,21 @@
         <icon name="eos-icons:cluster-management"
           class="flex-shrink-0 w-5 h-5 text-gray-400 transition duration-75 group-hover:text-white"
           aria-hidden="true" />
-        <span class="flex-1 ms-3 text-left rtl:text-right whitespace-nowrap">Management</span>
+        <span class="flex-1 ms-3 text-start whitespace-nowrap">{{ $t('layouts.management') }}</span>
         <icon name="material-symbols:keyboard-arrow-down-rounded" class="w-5 h-5"
           :class="{ 'rotate-180': openDropdowns.management }" aria-hidden="true" />
       </button>
       <ul v-if="openDropdowns.management" class="py-2 space-y-2">
         <li>
           <nuxt-link to=""
-            class="flex items-center w-full p-2 text-white transition duration-75 rounded-lg pl-11 group hover:bg-gray-800">
-            Employees
+            class="flex items-center w-full p-2 text-white transition duration-75 rounded-lg ps-14 group hover:bg-gray-800">
+            {{ $t('layouts.employees') }}
           </nuxt-link>
         </li>
         <li>
           <nuxt-link to=""
-            class="flex items-center w-full p-2 text-white transition duration-75 rounded-lg pl-11 group hover:bg-gray-800">
-            Teams
+            class="flex items-center w-full p-2 text-white transition duration-75 rounded-lg ps-14 group hover:bg-gray-800">
+            {{ $t('layouts.teams') }}
           </nuxt-link>
         </li>
       </ul>
@@ -40,33 +40,33 @@
         <icon name="clarity:employee-group-solid"
           class="flex-shrink-0 w-5 h-5 text-gray-400 transition duration-75 group-hover:text-white"
           aria-hidden="true" />
-        <span class="flex-1 ms-3 text-left rtl:text-right whitespace-nowrap">HR Processes</span>
+        <span class="flex-1 ms-3 text-start whitespace-nowrap">{{ $t('layouts.hr_processes') }}</span>
         <icon name="material-symbols:keyboard-arrow-down-rounded" class="w-5 h-5"
           :class="{ 'rotate-180': openDropdowns.processes }" aria-hidden="true" />
       </button>
       <ul v-if="openDropdowns.processes" class="py-2 space-y-2">
         <li>
           <nuxt-link to=""
-            class="flex items-center w-full p-2 text-white transition duration-75 rounded-lg pl-11 group hover:bg-gray-800">
-            Attendance
+            class="flex items-center w-full p-2 text-white transition duration-75 rounded-lg ps-14 group hover:bg-gray-800">
+            {{ $t('layouts.attendance') }}
           </nuxt-link>
         </li>
         <li>
           <nuxt-link to=""
-            class="flex items-center w-full p-2 text-white transition duration-75 rounded-lg pl-11 group hover:bg-gray-800">
-            Leave Management
+            class="flex items-center w-full p-2 text-white transition duration-75 rounded-lg ps-14 group hover:bg-gray-800">
+            {{ $t('layouts.leave_management') }}
           </nuxt-link>
         </li>
         <li>
           <nuxt-link to=""
-            class="flex items-center w-full p-2 text-white transition duration-75 rounded-lg pl-11 group hover:bg-gray-800">
-            Payroll
+            class="flex items-center w-full p-2 text-white transition duration-75 rounded-lg ps-14 group hover:bg-gray-800">
+            {{ $t('layouts.payroll') }}
           </nuxt-link>
         </li>
         <li>
           <nuxt-link to=""
-            class="flex items-center w-full p-2 text-white transition duration-75 rounded-lg pl-11 group hover:bg-gray-800">
-            Performance Reviews
+            class="flex items-center w-full p-2 text-white transition duration-75 rounded-lg ps-14 group hover:bg-gray-800">
+            {{ $t('layouts.performance_reviews') }}
           </nuxt-link>
         </li>
       </ul>

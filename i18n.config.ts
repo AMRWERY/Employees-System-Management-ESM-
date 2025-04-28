@@ -1,11 +1,6 @@
 import en from "./locales/en.json";
 import ar from "./locales/ar.json";
-import type {
-  DateTimeFormat,
-  NumberFormat,
-  LocaleMessage,
-  MessageType,
-} from "@intlify/core-base";
+import type { DateTimeFormat, NumberFormat } from "@intlify/core-base";
 
 type SupportedLocales = "en" | "ar";
 
@@ -89,17 +84,16 @@ const numberFormats: NumberFormats = {
   },
 };
 
-// Make sure both locale files have identical structure
-console.log('EN locale:', en);
-console.log('AR locale:', ar);
+// console.log('EN locale:', en);
+// console.log('AR locale:', ar);
 
 export default defineI18nConfig(() => ({
   legacy: false,
   locale: "en",
   fallbackLocale: "en",
-  messages: { 
-    en, 
-    ar
+  messages: {
+    en,
+    ar,
   },
   datetimeFormats,
   numberFormats,

@@ -27,6 +27,9 @@ export default defineNuxtConfig({
       fallbackLocale: "en",
       redirectOn: "all",
     },
+    bundle: {
+      optimizeTranslationDirective: false,
+    },
   },
   plugins: ["~/plugins/locale.client.ts"],
   css: ["~/assets/css/main.css"],

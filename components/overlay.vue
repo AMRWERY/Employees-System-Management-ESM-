@@ -4,7 +4,7 @@
       <div v-if="visible" class="fixed inset-0 z-[1000] flex items-center justify-center bg-black bg-opacity-75">
         <div class="flex items-center justify-center">
           <div class="flex justify-center text-5xl text-gray-300 align-center">
-            <icon name="svg-spinners:12-dots-scale-rotate" class="w-64 h-64" />
+            <icon name="svg-spinners:pulse-rings-multiple" class="w-64 h-64" />
           </div>
         </div>
       </div>
@@ -12,7 +12,7 @@
   </div>
 </template>
 
-<script setup>
+<script lang="ts" setup>
 defineProps(['visible']);
 </script>
 
