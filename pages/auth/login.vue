@@ -62,24 +62,6 @@
               <span v-else>{{ $t('btn.log_in') }}</span>
             </button>
           </div>
-
-          <div class="my-4 flex items-center gap-4">
-            <hr class="w-full border-slate-300" />
-            <p class="text-sm text-slate-800 text-center">{{ $t('form.or') }}</p>
-            <hr class="w-full border-slate-300" />
-          </div>
-
-          <div class="space-s-6 flex justify-center">
-            <button type="button" class="border-none outline-none" @click="googleLogin">
-              <icon name="devicon:google" class="w-6 h-6" />
-            </button>
-            <button type="button" class="border-none outline-none">
-              <icon name="logos:facebook" class="w-6 h-6" />
-            </button>
-            <button type="button" class="border-none outline-none">
-              <icon name="logos:apple" class="w-6 h-6" />
-            </button>
-          </div>
         </div>
       </div>
     </div>
@@ -126,17 +108,6 @@ const handleLogin = async () => {
     });
   } finally {
     loading.value = false;
-  }
-};
-
-const googleLogin = async () => {
-  try {
-    await authStore.loginWithGoogle();
-    setTimeout(() => {
-      navigateTo('/');
-    }, 3000);
-  } catch (error) {
-    return error
   }
 };
 

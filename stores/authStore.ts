@@ -3,8 +3,6 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
-  GoogleAuthProvider,
-  signInWithPopup,
   setPersistence,
   browserLocalPersistence,
   updatePassword,
@@ -222,55 +220,7 @@ export const useAuthStore = defineStore("auth", {
       }
     },
 
-    async loginWithGoogle() {
-      this.isOverlayVisible = true;
-      this.loading = true;
-      try {
-        await setPersistence(auth, browserLocalPersistence);
-        const provider = new GoogleAuthProvider();
-        const result = await signInWithPopup(auth, provider);
-        const user = result.user;
-        this.user = user;
-        const userDocRef = doc(db, "ems-users", user.uid);
-        const userDoc = await getDoc(userDocRef);
-        let userData;
-        if (!userDoc.exists()) {
-          userData = {
-            uid: user.uid,
-            email: user.email,
-            firstName: user.displayName?.split(" ")[0] || "FirstName",
-            lastName: user.displayName?.split(" ")[1] || "LastName",
-            role: "user",
-            loginType: "google",
-            createdAt: new Date(),
-          };
-          await setDoc(userDocRef, userData);
-        } else {
-          userData = userDoc.data();
-        }
-        const sessionUserData = {
-          uid: userData.uid,
-          email: userData.email,
-          firstName: userData.firstName,
-          lastName: userData.lastName,
-          role: userData.role,
-          loginType: userData.loginType,
-        };
-        localStorage.setItem("user", JSON.stringify(sessionUserData));
-        this.role = userData.role || "user";
-        await this.fetchUserData(user.uid);
-        this.error = null;
-      } catch (error) {
-        this.handleError(error, "Google login failed");
-        throw error;
-      } finally {
-        this.loading = false;
-        setTimeout(() => {
-          this.isOverlayVisible = false;
-        }, 3000);
-      }
-    },
-
+  
     async logoutUser() {
       this.isOverlayVisible = true;
       this.loading = true;
