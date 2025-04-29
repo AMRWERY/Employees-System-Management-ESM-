@@ -60,7 +60,7 @@
                       {{ $t('form.terms_and_conditions') }}
                     </nuxt-link>
                   </label>
-                  <span v-if="termsError" class="font-medium text-red-600 dark:text-red-500 block">{{ termsError
+                  <span v-if="termsError" class="font-medium text-red-600 block">{{ termsError
                   }}</span>
                 </div>
               </div>

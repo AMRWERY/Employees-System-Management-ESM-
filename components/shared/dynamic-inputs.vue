@@ -3,22 +3,22 @@
     <Form v-slot="{ errors }">
       <div class="my-4">
         <label :for="id"
-          :class="['block mb-1 text-sm font-medium text-gray-700 dark:text-gray-200', errors[name] ? 'text-red-600' : 'text-slate-700']">
+          :class="['block mb-1 text-sm font-medium text-gray-700', errors[name] ? 'text-red-600' : 'text-slate-700']">
           {{ label }}
-          <span v-if="required" class="text-red-600 dark:text-red-500">*</span>
+          <span v-if="required" class="text-red-600">*</span>
         </label>
 
         <div class="relative w-full">
           <!-- prefix-icon -->
           <span v-if="prefixIcon"
-            :class="['absolute inset-y-0 flex items-center text-gray-400 dark:text-gray-100 start-3 hover:text-gray-600 hover:dark:text-gray-200', errors[name] ? 'text-red-600' : 'text-slate-400']">
+            :class="['absolute inset-y-0 flex items-center text-gray-400 start-3 hover:text-gray-600', errors[name] ? 'text-red-600' : 'text-slate-400']">
             <icon :name="prefixIcon" class="w-5 h-5" />
           </span>
           <!-- input -->
           <template v-if="type === 'textarea'">
             <Field as="textarea" :name="name" :placeholder="placeholder" :id="id" :readonly="readonly"
               v-model="internalValue" :rules="rules"
-              class="w-full px-3 py-2 transition duration-300 bg-transparent border rounded-md shadow-sm placeholder:text-slate-400 dark:placeholder:text-slate-300 text-slate-700 dark:text-slate-200 focus:outline-none focus:border-slate-400 hover:border-slate-300 focus:shadow ps-9"
+              class="w-full px-3 py-2 transition duration-300 bg-transparent border rounded-md shadow-sm placeholder:text-slate-400 text-slate-700 focus:outline-none focus:border-slate-400 hover:border-slate-300 focus:shadow ps-9"
               rows="4" />
           </template>
 
@@ -31,7 +31,7 @@
           </template>
           <!-- Eye icon -->
           <span v-if="type === 'password'" @click="togglePassword"
-            class="absolute inset-y-0 flex items-center text-gray-400 cursor-pointer dark:text-gray-100 end-3 hover:text-gray-600 dark:hover:text-gray-300">
+            class="absolute inset-y-0 flex items-center text-gray-400 cursor-pointer end-3 hover:text-gray-600">
             <icon
               :name="showPassword ? 'material-symbols:visibility-off-rounded' : 'material-symbols:visibility-rounded'"
               class="w-5 h-5" />
@@ -40,7 +40,7 @@
 
         <!-- error messages -->
         <div class="mt-1">
-          <span class="font-medium text-red-600 dark:text-red-500">{{ errors[name] }}</span>
+          <span class="font-medium text-red-600">{{ errors[name] }}</span>
         </div>
       </div>
     </Form>

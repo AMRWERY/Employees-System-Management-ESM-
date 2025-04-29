@@ -28,7 +28,8 @@
     "create_account_button": "Create an account",
     "reset_password": "Reset password",
     "download_data": "Download data",
-    "signing_up": "Signing up"
+    "signing_up": "Signing up",
+    "logging": "Logging in"
   },
   "form": {
     "sign_in": "Sign in",
@@ -81,6 +82,8 @@
   "toast": {
     "all_fields_are_required": "All fields are required",
     "successfully_signed_up": "Successfully signed up",
-    "failed_to_sign_up": "Failed to sign up"
+    "failed_to_sign_up": "Failed to sign up",
+    "successfully_login": "Successfully login",
+    "failed_to_login": "Failed to login"
   }
 }

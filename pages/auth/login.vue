@@ -16,23 +16,26 @@
           </p>
         </div>
 
-        <form class="max-w-md md:ms-auto w-full text-end">
+        <div class="max-w-md md:ms-auto w-full text-end">
           <h3 class="text-slate-900 lg:text-3xl text-2xl font-bold mb-8">
             {{ $t('form.sign_in') }}
           </h3>
           <div class="space-y-6">
-            <div>
-              <label class='text-sm text-slate-800 font-medium mb-2 block'>{{ $t('form.email') }}</label>
-              <input name="email" type="email" required
-                class="bg-slate-100 w-full text-sm text-slate-800 px-4 py-3 rounded-md outline-none border focus:border-blue-600 focus:bg-transparent"
-                :placeholder="t('form.enter_your_email')" />
-            </div>
-            <div>
-              <label class='text-sm text-slate-800 font-medium mb-2 block'>{{ $t('form.password') }}</label>
-              <input name="password" type="password" required
-                class="bg-slate-100 w-full text-sm text-slate-800 px-4 py-3 rounded-md outline-none border focus:border-blue-600 focus:bg-transparent"
-                :placeholder="t('form.enter_your_password')" />
-            </div>
+            <ClientOnly>
+              <div class="grid col-span-1 sm:grid-cols-6 gap-x-6">
+                <div class="col-span-full">
+                  <dynamic-inputs :label="t('form.email')" :placeholder="t('form.enter_your_email')" type="email"
+                    name="email" :rules="'required|email'" :required="true" v-model="email" />
+                </div>
+
+                <div class="col-span-full">
+                  <dynamic-inputs :label="t('form.password')" :placeholder="t('form.enter_your_password')"
+                    type="password" name="password" :rules="'required|minLength:7'" :required="true"
+                    v-model="password" />
+                </div>
+              </div>
+            </ClientOnly>
+
             <div class="flex flex-wrap items-center justify-between gap-4">
               <div class="flex items-center">
                 <input id="remember-me" name="remember-me" type="checkbox"
@@ -50,9 +53,13 @@
           </div>
 
           <div class="!mt-7">
-            <button type="submit"
+            <button type="submit" :disabled="loading" @click="handleLogin"
               class="w-full shadow-xl py-2.5 px-4 text-sm font-semibold rounded text-white bg-blue-600 hover:bg-blue-700 focus:outline-none">
-              {{ $t('btn.log_in') }}
+              <div class="flex items-center justify-center" v-if="loading">
+                <span class="text-center me-2">{{ $t('btn.logging') }}...</span>
+                <icon name="svg-spinners:270-ring-with-bg" />
+              </div>
+              <span v-else>{{ $t('btn.log_in') }}</span>
             </button>
           </div>
 
@@ -63,7 +70,7 @@
           </div>
 
           <div class="space-s-6 flex justify-center">
-            <button type="button" class="border-none outline-none">
+            <button type="button" class="border-none outline-none" @click="googleLogin">
               <icon name="devicon:google" class="w-6 h-6" />
             </button>
             <button type="button" class="border-none outline-none">
@@ -73,7 +80,14 @@
               <icon name="logos:apple" class="w-6 h-6" />
             </button>
           </div>
-        </form>
+        </div>
+      </div>
+    </div>
+    <!-- dynamic-toast component -->
+    <div class="fixed z-50 pointer-events-none bottom-5 start-5 w-96">
+      <div class="pointer-events-auto">
+        <dynamic-toast v-if="showToast" :message="toastMessage" :toastType="toastType" :duration="5000"
+          :toastIcon="toastIcon" @toastClosed="showToast = false" />
       </div>
     </div>
   </div>
@@ -81,6 +95,54 @@
 
 <script lang="ts" setup>
 const { t } = useI18n()
+const authStore = useAuthStore()
+const email = ref('');
+const password = ref('');
+const loading = ref(false);
+const errorMessage = ref('');
+const { showToast, toastMessage, toastType, toastIcon, triggerToast } = useToast();
+
+const handleLogin = async () => {
+  if (!email.value || !password.value) {
+    errorMessage.value = t('toast.all_fields_are_required')
+    return
+  }
+  loading.value = true;
+  try {
+    await authStore.loginUser(email.value, password.value);
+    triggerToast({
+      message: t('toast.successfully_login'),
+      type: 'success',
+      icon: 'mdi-check-circle',
+    });
+    setTimeout(() => {
+      navigateTo('/');
+    }, 3000);
+  } catch (error) {
+    triggerToast({
+      message: t('toast.failed_to_login'),
+      type: 'error',
+      icon: 'material-symbols:error-outline-rounded',
+    });
+  } finally {
+    loading.value = false;
+  }
+};
+
+const googleLogin = async () => {
+  try {
+    await authStore.loginWithGoogle();
+    setTimeout(() => {
+      navigateTo('/');
+    }, 3000);
+  } catch (error) {
+    return error
+  }
+};
+
+onMounted(() => {
+  authStore.init();
+});
 
 definePageMeta({
   layout: 'auth'

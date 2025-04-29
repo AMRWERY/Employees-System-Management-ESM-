@@ -28,7 +28,8 @@
     "create_account_button": "إنشاء حساب",
     "reset_password": "إعادة تعيين كلمة المرور",
     "download_data": "تحميل البيانات",
-    "signing_up": "جاري التسجيل"
+    "signing_up": "جاري التسجيل",
+    "logging": "جاري تسجيل الدخول"
   },
   "form": {
     "sign_in": "تسجيل الدخول",
@@ -81,6 +82,8 @@
   "toast": {
     "all_fields_are_required": "جميع الحقول مطلوبة",
     "successfully_signed_up": "تم التسجيل بنجاح",
-    "failed_to_sign_up": "فشل في التسجيل"
+    "failed_to_sign_up": "فشل في التسجيل",
+    "successfully_login": "تم تسجيل الدخول بنجاح",
+    "failed_to_login": "فشل تسجيل الدخول"
   }
 }

@@ -100,16 +100,20 @@
 <script lang="ts" setup>
 const { setLocale, setLocaleMessage } = useI18n();
 const localeStore = useLocaleStore();
+const authStore = useAuthStore();
 const isSidebarOpen = ref(false);
 
 const toggleSidebar = () => {
   isSidebarOpen.value = !isSidebarOpen.value;
 };
 
-const handleLogout = () => {
-  console.log('Logging out...');
-  // Close sidebar on mobile after logout action
-  isSidebarOpen.value = false;
+const handleLogout = async () => {
+  try {
+    await authStore.logoutUser();
+    navigateTo('/auth/login');
+  } catch (err) {
+    console.error('Error during logout:', err);
+  }
 };
 
 // Watch for changes in the RTL state and update document direction

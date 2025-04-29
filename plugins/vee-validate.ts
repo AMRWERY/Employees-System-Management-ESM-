@@ -80,7 +80,7 @@ export default defineNuxtPlugin((nuxtApp) => {
         ...ar,
         messages: {
           ...ar.messages,
-          required: "{field} حقل مطلوب",
+          required: "{field} مطلوب",
         },
         names: inputsAr.form,
       },
