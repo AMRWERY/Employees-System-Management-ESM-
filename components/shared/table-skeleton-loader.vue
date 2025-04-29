@@ -31,10 +31,16 @@
     </div>
 </template>
 
-<script setup>
+<script lang="ts" setup>
+interface TableHeader {
+    type?: 'image' | 'action' | 'text';
+    loaderWidth?: string;
+    [key: string]: any;
+}
+
 defineProps({
     headers: {
-        type: Array,
+        type: Array as PropType<TableHeader[]>,
         required: true,
         default: () => []
     },
