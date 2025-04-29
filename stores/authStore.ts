@@ -220,7 +220,6 @@ export const useAuthStore = defineStore("auth", {
       }
     },
 
-  
     async logoutUser() {
       this.isOverlayVisible = true;
       this.loading = true;

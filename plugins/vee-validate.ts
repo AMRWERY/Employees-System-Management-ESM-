@@ -40,9 +40,9 @@ export default defineNuxtPlugin((nuxtApp) => {
     if (!value || !value.length) {
       return true;
     }
-    // if (value.length < limit) {
-    //   return i18n.t("form.minLengthError", { limit });
-    // }
+    if (value.length < limit) {
+      return i18n.t("form.minLengthError", { limit });
+    }
     return true;
   });
 
@@ -53,8 +53,8 @@ export default defineNuxtPlugin((nuxtApp) => {
     return i18n.t("form.passwords_must_match");
   });
 
-  defineRule('terms_required', (value: boolean) => {
-    return !!value || i18n.t('form.terms_required');
+  defineRule("terms_required", (value: boolean) => {
+    return !!value || i18n.t("form.terms_required");
   });
 
   defineRule("min", min);

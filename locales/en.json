@@ -65,7 +65,8 @@
     "field_required": "Field required",
     "email_invalid": "Email invalid",
     "passwords_must_match": "Passwords must match",
-    "terms_required": "You must accept the terms and conditions"
+    "terms_required": "You must accept the terms and conditions",
+    "minLengthError": "Password must be 7 characters"
   },
   "head": {
     "sign_in": "Sign in",
