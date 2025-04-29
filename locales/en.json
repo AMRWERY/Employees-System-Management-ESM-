@@ -27,7 +27,8 @@
     "log_in": "Log in",
     "create_account_button": "Create an account",
     "reset_password": "Reset password",
-    "download_data": "Download data"
+    "download_data": "Download data",
+    "signing_up": "Signing up"
   },
   "form": {
     "sign_in": "Sign in",
@@ -55,7 +56,14 @@
     "already_have_account": "Already have an account?",
     "login_here": "Login here",
     "create_your_account": "Create Your Account",
-    "forgot_password": "Forgot password"
+    "forgot_password": "Forgot password",
+    "first_name": "First name",
+    "enter_your_first_name": "Enter your first name",
+    "last_name": "Last name",
+    "enter_your_last_name": "Enter your last name",
+    "field_required": "Field required",
+    "email_invalid": "Email invalid",
+    "passwords_must_match": "Passwords must match"
   },
   "head": {
     "sign_in": "Sign in",
@@ -68,5 +76,10 @@
   "menu": {
     "download_as_pdf": "Download as PDF",
     "download_as_excel": "Download as Excel"
+  },
+  "toast": {
+    "all_fields_are_required": "All fields are required",
+    "successfully_signed_up": "Successfully signed up",
+    "failed_to_sign_up": "Failed to sign up"
   }
 }

@@ -8,6 +8,7 @@ export default defineNuxtConfig({
     "@vueuse/nuxt",
     "@pinia/nuxt",
     "@nuxtjs/i18n",
+    "@vee-validate/nuxt",
   ],
   tailwindcss: {
     cssPath: ["~/css/tailwind.css", { injectPosition: "first" }],
@@ -30,6 +31,9 @@ export default defineNuxtConfig({
     bundle: {
       optimizeTranslationDirective: false,
     },
+  },
+  veeValidate: {
+    autoImports: true,
   },
   plugins: ["~/plugins/locale.client.ts"],
   css: ["~/assets/css/main.css"],

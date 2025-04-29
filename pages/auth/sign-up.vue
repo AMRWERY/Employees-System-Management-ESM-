@@ -22,37 +22,25 @@
         <div class="w-full max-w-lg">
           <h2 class="text-2xl font-semibold text-gray-800 mb-8">{{ $t('form.create_account') }}</h2>
 
-          <form>
-            <div class="mb-6">
-              <label for="name" class="block text-gray-700 mb-2">{{ $t('form.name') }}</label>
-              <div class="relative">
-                <input id="name" type="text"
-                  class="bg-slate-100 w-full text-sm text-slate-800 px-4 py-3 rounded-md outline-none border focus:border-blue-600 focus:bg-transparent"
-                  :placeholder="$t('form.name_placeholder')" />
+          <ClientOnly>
+            <div class="grid col-span-1 sm:grid-cols-6 gap-x-6">
+              <div class="sm:col-span-3">
+                <dynamic-inputs :label="t('form.first_name')" :placeholder="t('form.enter_your_first_name')" type="text"
+                  name="first_name" :rules="'required|alpha_spaces'" :required="true" v-model="firstName" />
+              </div>
+
+              <div class="sm:col-span-3">
+                <dynamic-inputs :label="t('form.last_name')" :placeholder="t('form.enter_your_last_name')" type="text"
+                  name="last_name" :rules="'required|alpha_spaces'" :required="true" v-model="lastName" />
               </div>
             </div>
 
-            <!-- Email Field -->
-            <div class="mb-6">
-              <label for="email" class="block text-gray-700 mb-2">{{ $t('form.email') }}</label>
-              <div class="relative">
-                <input id="email" type="email"
-                  class="bg-slate-100 w-full text-sm text-slate-800 px-4 py-3 rounded-md outline-none border focus:border-blue-600 focus:bg-transparent"
-                  :placeholder="$t('form.email_placeholder')" />
-              </div>
-            </div>
+            <dynamic-inputs :label="t('form.email')" :placeholder="t('form.enter_your_email')" type="email" name="email"
+              :rules="'required|email'" :required="true" v-model="email" />
 
-            <!-- Password Field -->
-            <div class="mb-6">
-              <label for="password" class="block text-gray-700 mb-2">{{ $t('form.password') }}</label>
-              <div class="relative">
-                <input id="password"
-                  class="bg-slate-100 w-full text-sm text-slate-800 px-4 py-3 rounded-md outline-none border focus:border-blue-600 focus:bg-transparent"
-                  :placeholder="$t('form.password_placeholder')" />
-              </div>
-            </div>
+            <dynamic-inputs :label="t('form.password')" :placeholder="t('form.enter_your_password')" type="password"
+              name="password" :rules="'required|minLength:7'" :required="true" v-model="password" />
 
-            <!-- Terms and Conditions -->
             <div class="mb-6 flex items-start">
               <div class="flex items-center h-5">
                 <input id="terms" type="checkbox"
@@ -64,31 +52,101 @@
                   $t('form.terms_and_conditions') }}</nuxt-link-locale>
               </label>
             </div>
+          </ClientOnly>
 
-            <!-- Submit Button -->
-            <button type="submit"
-              class="w-full shadow-xl py-2.5 px-4 text-sm font-semibold rounded text-white bg-blue-600 hover:bg-blue-700 focus:outline-none">
-              {{ $t('btn.create_account_button') }}
-            </button>
-
-            <!-- Login Link -->
-            <div class="mt-6 text-center">
-              <p class="text-sm text-slate-500">
-                {{ $t('form.already_have_account') }}
-                <nuxt-link to="/auth/login" class="text-blue-600 font-medium hover:underline ms-1">
-                  {{ $t('form.login_here') }}
-                </nuxt-link>
-              </p>
+          <button type="submit" :disabled="loading" @click="handleSignup"
+            class="w-full shadow-xl py-2.5 px-4 text-sm font-semibold rounded text-white bg-blue-600 hover:bg-blue-700 focus:outline-none">
+            <div class="flex items-center justify-center" v-if="loading">
+              <span class="text-center me-2">{{ $t('btn.signing_up') }}...</span>
+              <icon name="svg-spinners:270-ring-with-bg" />
             </div>
-          </form>
+            <span v-else>{{ $t('btn.create_account_button') }}</span>
+          </button>
+
+          <!-- Login Link -->
+          <div class="mt-6 text-center">
+            <p class="text-sm text-slate-500">
+              {{ $t('form.already_have_account') }}
+              <nuxt-link-locale to="/auth/login" class="text-blue-600 font-medium hover:underline ms-1">
+                {{ $t('form.login_here') }}
+              </nuxt-link-locale>
+            </p>
+          </div>
         </div>
+      </div>
+    </div>
+
+    <!-- dynamic-toast component -->
+    <div class="fixed z-50 pointer-events-none bottom-5 start-5 w-96">
+      <div class="pointer-events-auto">
+        <dynamic-toast v-if="showToast" :message="toastMessage" :toastType="toastType" :duration="5000"
+          :toastIcon="toastIcon" @toastClosed="showToast = false" />
       </div>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-const { t } = useI18n();
+const { t } = useI18n()
+const authStore = useAuthStore()
+const firstName = ref('');
+const lastName = ref('');
+const email = ref('');
+const password = ref('');
+const loading = ref(false);
+const errorMessage = ref('');
+const { showToast, toastMessage, toastType, toastIcon, triggerToast } = useToast();
+
+const handleSignup = async () => {
+  if (!email.value || !password.value || !firstName.value || !lastName.value) {
+    errorMessage.value = t('toast.all_fields_are_required')
+    return
+  }
+  loading.value = true;
+  try {
+    await authStore.registerUser(
+      email.value,
+      password.value,
+      firstName.value,
+      lastName.value
+    );
+    triggerToast({
+      message: t('toast.successfully_signed_up'),
+      type: 'success',
+      icon: 'mdi-check-circle',
+    });
+    setTimeout(() => {
+      navigateTo('/');
+    }, 3000);
+  } catch (error) {
+    triggerToast({
+      message: t('toast.failed_to_sign_up'),
+      type: 'error',
+      icon: 'material-symbols:error-outline-rounded',
+    });
+  } finally {
+    loading.value = false;
+  }
+};
+
+// const googleSignup = async () => {
+//   loading.value = true;
+//   try {
+//     await authStore.loginWithGoogle();
+//     triggerToast({
+//       message: t('toast.successfully_signed_up'),
+//       type: 'success',
+//       icon: 'mdi-check-circle',
+//     });
+//     setTimeout(() => {
+//       navigateTo('/');
+//     }, 3000);
+//   } catch (error) {
+//     alert(error.message);
+//   } finally {
+//     loading.value = false;
+//   }
+// };
 
 definePageMeta({
   layout: 'auth'

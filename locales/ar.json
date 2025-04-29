@@ -27,7 +27,8 @@
     "log_in": "تسجيل الدخول",
     "create_account_button": "إنشاء حساب",
     "reset_password": "إعادة تعيين كلمة المرور",
-    "download_data": "تحميل البيانات"
+    "download_data": "تحميل البيانات",
+    "signing_up": "جاري التسجيل"
   },
   "form": {
     "sign_in": "تسجيل الدخول",
@@ -55,7 +56,14 @@
     "already_have_account": "هل لديك حساب بالفعل؟",
     "login_here": "تسجيل الدخول هنا",
     "create_your_account": "إنشاء حسابك",
-    "forgot_password": "هل نسيت كلمة السر"
+    "forgot_password": "هل نسيت كلمة السر",
+    "first_name": "الاسم الأول",
+    "enter_your_first_name": "أدخل اسمك الأول",
+    "last_name": "اسم الأخير",
+    "enter_your_last_name": "أدخل اسمك الأخير",
+    "field_required": "هذا الحقل مطلوب",
+    "email_invalid": "البريد الإلكتروني غير صالح",
+    "passwords_must_match": "يجب أن تتطابق كلمات المرور"
   },
   "head": {
     "sign_in": "تسجيل الدخول",
@@ -68,5 +76,10 @@
   "menu": {
     "download_as_pdf": "تحميل بصيغة PDF",
     "download_as_excel": "تحميل كملف Excel"
+  },
+  "toast": {
+    "all_fields_are_required": "جميع الحقول مطلوبة",
+    "successfully_signed_up": "تم التسجيل بنجاح",
+    "failed_to_sign_up": "فشل في التسجيل"
   }
 }
