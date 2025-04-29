@@ -63,7 +63,8 @@
     "enter_your_last_name": "أدخل اسمك الأخير",
     "field_required": "هذا الحقل مطلوب",
     "email_invalid": "البريد الإلكتروني غير صالح",
-    "passwords_must_match": "يجب أن تتطابق كلمات المرور"
+    "passwords_must_match": "يجب أن تتطابق كلمات المرور",
+    "terms_required": "يجب عليك الموافقة على الشروط والأحكام"
   },
   "head": {
     "sign_in": "تسجيل الدخول",

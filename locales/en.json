@@ -63,7 +63,8 @@
     "enter_your_last_name": "Enter your last name",
     "field_required": "Field required",
     "email_invalid": "Email invalid",
-    "passwords_must_match": "Passwords must match"
+    "passwords_must_match": "Passwords must match",
+    "terms_required": "You must accept the terms and conditions"
   },
   "head": {
     "sign_in": "Sign in",
