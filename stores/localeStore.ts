@@ -14,11 +14,18 @@ export const useLocaleStore = defineStore("locales", {
   }),
 
   actions: {
-    updateLocale(value: SupportedLocale): void {
+    async updateLocale(newLocale: SupportedLocale) {
       this.isOverlayVisible = true;
-      this.locale = value;
+      const nuxtApp = useNuxtApp();
+      // Load messages first
+      const messages = await import(`../locales/${newLocale}.json`);
+      nuxtApp.$i18n.setLocaleMessage(newLocale, messages.default || messages);
+      // Then update locale
+      this.locale = newLocale;
+      nuxtApp.$i18n.locale.value = newLocale;
+      document.documentElement.dir = newLocale === "ar" ? "rtl" : "ltr";
       if (process.client) {
-        localStorage.setItem("locale", value);
+        localStorage.setItem("locale", newLocale);
       }
       setTimeout(() => {
         this.isOverlayVisible = false;
