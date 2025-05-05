@@ -53,12 +53,11 @@
 
       <!-- Sidebar - now starts below the navbar -->
       <aside id="default-sidebar"
-        class="fixed top-14 z-40 w-[262px] h-[calc(100vh-3.5rem)] transition-transform flex flex-col" :class="[
-          localeStore.isRTL ? 'right-0' : 'left-0',
-          isSidebarOpen || localeStore.isRTL ? 'translate-x-0' : '-translate-x-full',
-          localeStore.isRTL && !isSidebarOpen ? 'translate-x-full' : '',
-          localeStore.isRTL ? 'sm:translate-x-0' : 'sm:translate-x-0',
-        ]" aria-label="Sidebar">
+  class="fixed top-14 z-40 w-[262px] h-[calc(100vh-3.5rem)] transition-transform flex flex-col" :class="[
+    localeStore.isRTL ? 'right-0' : 'left-0',
+    isSidebarOpen ? 'translate-x-0' : (localeStore.isRTL ? 'translate-x-full' : '-translate-x-full'),
+    'sm:translate-x-0',
+  ]" aria-label="Sidebar">
         <div
           class="flex-1 h-full px-3 py-4 overflow-y-auto bg-gray-900 text-white [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
           <ul class="space-y-2 font-medium">

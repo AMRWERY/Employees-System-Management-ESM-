@@ -1,0 +1,22 @@
+/* Direction-aware styles */
+[dir="rtl"] {
+  direction: rtl;
+  text-align: right;
+}
+
+/* Tailwind RTL overrides */
+[dir="rtl"] .ms-3 {
+  margin-inline-start: 0.75rem !important;
+}
+
+[dir="rtl"] .me-1 {
+  margin-inline-end: 0.25rem !important;
+}
+
+[dir="rtl"] .ml-2\.5 {
+  margin-inline-start: 0.625rem !important;
+}
+
+[dir="rtl"] .pl-11 {
+  padding-inline-start: 2.75rem !important;
+}

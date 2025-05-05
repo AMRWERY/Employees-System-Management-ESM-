@@ -28,9 +28,9 @@ export default defineNuxtConfig({
       fallbackLocale: "en",
       redirectOn: "all",
     },
-    bundle: {
-      optimizeTranslationDirective: false,
-    },
+    // bundle: {
+    //   optimizeTranslationDirective: false,
+    // },
   },
   veeValidate: {
     autoImports: true,

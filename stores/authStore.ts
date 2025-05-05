@@ -34,6 +34,15 @@ type UserData = {
   [key: string]: any;
 };
 
+interface AuthState {
+  user: UserData | null;
+  error: string | null;
+  role: string | null;
+  isOverlayVisible: boolean;
+  loading: boolean;
+  welcomeType: "signup" | "login" | null;
+}
+
 export const useAuthStore = defineStore("auth", {
   state: () => ({
     user: null as UserData | null,
@@ -41,6 +50,8 @@ export const useAuthStore = defineStore("auth", {
     role: null as string | null,
     isOverlayVisible: false,
     loading: false,
+    welcomeType: null as "signup" | "login" | null,
+    // showWelcomeToast: false
   }),
 
   actions: {
@@ -168,6 +179,7 @@ export const useAuthStore = defineStore("auth", {
         this.role = role;
         await this.fetchUserData(user.uid);
         this.error = null;
+        this.setWelcomeType("signup");
         return user;
       } catch (error) {
         this.handleError(error, "Registration failed");
@@ -209,6 +221,7 @@ export const useAuthStore = defineStore("auth", {
         }
         await this.fetchUserData(user.uid);
         this.error = null;
+        this.setWelcomeType("login");
       } catch (error) {
         this.handleError(error, "Login failed");
         throw error;
@@ -271,7 +284,6 @@ export const useAuthStore = defineStore("auth", {
             apartment: this.user.apartment || "",
             selectedCity: this.user.selectedCity || "",
           };
-
           updateDoc(userDocRef, updatedProfile)
             .then(() => {
               if (this.user) {
@@ -301,7 +313,6 @@ export const useAuthStore = defineStore("auth", {
               reject(error);
             });
         };
-
         if (file) {
           const storageRef = ref(
             storage,
@@ -344,19 +355,16 @@ export const useAuthStore = defineStore("auth", {
         this.handleError({ message: "User is not authenticated" });
         return Promise.reject(new Error("User is not authenticated"));
       }
-
       try {
         // Re-authenticate user before changing password
         if (!user.email) {
           throw new Error("User email is missing");
         }
-
         const credential = EmailAuthProvider.credential(
           user.email,
           currentPassword
         );
         await reauthenticateWithCredential(user, credential);
-
         // Update password
         await updatePassword(user, newPassword);
         this.error = null;
@@ -366,6 +374,14 @@ export const useAuthStore = defineStore("auth", {
         this.handleError(error, "Failed to change password");
         return Promise.reject(error);
       }
+    },
+
+    setWelcomeType(type: "signup" | "login"): void {
+      this.welcomeType = type;
+    },
+
+    clearWelcomeType(): void {
+      this.welcomeType = null;
     },
   },
 

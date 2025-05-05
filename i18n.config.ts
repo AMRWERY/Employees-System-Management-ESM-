@@ -97,7 +97,10 @@ export default defineI18nConfig(() => ({
   },
   datetimeFormats,
   numberFormats,
-  warnHtmlMessage: false,
-  missingWarn: true,
-  fallbackWarn: true,
+  missingWarn: false,
+  fallbackWarn: false,
+  warnHtmlMessage: false
+  // warnHtmlMessage: false,
+  // missingWarn: true,
+  // fallbackWarn: true,
 }));

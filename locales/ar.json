@@ -85,6 +85,8 @@
     "successfully_signed_up": "تم التسجيل بنجاح",
     "failed_to_sign_up": "فشل في التسجيل",
     "successfully_login": "تم تسجيل الدخول بنجاح",
-    "failed_to_login": "فشل تسجيل الدخول"
+    "failed_to_login": "فشل تسجيل الدخول",
+    "welcome_new_user": "مرحباً بالمستخدم الجديد",
+    "welcome_back": "مرحبًا بعودتك"
   }
 }

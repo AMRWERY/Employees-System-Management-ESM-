@@ -85,6 +85,8 @@
     "successfully_signed_up": "Successfully signed up",
     "failed_to_sign_up": "Failed to sign up",
     "successfully_login": "Successfully login",
-    "failed_to_login": "Failed to login"
+    "failed_to_login": "Failed to login",
+    "welcome_new_user": "Welcome new user",
+    "welcome_back": "Welcome back"
   }
 }

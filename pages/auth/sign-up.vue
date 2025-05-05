@@ -61,7 +61,7 @@
                     </nuxt-link>
                   </label>
                   <span v-if="termsError" class="font-medium text-red-600 block">{{ termsError
-                  }}</span>
+                    }}</span>
                 </div>
               </div>
             </ClientOnly>
@@ -139,6 +139,7 @@ const handleSignup = async () => {
     setTimeout(() => {
       navigateTo('/');
     }, 3000);
+    authStore.setWelcomeType('signup');
   } catch (error) {
     triggerToast({
       message: t('toast.failed_to_sign_up'),
