@@ -9,7 +9,7 @@
           <p class="text-sm mt-6 text-slate-500 leading-relaxed">{{
             $t('form.i_streamline_workforce_management_through_our_comprehensive_employee_system_platform_track_attendance_manage_payroll_monitor_performance_and_optimize_team_structures_from_a_single_unified_interface')
             }}</p>
-          <p class="text-sm mt-6 md:mt-12 text-slate-500">{{ $t('form.do_not_have_an_account') }}
+          <p class="text-sm mt-6 md:mt-8 text-slate-500">{{ $t('form.do_not_have_an_account') }}
             <nuxt-link-locale to="/auth/sign-up" class="text-blue-600 font-medium hover:underline ms-1">{{
               $t('form.register_here')
             }}</nuxt-link-locale>
@@ -65,6 +65,7 @@
         </div>
       </div>
     </div>
+    
     <!-- dynamic-toast component -->
     <div class="fixed z-50 pointer-events-none bottom-5 start-5 w-96">
       <div class="pointer-events-auto">

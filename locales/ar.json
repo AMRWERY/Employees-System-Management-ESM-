@@ -21,6 +21,13 @@
     "my_performance_reviews": "مراجعات أدائي",
     "my_payslips_payroll": "كشوف المرتبات الخاصة بي"
   },
+  "dashboard": {
+    "you_re_currently": "أنت حاليا",
+    "clocked_in": "تم تسجيل الدخول",
+    "clocked_out": "تم تسجيل الخروج",
+    "todays_activity": "نشاط اليوم",
+    "past_week_summary": "ملخص الأسبوع الماضي"
+  },
   "btn": {
     "go_back_home": "العودة إلى الصفحه الرئيسيه",
     "logout": "تسجيل الخروج",
@@ -29,7 +36,9 @@
     "reset_password": "إعادة تعيين كلمة المرور",
     "download_data": "تحميل البيانات",
     "signing_up": "جاري التسجيل",
-    "logging": "جاري تسجيل الدخول"
+    "logging": "جاري تسجيل الدخول",
+    "clocked_in": "تسجيل الدخول",
+    "clocked_out": "تسجيل الخروج"
   },
   "form": {
     "sign_in": "تسجيل الدخول",
@@ -88,6 +97,9 @@
     "successfully_login": "تم تسجيل الدخول بنجاح",
     "failed_to_login": "فشل تسجيل الدخول",
     "welcome_new_user": "مرحباً بالمستخدم الجديد",
-    "welcome_back": "مرحبًا بعودتك"
+    "welcome_back": "مرحبًا بعودتك",
+    "successfully_check_out": "تم تسجيل الخروج بنجاح",
+    "successfully_check_in": "تم تسجيل الدخول بنجاح",
+    "something_wrong": "هناك مشكله ما"
   }
 }

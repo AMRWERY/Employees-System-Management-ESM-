@@ -21,6 +21,13 @@
     "my_performance_reviews": "My Performance Reviews",
     "my_payslips_payroll": "My Payslips/Payroll"
   },
+  "dashboard": {
+    "you_re_currently": "You're currently",
+    "clocked_in": "Clocked In",
+    "clocked_out": "Clocked Out",
+    "todays_activity": "Today's Activity",
+    "past_week_summary": "Past Week Summary"
+  },
   "btn": {
     "go_back_home": "Go back Home",
     "logout": "Logout",
@@ -29,7 +36,9 @@
     "reset_password": "Reset password",
     "download_data": "Download data",
     "signing_up": "Signing up",
-    "logging": "Logging in"
+    "logging": "Logging in",
+    "clocked_in": "Clocked In",
+    "clocked_out": "Clocked Out"
   },
   "form": {
     "sign_in": "Sign in",
@@ -88,6 +97,9 @@
     "successfully_login": "Successfully login",
     "failed_to_login": "Failed to login",
     "welcome_new_user": "Welcome new user",
-    "welcome_back": "Welcome back"
+    "welcome_back": "Welcome back",
+    "successfully_check_out": "Successfully check out",
+    "successfully_check_in": "Successfully check in",
+    "something_wrong": "Something wrong"
   }
 }
