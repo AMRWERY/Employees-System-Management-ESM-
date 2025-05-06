@@ -71,7 +71,8 @@
   "head": {
     "sign_in": "Sign in",
     "sign_up": "Create new Account",
-    "reset_password": "Reset password"
+    "reset_password": "Reset password",
+    "my_attendance": "My Attendance"
   },
   "error_page": {
     "you_are_all_alone_here": "You are all alone here 😁"

@@ -20,10 +20,10 @@
       </button>
       <ul v-if="openDropdowns.personal" class="py-2 space-y-2">
         <li>
-          <nuxt-link to=""
+          <nuxt-link-locale to="/employee/my-attendance"
             class="flex items-center w-full p-2 text-white transition duration-75 rounded-lg ps-14 group hover:bg-gray-800">
             {{ $t('layouts.my_attendance') }}
-          </nuxt-link>
+          </nuxt-link-locale>
         </li>
         <li>
           <nuxt-link to=""

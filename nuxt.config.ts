@@ -2,6 +2,7 @@
 export default defineNuxtConfig({
   compatibilityDate: "2024-11-01",
   devtools: { enabled: true },
+  ssr: false,
   modules: [
     "@nuxtjs/tailwindcss",
     "@nuxt/icon",
@@ -43,7 +44,7 @@ export default defineNuxtConfig({
       strict: false, // Allow trailing slashes
     },
   },
-  plugins: ["~/plugins/locale.client.ts"],
+  plugins: ["~/plugins/locale.client.ts", "~/plugins/auth.client.ts"],
   css: ["~/assets/css/main.css"],
   components: [
     {

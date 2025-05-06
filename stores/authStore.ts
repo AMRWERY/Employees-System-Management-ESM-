@@ -108,16 +108,44 @@ export const useAuthStore = defineStore("auth", {
       try {
         this.loading = true;
         await setPersistence(auth, browserSessionPersistence);
-        const user = auth.currentUser;
-        if (user) {
-          await this.fetchUserData(user.uid);
-        }
+        
+        // Use auth state observer instead of currentUser
+        return new Promise<void>((resolve) => {
+          const unsubscribe = auth.onAuthStateChanged(async (user) => {
+            unsubscribe();
+            if (user) {
+              await this.fetchUserData(user.uid);
+              // Sync session storage
+              sessionStorage.setItem('user', JSON.stringify({
+                uid: user.uid,
+                email: user.email,
+                role: this.role
+              }));
+            }
+            resolve();
+          });
+        });
       } catch (error) {
         this.handleError(error, "Failed to initialize authentication");
       } finally {
         this.loading = false;
       }
     },
+
+    // async init() {
+    //   try {
+    //     this.loading = true;
+    //     await setPersistence(auth, browserSessionPersistence);
+    //     const user = auth.currentUser;
+    //     if (user) {
+    //       await this.fetchUserData(user.uid);
+    //     }
+    //   } catch (error) {
+    //     this.handleError(error, "Failed to initialize authentication");
+    //   } finally {
+    //     this.loading = false;
+    //   }
+    // },
 
     async fetchUserData(uid: string) {
       try {
