@@ -175,7 +175,7 @@ export const useAuthStore = defineStore("auth", {
           createdAt: new Date(),
         };
         await setDoc(doc(db, "ems-users", user.uid), userData);
-        localStorage.setItem("user", JSON.stringify(userData));
+        sessionStorage.setItem("user", JSON.stringify(userData));
         this.role = role;
         await this.fetchUserData(user.uid);
         this.error = null;
@@ -215,7 +215,7 @@ export const useAuthStore = defineStore("auth", {
             role: userData.role,
             loginType: userData.loginType,
           };
-          localStorage.setItem("user", JSON.stringify(saveUserData));
+          sessionStorage.setItem("user", JSON.stringify(saveUserData));
         } else {
           this.role = "user";
         }
@@ -242,7 +242,7 @@ export const useAuthStore = defineStore("auth", {
         this.role = null;
         this.error = null;
         ["user"].forEach((key) => {
-          localStorage.removeItem(key);
+          sessionStorage.removeItem(key);
         });
       } catch (error) {
         this.handleError(error, "Logout failed");
