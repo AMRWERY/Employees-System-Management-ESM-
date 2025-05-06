@@ -8,15 +8,15 @@
           </h2>
           <p class="text-sm mt-6 text-slate-500 leading-relaxed">{{
             $t('form.i_streamline_workforce_management_through_our_comprehensive_employee_system_platform_track_attendance_manage_payroll_monitor_performance_and_optimize_team_structures_from_a_single_unified_interface')
-          }}</p>
+            }}</p>
           <p class="text-sm mt-6 md:mt-12 text-slate-500">{{ $t('form.do_not_have_an_account') }}
             <nuxt-link-locale to="/auth/sign-up" class="text-blue-600 font-medium hover:underline ms-1">{{
               $t('form.register_here')
-              }}</nuxt-link-locale>
+            }}</nuxt-link-locale>
           </p>
         </div>
 
-        <div class="max-w-md md:ms-auto w-full text-end">
+        <div class="max-w-lg md:ms-auto w-full text-end">
           <h3 class="text-slate-900 lg:text-3xl text-2xl font-bold mb-8">
             {{ $t('form.sign_in') }}
           </h3>

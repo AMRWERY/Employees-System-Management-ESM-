@@ -35,6 +35,14 @@ export default defineNuxtConfig({
   veeValidate: {
     autoImports: true,
   },
+  experimental: {
+    payloadExtraction: true, // Fix for client-side routing
+  },
+  router: {
+    options: {
+      strict: false, // Allow trailing slashes
+    },
+  },
   plugins: ["~/plugins/locale.client.ts"],
   css: ["~/assets/css/main.css"],
   components: [
