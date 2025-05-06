@@ -4,7 +4,7 @@ import {
   signInWithEmailAndPassword,
   signOut,
   setPersistence,
-  browserLocalPersistence,
+  browserSessionPersistence,
   updatePassword,
   sendPasswordResetEmail,
   EmailAuthProvider,
@@ -107,7 +107,7 @@ export const useAuthStore = defineStore("auth", {
     async init() {
       try {
         this.loading = true;
-        await setPersistence(auth, browserLocalPersistence);
+        await setPersistence(auth, browserSessionPersistence);
         const user = auth.currentUser;
         if (user) {
           await this.fetchUserData(user.uid);
@@ -194,7 +194,7 @@ export const useAuthStore = defineStore("auth", {
       this.isOverlayVisible = true;
       this.loading = true;
       try {
-        await setPersistence(auth, browserLocalPersistence);
+        await setPersistence(auth, browserSessionPersistence);
         const userCredential = await signInWithEmailAndPassword(
           auth,
           email,

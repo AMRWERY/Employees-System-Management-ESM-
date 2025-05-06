@@ -1,6 +1,6 @@
 <template>
   <div>
-    <li>
+    <li v-if="hasAnyRole('manager')">
       <nuxt-link to="" class="flex items-center p-2 text-white rounded-lg hover:bg-gray-800 group">
         <icon name="material-symbols:dashboard"
           class="w-5 h-5 text-gray-400 transition duration-75 group-hover:text-white" aria-hidden="true" />
@@ -8,7 +8,7 @@
       </nuxt-link>
     </li>
 
-    <li>
+    <li v-if="hasAnyRole('manager')">
       <button @click="toggleDropdown('team')" type="button"
         class="flex items-center w-full p-2 text-base text-white transition duration-75 rounded-lg group hover:bg-gray-800">
         <icon name="game-icons:team-idea"
@@ -59,4 +59,6 @@ const openDropdowns = reactive<Record<DropdownNames, boolean>>({
 const toggleDropdown = (name: DropdownNames) => {
   openDropdowns[name] = !openDropdowns[name]
 }
+
+const { hasAnyRole } = useUserRoles()
 </script>
