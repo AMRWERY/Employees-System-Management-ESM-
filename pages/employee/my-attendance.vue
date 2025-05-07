@@ -85,25 +85,17 @@ const { t } = useI18n();
 const attendanceStore = useAttendanceStore();
 const { showToast, toastMessage, toastType, toastIcon, triggerToast } = useToast();
 
-const formattedDate = computed(() => {
-  return new Date().toLocaleDateString('en-US', {
-    weekday: 'long',
-    month: 'long',
-    day: 'numeric'
-  });
-});
-
 onMounted(async () => {
   await attendanceStore.fetchTodayEntries();
   await attendanceStore.fetchWeeklySummary();
 });
 
+const dayLocale = localStorage.getItem('locale') || 'en-US';
+
+const formattedDate = useDateFormat(useNow(), 'YYYY-MM-DD (dddd)', { locales: dayLocale });
+
 const formatTime = (date: Date) => {
-  return date.toLocaleTimeString('en-US', {
-    hour: 'numeric',
-    minute: '2-digit',
-    hour12: true
-  });
+  return useDateFormat(date, 'HH:mm a');
 };
 
 const isProcessing = ref(false);
