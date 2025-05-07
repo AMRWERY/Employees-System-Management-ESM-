@@ -1,11 +1,12 @@
 <template>
   <div>
     <li v-if="hasAnyRole('employee')">
-      <nuxt-link to="" class="flex items-center p-2 text-white rounded-lg hover:bg-gray-800 group">
-        <icon name="material-symbols:dashboard"
-          class="w-5 h-5 text-gray-400 transition duration-75 group-hover:text-white" aria-hidden="true" />
+      <nuxt-link-locale to="/" class="flex items-center p-2 text-white rounded-lg group"
+        exact-active-class="bg-gray-400 text-white hover:bg-gray-500">
+        <icon name="material-symbols:dashboard" class="w-5 h-5 transition duration-75 group-hover:text-white"
+          :class="{ 'text-gray-400': $route.path === '/', 'text-white': $route.path !== '/' }" aria-hidden="true" />
         <span class="flex-1 ms-3 whitespace-nowrap">{{ $t('layouts.dashboard') }}</span>
-      </nuxt-link>
+      </nuxt-link-locale>
     </li>
 
     <li v-if="hasAnyRole('employee')">
@@ -20,20 +21,20 @@
       </button>
       <ul v-if="openDropdowns.personal" class="py-2 space-y-2">
         <li>
-          <nuxt-link-locale to="/employee/my-attendance"
-            class="flex items-center w-full p-2 text-white transition duration-75 rounded-lg ps-14 group hover:bg-gray-800">
+          <nuxt-link-locale to="/employee/my-attendance" class="flex items-center p-2 text-white rounded-lg group ps-14"
+            exact-active-class="bg-gray-400 text-white hover:bg-gray-500">
             {{ $t('layouts.my_attendance') }}
           </nuxt-link-locale>
         </li>
         <li>
-          <nuxt-link to=""
-            class="flex items-center w-full p-2 text-white transition duration-75 rounded-lg ps-14 group hover:bg-gray-800">
+          <nuxt-link to="" class="flex items-center p-2 text-white rounded-lg group ps-14"
+            exact-active-class="bg-gray-400 text-white hover:bg-gray-500">
             {{ $t('layouts.my_leave_requests') }}
           </nuxt-link>
         </li>
         <li>
-          <nuxt-link to=""
-            class="flex items-center w-full p-2 text-white transition duration-75 rounded-lg ps-14 group hover:bg-gray-800">
+          <nuxt-link to="" class="flex items-center p-2 text-white rounded-lg group ps-14"
+            exact-active-class="bg-gray-400 text-white hover:bg-gray-500">
             {{ $t('layouts.my_performance_reviews') }}
           </nuxt-link>
         </li>
