@@ -81,11 +81,13 @@
       </li>
 
       <li v-if="hasAnyRole('admin')">
-        <nuxt-link to="" class="flex items-center p-2 text-white rounded-lg hover:bg-gray-800 group">
+        <nuxt-link-locale to="/settings" class="flex items-center p-2 text-white rounded-lg group"
+          exact-active-class="bg-gray-400 text-white hover:bg-gray-500">
           <icon name="material-symbols-light:settings-rounded"
-            class="flex-shrink-0 w-5 h-5 text-gray-400 transition duration-75 group-hover:text-white" />
+            class="w-5 h-5 transition duration-75 group-hover:text-white"
+            :class="{ 'text-gray-400': $route.path === '/settings', 'text-white': $route.path !== '/settings' }" />
           <span class="flex-1 ms-3 whitespace-nowrap">{{ $t('layouts.settings') }}</span>
-        </nuxt-link>
+        </nuxt-link-locale>
       </li>
     </div>
   </div>
