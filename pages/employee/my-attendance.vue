@@ -6,10 +6,10 @@
         <div>
           <h2 class="text-2xl font-bold text-gray-900">{{ formattedDate }}</h2>
           <p class="text-gray-600 text-sm mt-1 flex items-center gap-2">
-            You're currently
+            {{ $t('dashboard.you_re_currently') }}
             <icon name="fxemoji:alarmclock" />
             <span :class="attendanceStore.clockedIn ? 'text-green-600' : 'text-red-600'">
-              {{ attendanceStore.clockedIn ? 'Clocked In' : 'Clocked Out' }}
+              {{ attendanceStore.clockedIn ? t('dashboard.clocked_in') : t('dashboard.clocked_out') }}
             </span>
           </p>
         </div>
@@ -24,14 +24,19 @@
             : 'bg-green-500 hover:bg-green-600 text-white',
           attendanceStore.loading ? 'opacity-50 cursor-not-allowed' : ''
         ]">
-          <icon name="fxemoji:alarmclock" />
-          {{ attendanceStore.clockedIn ? 'Clock Out' : 'Clock In' }}
+          <template v-if="isProcessing">
+            <icon name="svg-spinners:270-ring" class="w-8 h-8" />
+          </template>
+          <template v-else>
+            <icon name="fxemoji:alarmclock" />
+            {{ attendanceStore.clockedIn ? t('btn.clocked_out') : t('btn.clocked_in') }}
+          </template>
         </button>
       </div>
 
       <!-- Recent History -->
       <div class="bg-white rounded-lg shadow p-6">
-        <h3 class="text-lg font-semibold mb-4">Today's Activity</h3>
+        <h3 class="text-lg font-semibold mb-4">{{ $t('dashboard.todays_activity') }}</h3>
         <div class="space-y-3">
           <div v-for="(entry, index) in attendanceStore.formattedTodayEntries" :key="index"
             class="flex justify-between items-center p-3 bg-gray-50 rounded">
@@ -46,14 +51,14 @@
               'px-3 py-1 rounded-full text-sm',
               entry.type === 'in' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
             ]">
-              {{ entry.type === 'in' ? 'Clocked In' : 'Clocked Out' }}
+              {{ entry.type === 'in' ? t('dashboard.clocked_in') : t('dashboard.clocked_out') }}
             </span>
           </div>
         </div>
 
         <!-- Weekly Summary -->
         <div class="mt-8 pt-6 border-t border-gray-200">
-          <h3 class="text-lg font-semibold mb-4">Past Week Summary</h3>
+          <h3 class="text-lg font-semibold mb-4">{{ $t('dashboard.past_week_summary') }}</h3>
           <div class="grid grid-cols-7 gap-2 text-center">
             <div v-for="day in attendanceStore.weeklySummary" :key="day.date" class="p-2 rounded bg-gray-50 text-sm">
               <div class="text-gray-600 mb-1">{{ day.day }}</div>
@@ -64,42 +69,65 @@
         </div>
       </div>
     </div>
+
+    <!-- dynamic-toast component -->
+    <div class="fixed z-50 pointer-events-none bottom-5 end-1 w-96">
+      <div class="pointer-events-auto">
+        <dynamic-toast v-if="showToast" :message="toastMessage" :toastType="toastType" :duration="5000"
+          :toastIcon="toastIcon" @toastClosed="showToast = false" />
+      </div>
+    </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { Timestamp } from 'firebase/firestore';
-
 const { t } = useI18n();
 const attendanceStore = useAttendanceStore();
-const authStore = useAuthStore();
-
-const formattedDate = computed(() => {
-  return new Date().toLocaleDateString('en-US', {
-    weekday: 'long',
-    month: 'long',
-    day: 'numeric'
-  });
-});
+const { showToast, toastMessage, toastType, toastIcon, triggerToast } = useToast();
 
 onMounted(async () => {
   await attendanceStore.fetchTodayEntries();
   await attendanceStore.fetchWeeklySummary();
 });
 
+const dayLocale = localStorage.getItem('locale') || 'en-US';
+
+const formattedDate = useDateFormat(useNow(), 'YYYY-MM-DD (dddd)', { locales: dayLocale });
+
 const formatTime = (date: Date) => {
-  return date.toLocaleTimeString('en-US', {
-    hour: 'numeric',
-    minute: '2-digit',
-    hour12: true
-  });
+  return useDateFormat(date, 'HH:mm a');
 };
 
+const isProcessing = ref(false);
+
 const toggleClock = async () => {
-  if (attendanceStore.clockedIn) {
-    await attendanceStore.clockOut();
-  } else {
-    await attendanceStore.clockIn();
+  try {
+    isProcessing.value = true;
+    if (attendanceStore.clockedIn) {
+      await attendanceStore.clockOut();
+      triggerToast({
+        message: t('toast.successfully_check_out'),
+        type: 'success',
+        icon: 'mdi-check-circle',
+      });
+    } else {
+      await attendanceStore.clockIn();
+      triggerToast({
+        message: t('toast.successfully_check_in'),
+        type: 'success',
+        icon: 'mdi-check-circle',
+      });
+    }
+    setTimeout(() => {
+      isProcessing.value = false;
+    }, 3000);
+  } catch (error) {
+    isProcessing.value = false;
+    triggerToast({
+      message: t('toast.something_wrong'),
+      type: 'error',
+      icon: 'material-symbols:error-outline-rounded',
+    });
   }
 };
 
