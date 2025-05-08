@@ -94,6 +94,9 @@ export const useAuthStore = defineStore("auth", {
           errorMessage =
             "Network error. Please check your internet connection.";
           break;
+        case "(error as any).code === 'permission-denied'":
+          errorMessage = "You don't have permission to perform this action";
+          break;
       }
       this.error = customMessage
         ? `${customMessage}: ${errorMessage}`
@@ -108,7 +111,6 @@ export const useAuthStore = defineStore("auth", {
       try {
         this.loading = true;
         await setPersistence(auth, browserSessionPersistence);
-        
         // Use auth state observer instead of currentUser
         return new Promise<void>((resolve) => {
           const unsubscribe = auth.onAuthStateChanged(async (user) => {
@@ -116,11 +118,14 @@ export const useAuthStore = defineStore("auth", {
             if (user) {
               await this.fetchUserData(user.uid);
               // Sync session storage
-              sessionStorage.setItem('user', JSON.stringify({
-                uid: user.uid,
-                email: user.email,
-                role: this.role
-              }));
+              sessionStorage.setItem(
+                "user",
+                JSON.stringify({
+                  uid: user.uid,
+                  email: user.email,
+                  role: this.role,
+                })
+              );
             }
             resolve();
           });
@@ -131,21 +136,6 @@ export const useAuthStore = defineStore("auth", {
         this.loading = false;
       }
     },
-
-    // async init() {
-    //   try {
-    //     this.loading = true;
-    //     await setPersistence(auth, browserSessionPersistence);
-    //     const user = auth.currentUser;
-    //     if (user) {
-    //       await this.fetchUserData(user.uid);
-    //     }
-    //   } catch (error) {
-    //     this.handleError(error, "Failed to initialize authentication");
-    //   } finally {
-    //     this.loading = false;
-    //   }
-    // },
 
     async fetchUserData(uid: string) {
       try {
@@ -165,7 +155,7 @@ export const useAuthStore = defineStore("auth", {
             ).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
           }
           this.user = userData;
-          this.role = userData.role || "user";
+          this.role = userData.role || "employee";
         } else {
           throw new Error("User data not found");
         }
@@ -182,11 +172,12 @@ export const useAuthStore = defineStore("auth", {
       password: string,
       firstName: string,
       lastName: string,
-      role = "user"
+      role = "employee"
     ) {
       this.isOverlayVisible = true;
       this.loading = true;
       try {
+        await setPersistence(auth, browserSessionPersistence);
         const userCredential = await createUserWithEmailAndPassword(
           auth,
           email,
@@ -198,7 +189,7 @@ export const useAuthStore = defineStore("auth", {
           email: user.email,
           firstName: firstName,
           lastName: lastName,
-          role: role,
+          role: role || "employee",
           loginType: "email",
           createdAt: new Date(),
         };
@@ -234,7 +225,7 @@ export const useAuthStore = defineStore("auth", {
         const userDoc = await getDoc(userDocRef);
         if (userDoc.exists()) {
           const userData = userDoc.data();
-          this.role = userData?.role || "user";
+          this.role = userData?.role || "employee";
           const saveUserData = {
             uid: userData.uid,
             email: userData.email,
@@ -245,7 +236,7 @@ export const useAuthStore = defineStore("auth", {
           };
           sessionStorage.setItem("user", JSON.stringify(saveUserData));
         } else {
-          this.role = "user";
+          this.role = "employee";
         }
         await this.fetchUserData(user.uid);
         this.error = null;
@@ -292,9 +283,8 @@ export const useAuthStore = defineStore("auth", {
         }
         this.loading = true;
         const storage = getStorage();
-        const userDocRef = doc(db, "users", this.user.uid);
+        const userDocRef = doc(db, "ems-users", this.user.uid);
         let profileImgUrl = this.user.profileImg || null;
-
         const updateProfile = () => {
           if (!this.user) {
             this.loading = false;
@@ -415,7 +405,9 @@ export const useAuthStore = defineStore("auth", {
 
   getters: {
     isAuthenticated: (state) => !!state.user,
+
     isLoading: (state) => state.loading,
+
     errorMessage: (state) => state.error,
   },
 });

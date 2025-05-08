@@ -8,7 +8,8 @@
           <p class="text-gray-600 text-sm mt-1 flex items-center gap-2">
             {{ $t('dashboard.you_re_currently') }}
             <icon name="fxemoji:alarmclock" />
-            <span :class="attendanceStore.clockedIn ? 'text-green-600' : 'text-red-600'">
+            <span
+              :class="attendanceStore.clockedIn ? 'text-green-600 underline font-semibold' : 'text-red-600 underline font-semibold'">
               {{ attendanceStore.clockedIn ? t('dashboard.clocked_in') : t('dashboard.clocked_out') }}
             </span>
           </p>
@@ -86,7 +87,7 @@ const attendanceStore = useAttendanceStore();
 const { showToast, toastMessage, toastType, toastIcon, triggerToast } = useToast();
 
 onMounted(async () => {
-  await attendanceStore.fetchTodayEntries();
+  await attendanceStore.fetchTodayRecord();
   await attendanceStore.fetchWeeklySummary();
 });
 
