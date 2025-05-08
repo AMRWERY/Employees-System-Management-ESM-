@@ -37,17 +37,17 @@ const calculateDuration = (start: Timestamp, end: Timestamp): string => {
   return `${hours}h ${minutes}m`;
 };
 
-const formatTotalTime = (totalSeconds: number): string => {
-  const hours = Math.floor(totalSeconds / 3600);
-  const minutes = Math.floor((totalSeconds % 3600) / 60);
-  const seconds = Math.floor(totalSeconds % 60);
-  return `${hours}h ${minutes}m ${seconds}s`;
-};
+// const formatTotalTime = (totalSeconds: number): string => {
+//   const hours = Math.floor(totalSeconds / 3600);
+//   const minutes = Math.floor((totalSeconds % 3600) / 60);
+//   const seconds = Math.floor(totalSeconds % 60);
+//   return `${hours}h ${minutes}m ${seconds}s`;
+// };
 
-// Convert seconds to minutes (for decimal display)
-const secondsToMinutes = (seconds: number): number => {
-  return seconds / 60;
-};
+// // Convert seconds to minutes (for decimal display)
+// const secondsToMinutes = (seconds: number): number => {
+//   return seconds / 60;
+// };
 
 const calculateDurationInSeconds = (
   start: Timestamp,
