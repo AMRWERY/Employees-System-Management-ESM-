@@ -8,36 +8,56 @@ import {
   where,
   getDocs,
   Timestamp,
+  arrayUnion,
+  increment,
+  getDoc,
 } from "firebase/firestore";
 
-interface AttendanceRecord {
+interface DailyAttendance {
+  date: string; // "YYYY-MM-DD"
+  clockIns: Timestamp[];
+  clockOuts: Timestamp[];
+  totalHours: number;
   uid: string;
   role: string;
-  date: string;
-  clockIn: Timestamp;
-  clockOut?: Timestamp;
-  status: "active" | "completed";
-}
-
-interface AttendanceDocument extends AttendanceRecord {
-  id: string;
 }
 
 interface AttendanceState {
-  todayEntries: AttendanceDocument[];
+  todayRecord: DailyAttendance | null;
   weeklySummary: any[];
   loading: boolean;
   error: string | null;
-  currentAttendanceId: string | null;
 }
+
+interface DailyAttendance {
+  id: string;
+  date: string;
+  clockIns: Timestamp[];
+  clockOuts: Timestamp[];
+  totalHours: number;
+  uid: string;
+  role: string;
+}
+
+const calculateDuration = (start: Timestamp, end: Timestamp): string => {
+  const diff = end.toMillis() - start.toMillis();
+  const hours = Math.floor(diff / (1000 * 60 * 60));
+  const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+  return `${hours}h ${minutes}m`;
+};
+
+const calculateDurationInHours = (start: Timestamp, end: Timestamp): number => {
+  return (end.toMillis() - start.toMillis()) / (1000 * 60 * 60);
+};
+
+const getUTCDateString = () => new Date().toISOString().substring(0, 10);
 
 export const useAttendanceStore = defineStore("attendance", {
   state: (): AttendanceState => ({
-    todayEntries: [],
+    todayRecord: null,
     weeklySummary: [],
     loading: false,
     error: null,
-    currentAttendanceId: null,
   }),
 
   actions: {
@@ -45,71 +65,109 @@ export const useAttendanceStore = defineStore("attendance", {
       const authStore = useAuthStore();
       if (!authStore.user) throw new Error("User not authenticated");
       this.loading = true;
-      this.error = null;
       try {
-        const newRecord: Partial<AttendanceRecord> = {
-          uid: authStore.user.uid,
-          role: authStore.user.role || "employee",
-          date: new Date().toISOString().split("T")[0],
-          clockIn: Timestamp.now(),
-          status: "active",
-        };
-        const docRef = doc(collection(db, "ems-attendance"));
-        await setDoc(docRef, newRecord);
-        this.currentAttendanceId = docRef.id;
-        await this.fetchTodayEntries();
+        const date = getUTCDateString();
+        const docRef = doc(
+          db,
+          "ems-attendance",
+          authStore.user.uid,
+          "daily-records",
+          date
+        );
+        await setDoc(
+          docRef,
+          {
+            date,
+            uid: authStore.user.uid,
+            role: authStore.user.role || "employee",
+            clockIns: arrayUnion(Timestamp.now()),
+            clockOuts: [],
+            totalHours: 0,
+          },
+          { merge: true }
+        );
+        await this.fetchTodayRecord();
       } catch (error) {
-        this.error = (error as Error).message;
-        throw error;
+        this.handleError(error);
       } finally {
         this.loading = false;
       }
     },
 
     async clockOut() {
-      if (!this.currentAttendanceId)
-        throw new Error("No active attendance record");
+      const authStore = useAuthStore();
+      if (!authStore.user) throw new Error("User not authenticated");
       this.loading = true;
-      this.error = null;
       try {
-        const docRef = doc(db, "ems-attendance", this.currentAttendanceId);
+        const date = getUTCDateString();
+        const docRef = doc(
+          db,
+          "ems-attendance",
+          authStore.user.uid,
+          "daily-records",
+          date
+        );
+        const lastClockIn =
+          this.todayRecord?.clockIns.slice(-1)[0] || Timestamp.now();
+        const duration = calculateDurationInHours(lastClockIn, Timestamp.now());
+        const roundedDuration = Math.ceil(duration);
         await updateDoc(docRef, {
-          clockOut: Timestamp.now(),
-          status: "completed",
+          clockOuts: arrayUnion(Timestamp.now()),
+          totalHours: increment(roundedDuration),
         });
-        this.currentAttendanceId = null;
-        await this.fetchTodayEntries();
+        await this.fetchTodayRecord();
       } catch (error) {
-        this.error = (error as Error).message;
-        throw error;
+        this.handleError(error);
       } finally {
         this.loading = false;
       }
     },
 
-    async fetchTodayEntries() {
+    handleError(error: unknown) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown error";
+      this.error = errorMessage;
+      console.error("Attendance error:", error);
+    },
+
+    calculateLastSessionHours(): number {
+      if (!this.todayRecord) return 0;
+      const lastClockIn = this.todayRecord.clockIns.slice(-1)[0];
+      return (
+        (Timestamp.now().toMillis() - lastClockIn.toMillis()) / (1000 * 60 * 60)
+      );
+    },
+
+    async fetchTodayRecord() {
       const authStore = useAuthStore();
-      if (!authStore.user) return;
+      if (!authStore.user?.uid) {
+        this.error = "User not authenticated";
+        return;
+      }
       this.loading = true;
       try {
-        const today = new Date().toISOString().split("T")[0];
-        const q = query(
-          collection(db, "ems-attendance"),
-          where("uid", "==", authStore.user.uid),
-          where("date", "==", today)
+        const date = getUTCDateString();
+        const docRef = doc(
+          db,
+          "ems-attendance",
+          authStore.user.uid,
+          "daily-records",
+          date
         );
-        const snapshot = await getDocs(q);
-        this.todayEntries = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...(doc.data() as AttendanceRecord),
-        }));
-        // Check for active session
-        const activeRecord = this.todayEntries.find(
-          (record) => record.status === "active"
-        );
-        this.currentAttendanceId = activeRecord?.id || null;
+        const docSnap = await getDoc(docRef);
+        this.todayRecord = docSnap.exists()
+          ? {
+              id: docSnap.id,
+              date: docSnap.data().date,
+              clockIns: docSnap.data().clockIns || [],
+              clockOuts: docSnap.data().clockOuts || [],
+              totalHours: docSnap.data().totalHours || 0,
+              uid: docSnap.data().uid,
+              role: docSnap.data().role || "employee",
+            }
+          : null;
       } catch (error) {
-        this.error = (error as Error).message;
+        this.handleError(error);
       } finally {
         this.loading = false;
       }
@@ -122,54 +180,42 @@ export const useAttendanceStore = defineStore("attendance", {
       try {
         const oneWeekAgo = new Date();
         oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+        const dateString = oneWeekAgo.toISOString().substring(0, 10);
         const q = query(
-          collection(db, "ems-attendance"),
-          where("uid", "==", authStore.user.uid),
-          where("date", ">=", oneWeekAgo.toISOString().split("T")[0])
+          collection(db, "ems-attendance", authStore.user.uid, "daily-records"),
+          where("date", ">=", dateString) // <-- Use ISO string
         );
         const snapshot = await getDocs(q);
-        const records = snapshot.docs.map((doc) =>
-          doc.data()
-        ) as AttendanceRecord[];
-        // Process weekly summary
-        this.weeklySummary = this.processWeeklyData(records);
+        this.weeklySummary = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
       } catch (error) {
-        this.error = (error as Error).message;
+        this.handleError(error);
       } finally {
         this.loading = false;
       }
     },
-
-    processWeeklyData(records: AttendanceRecord[]) {
-      // Implementation for processing weekly data
-      // This should calculate hours per day
-      return [];
-    },
-
-    calculateDuration(start: Timestamp, end: Timestamp): string {
-      const diff = end.toMillis() - start.toMillis();
-      const hours = Math.floor(diff / (1000 * 60 * 60));
-      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-      return `${hours}h ${minutes}m`;
-    },
   },
 
   getters: {
-    clockedIn: (state) => !!state.currentAttendanceId,
+    clockedIn: (state) => {
+      return state.todayRecord
+        ? state.todayRecord.clockIns.length > state.todayRecord.clockOuts.length
+        : false;
+    },
 
     formattedTodayEntries(state) {
-      const calculateDuration = (start: Timestamp, end: Timestamp): string => {
-        const diff = end.toMillis() - start.toMillis();
-        const hours = Math.floor(diff / (1000 * 60 * 60));
-        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-        return `${hours}h ${minutes}m`;
-      };
-      return state.todayEntries.map((entry) => ({
-        time: entry.clockIn.toDate(),
+      if (!state.todayRecord) return [];
+      return state.todayRecord.clockIns.map((clockIn, index) => ({
+        time: clockIn.toDate(),
         type: "in" as const,
-        ...(entry.clockOut && {
-          clockOut: entry.clockOut.toDate(),
-          duration: calculateDuration(entry.clockIn, entry.clockOut),
+        ...(state.todayRecord?.clockOuts[index] && {
+          clockOut: state.todayRecord.clockOuts[index].toDate(),
+          duration: calculateDuration(
+            clockIn,
+            state.todayRecord.clockOuts[index]
+          ),
         }),
       }));
     },
