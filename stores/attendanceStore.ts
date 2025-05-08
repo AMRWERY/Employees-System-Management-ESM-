@@ -14,10 +14,11 @@ import {
 } from "firebase/firestore";
 
 interface DailyAttendance {
-  date: string; // "YYYY-MM-DD"
+  id: string; 
+  date: string;
   clockIns: Timestamp[];
   clockOuts: Timestamp[];
-  totalHours: number;
+  totalSeconds: number;
   uid: string;
   role: string;
 }
@@ -29,16 +30,6 @@ interface AttendanceState {
   error: string | null;
 }
 
-interface DailyAttendance {
-  id: string;
-  date: string;
-  clockIns: Timestamp[];
-  clockOuts: Timestamp[];
-  totalHours: number;
-  uid: string;
-  role: string;
-}
-
 const calculateDuration = (start: Timestamp, end: Timestamp): string => {
   const diff = end.toMillis() - start.toMillis();
   const hours = Math.floor(diff / (1000 * 60 * 60));
@@ -46,8 +37,23 @@ const calculateDuration = (start: Timestamp, end: Timestamp): string => {
   return `${hours}h ${minutes}m`;
 };
 
-const calculateDurationInHours = (start: Timestamp, end: Timestamp): number => {
-  return (end.toMillis() - start.toMillis()) / (1000 * 60 * 60);
+// const formatTotalTime = (totalSeconds: number): string => {
+//   const hours = Math.floor(totalSeconds / 3600);
+//   const minutes = Math.floor((totalSeconds % 3600) / 60);
+//   const seconds = Math.floor(totalSeconds % 60);
+//   return `${hours}h ${minutes}m ${seconds}s`;
+// };
+
+// // Convert seconds to minutes (for decimal display)
+// const secondsToMinutes = (seconds: number): number => {
+//   return seconds / 60;
+// };
+
+const calculateDurationInSeconds = (
+  start: Timestamp,
+  end: Timestamp
+): number => {
+  return (end.toMillis() - start.toMillis()) / 1000; // Convert milliseconds to seconds
 };
 
 const getUTCDateString = () => new Date().toISOString().substring(0, 10);
@@ -82,7 +88,7 @@ export const useAttendanceStore = defineStore("attendance", {
             role: authStore.user.role || "employee",
             clockIns: arrayUnion(Timestamp.now()),
             clockOuts: [],
-            totalHours: 0,
+            totalSeconds: 0,
           },
           { merge: true }
         );
@@ -109,11 +115,13 @@ export const useAttendanceStore = defineStore("attendance", {
         );
         const lastClockIn =
           this.todayRecord?.clockIns.slice(-1)[0] || Timestamp.now();
-        const duration = calculateDurationInHours(lastClockIn, Timestamp.now());
-        const roundedDuration = Math.ceil(duration);
+        const durationSeconds = calculateDurationInSeconds(
+          lastClockIn,
+          Timestamp.now()
+        );
         await updateDoc(docRef, {
           clockOuts: arrayUnion(Timestamp.now()),
-          totalHours: increment(roundedDuration),
+          totalSeconds: increment(durationSeconds),
         });
         await this.fetchTodayRecord();
       } catch (error) {
@@ -161,7 +169,7 @@ export const useAttendanceStore = defineStore("attendance", {
               date: docSnap.data().date,
               clockIns: docSnap.data().clockIns || [],
               clockOuts: docSnap.data().clockOuts || [],
-              totalHours: docSnap.data().totalHours || 0,
+              totalSeconds: docSnap.data().totalSeconds || 0,
               uid: docSnap.data().uid,
               role: docSnap.data().role || "employee",
             }
