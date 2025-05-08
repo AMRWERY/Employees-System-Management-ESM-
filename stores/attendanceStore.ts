@@ -15,7 +15,7 @@ import {
 
 interface DailyAttendance {
   id: string; 
-  date: string; // "YYYY-MM-DD"
+  date: string;
   clockIns: Timestamp[];
   clockOuts: Timestamp[];
   totalSeconds: number;
