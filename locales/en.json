@@ -26,7 +26,11 @@
     "clocked_in": "Clocked In",
     "clocked_out": "Clocked Out",
     "todays_activity": "Today's Activity",
-    "past_week_summary": "Past Week Summary"
+    "past_week_summary": "Past Week Summary",
+    "my_leave_requests": "My Leave Requests",
+    "from_to": "From - To",
+    "status": "Status",
+    "manager": "Manager"
   },
   "btn": {
     "go_back_home": "Go back Home",
@@ -38,7 +42,8 @@
     "signing_up": "Signing up",
     "logging": "Logging in",
     "clocked_in": "Clocked In",
-    "clocked_out": "Clocked Out"
+    "clocked_out": "Clocked Out",
+    "add_request": "Add Request"
   },
   "form": {
     "sign_in": "Sign in",
@@ -75,13 +80,16 @@
     "email_invalid": "Email invalid",
     "passwords_must_match": "Passwords must match",
     "terms_required": "You must accept the terms and conditions",
-    "minLengthError": "Password must be 7 characters"
+    "minLengthError": "Password must be 7 characters",
+    "leave_request_form": "Leave Request Form",
+    "select_date": "Select date"
   },
   "head": {
     "sign_in": "Sign in",
     "sign_up": "Create new Account",
     "reset_password": "Reset password",
-    "my_attendance": "My Attendance"
+    "my_attendance": "My Attendance",
+    "my_leave_requests": "My Leave Requests"
   },
   "error_page": {
     "you_are_all_alone_here": "You are all alone here 😁"
@@ -100,6 +108,15 @@
     "welcome_back": "Welcome back",
     "successfully_check_out": "Successfully check out",
     "successfully_check_in": "Successfully check in",
-    "something_wrong": "Something wrong"
+    "something_wrong": "Something wrong",
+    "leave_request_submitted_successfull": "Leave request submitted successfull",
+    "failed_to_submit_request": "Failed to submit request"
+  },
+  "status": {
+    "all": "All",
+    "pending": "Pending",
+    "approved": "Approved",
+    "rejected": "Rejected",
+    "cancelled": "Cancelled"
   }
 }
