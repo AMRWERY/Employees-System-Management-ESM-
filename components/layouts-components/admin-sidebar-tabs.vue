@@ -22,19 +22,19 @@
         </button>
         <ul v-if="openDropdowns.management" class="py-2 space-y-2">
           <li>
-            <nuxt-link to="" class="flex items-center p-2 text-white rounded-lg group ps-14"
+            <nuxt-link to="" class="flex items-center p-2 text-white rounded-lg group ps-7"
               exact-active-class="bg-gray-400 text-white hover:bg-gray-500">
               {{ $t('layouts.employees') }}
             </nuxt-link>
           </li>
           <li>
-            <nuxt-link to="" class="flex items-center p-2 text-white rounded-lg group ps-14"
+            <nuxt-link to="" class="flex items-center p-2 text-white rounded-lg group ps-7"
               exact-active-class="bg-gray-400 text-white hover:bg-gray-500">
               {{ $t('layouts.teams') }}
             </nuxt-link>
           </li>
           <li>
-            <nuxt-link to="" class="flex items-center p-2 text-white rounded-lg group ps-14"
+            <nuxt-link to="" class="flex items-center p-2 text-white rounded-lg group ps-7"
               exact-active-class="bg-gray-400 text-white hover:bg-gray-500">
               {{ $t('layouts.roles_permissions') }}
             </nuxt-link>
@@ -54,25 +54,25 @@
         </button>
         <ul v-if="openDropdowns.processes" class="py-2 space-y-2">
           <li>
-            <nuxt-link to="" class="flex items-center p-2 text-white rounded-lg group ps-14"
+            <nuxt-link to="" class="flex items-center p-2 text-white rounded-lg group ps-7"
               exact-active-class="bg-gray-400 text-white hover:bg-gray-500">
               {{ $t('layouts.attendance') }}
             </nuxt-link>
           </li>
           <li>
-            <nuxt-link to="" class="flex items-center p-2 text-white rounded-lg group ps-14"
+            <nuxt-link to="" class="flex items-center p-2 text-white rounded-lg group ps-7"
               exact-active-class="bg-gray-400 text-white hover:bg-gray-500">
               {{ $t('layouts.leave_management') }}
             </nuxt-link>
           </li>
           <li>
-            <nuxt-link to="" class="flex items-center p-2 text-white rounded-lg group ps-14"
+            <nuxt-link to="" class="flex items-center p-2 text-white rounded-lg group ps-7"
               exact-active-class="bg-gray-400 text-white hover:bg-gray-500">
               {{ $t('layouts.payroll') }}
             </nuxt-link>
           </li>
           <li>
-            <nuxt-link to="" class="flex items-center p-2 text-white rounded-lg group ps-14"
+            <nuxt-link to="" class="flex items-center p-2 text-white rounded-lg group ps-7"
               exact-active-class="bg-gray-400 text-white hover:bg-gray-500">
               {{ $t('layouts.performance_reviews') }}
             </nuxt-link>

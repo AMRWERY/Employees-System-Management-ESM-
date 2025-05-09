@@ -23,19 +23,19 @@
         <ul v-if="openDropdowns.personal" class="py-2 space-y-2">
           <li>
             <nuxt-link-locale to="/employee/my-attendance"
-              class="flex items-center p-2 text-white rounded-lg group ps-14"
+              class="flex items-center p-2 text-white rounded-lg group ps-7"
               exact-active-class="bg-gray-400 text-white hover:bg-gray-500">
               {{ $t('layouts.my_attendance') }}
             </nuxt-link-locale>
           </li>
           <li>
-            <nuxt-link to="" class="flex items-center p-2 text-white rounded-lg group ps-14"
+            <nuxt-link-locale to="/employee/my-leave-requests" class="flex items-center p-2 text-white rounded-lg group ps-7"
               exact-active-class="bg-gray-400 text-white hover:bg-gray-500">
               {{ $t('layouts.my_leave_requests') }}
-            </nuxt-link>
+            </nuxt-link-locale>
           </li>
           <li>
-            <nuxt-link to="" class="flex items-center p-2 text-white rounded-lg group ps-14"
+            <nuxt-link to="" class="flex items-center p-2 text-white rounded-lg group ps-7"
               exact-active-class="bg-gray-400 text-white hover:bg-gray-500">
               {{ $t('layouts.my_performance_reviews') }}
             </nuxt-link>
