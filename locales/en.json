@@ -110,7 +110,8 @@
     "sign_up": "Create new Account",
     "reset_password": "Reset password",
     "my_attendance": "My Attendance",
-    "my_leave_requests": "My Leave Requests"
+    "my_leave_requests": "My Leave Requests",
+    "leave_management": "Leave Management"
   },
   "error_page": {
     "you_are_all_alone_here": "You are all alone here 😁"
