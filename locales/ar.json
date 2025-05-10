@@ -30,7 +30,8 @@
     "my_leave_requests": "طلبات إجازتي",
     "from_to": "من - إلى",
     "status": "الحالة",
-    "manager": "المدير"
+    "manager": "المدير",
+    "no_leave_requests_found": "لم يتم العثور على طلبات إجازة"
   },
   "btn": {
     "go_back_home": "العودة إلى الصفحه الرئيسيه",
@@ -43,7 +44,8 @@
     "logging": "جاري تسجيل الدخول",
     "clocked_in": "تسجيل الدخول",
     "clocked_out": "تسجيل الخروج",
-    "add_request": "إضافة طلب"
+    "add_request": "إضافة طلب",
+    "submit_leave_request": "إرسال طلب إجازة"
   },
   "form": {
     "sign_in": "تسجيل الدخول",
@@ -82,7 +84,26 @@
     "terms_required": "يجب عليك الموافقة على الشروط والأحكام",
     "minLengthError": "يجب أن تكون كلمة المرور 7 خانات",
     "leave_request_form": "نموذج طلب إجازة",
-    "select_date": "حدد التاريخ"
+    "select_date": "حدد التاريخ",
+    "employee_name": "اسم الموظف",
+    "enter_your_name": "أدخل اسمك",
+    "employee_id": "معرف الموظف",
+    "enter_your_id": "أدخل رقمك التعريفي",
+    "leave_type": "نوع الإجازة",
+    "select_leave_type": "حدد نوع الإجازة",
+    "vacation": "أجازة",
+    "sick_leave": "إجازة مرضية",
+    "parental_leave": "إجازة الوالدين",
+    "bereavement_leave": "إجازة الحداد",
+    "medical_leave": "إجازة طبية",
+    "start_date": "تاريخ البدء",
+    "end_date": "تاريخ الانتهاء",
+    "total_days_requested": "إجمالي الأيام المطلوبة",
+    "enter_number_of_days": "أدخل عدد الأيام",
+    "reason_for_leave": "سبب الإجازة",
+    "please_describe_the_reason_for_your_leave": "يرجى وصف سبب إجازتك",
+    "click_to_upload_documents": "انقر لتحميل المستندات",
+    "attachments": "المرفقات (إن وجدت)"
   },
   "head": {
     "sign_in": "تسجيل الدخول",
@@ -110,7 +131,8 @@
     "successfully_check_in": "تم تسجيل الدخول بنجاح",
     "something_wrong": "هناك مشكله ما",
     "leave_request_submitted_successfull": "تم تقديم طلب الإجازة بنجاح",
-    "failed_to_submit_request": "فشل في إرسال الطلب"
+    "failed_to_submit_request": "فشل في إرسال الطلب",
+    "failed_to_upload_attachments": "فشل تحميل المرفقات: "
   },
   "status": {
     "all": "الكل",

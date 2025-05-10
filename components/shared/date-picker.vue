@@ -6,7 +6,7 @@
         <div class="relative">
           <input type="text" :value="formattedDate" readonly @click="toggleCalendar"
             :placeholder="$t('form.select_date')"
-            class="w-full px-4 py-2 border rounded-lg cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" />
+            class="w-full px-3 py-2 transition duration-300 border rounded-md shadow-sm placeholder:text-slate-400 text-slate-700 focus:outline-none focus:border-slate-400 hover:border-slate-300 focus:shadow" />
           <div class="absolute inset-y-0 flex items-center pointer-events-none end-0 pe-3">
             <icon name="material-symbols:calendar-month" class="w-5 h-5 text-gray-400" />
           </div>
@@ -53,7 +53,8 @@
 <script lang="ts" setup>
 const props = defineProps({
   modelValue: {
-    type: Date as PropType<Date | null>,
+    type: [Date, String] as PropType<Date | string | null>,
+    // type: Date as PropType<Date | null>,
     default: null,
   },
 });
@@ -67,20 +68,38 @@ const currentDate = ref(props.modelValue || new Date());
 const daysOfWeek = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
 
 // Format date for display
-const formattedDate = computed(() => {
-  if (!props.modelValue) return '';
-  return props.modelValue.toLocaleDateString();
+const dateValue = computed({
+  get: () => props.modelValue,
+  set: (value) => emit('update:modelValue', value)
 });
+
+// Format date for display
+const formattedDate = computed(() => {
+  if (!dateValue.value) return '';
+  const date = typeof dateValue.value === 'string' ?
+    new Date(dateValue.value) :
+    dateValue.value;
+  return useDateFormat(date, 'YYYY-MM-DD').value;
+});
+
+// Handle date selection
+const selectDate = (date: Date) => {
+  dateValue.value = date;
+  showCalendar.value = false;
+};
 
 // Current month and year display
 const currentMonthYear = computed(() => {
-  return currentDate.value.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+  const date = typeof currentDate.value === 'string' ? new Date(currentDate.value) : currentDate.value;
+  return date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
 });
 
 // Calendar days
 const calendarDays = computed(() => {
-  const year = currentDate.value.getFullYear();
-  const month = currentDate.value.getMonth();
+  const date = typeof currentDate.value === 'string' ? new Date(currentDate.value) : currentDate.value;
+  const year = date.getFullYear();
+  // const date = typeof currentDate.value === 'string' ? new Date(currentDate.value) : currentDate.value;
+  const month = date.getMonth();
   const firstDay = new Date(year, month, 1);
   const lastDay = new Date(year, month + 1, 0);
   const days = [];
@@ -128,7 +147,7 @@ const isSameDate = (date1: Date, date2: Date) => {
 };
 
 const isSelected = (date: Date) => {
-  return props.modelValue && isSameDate(date, props.modelValue);
+  return props.modelValue && isSameDate(date, typeof props.modelValue === 'string' ? new Date(props.modelValue) : props.modelValue);
 };
 
 // Actions
@@ -136,23 +155,23 @@ const toggleCalendar = () => {
   showCalendar.value = !showCalendar.value;
 };
 
-const selectDate = (date: Date) => {
-  emit('update:modelValue', date);
-  showCalendar.value = false;
-};
+// const selectDate = (date: Date) => {
+//   emit('update:modelValue', date);
+//   showCalendar.value = false;
+// };
 
 const previousMonth = () => {
   currentDate.value = new Date(
-    currentDate.value.getFullYear(),
-    currentDate.value.getMonth() - 1,
+    (typeof currentDate.value === 'string' ? new Date(currentDate.value) : currentDate.value).getFullYear(),
+    (typeof currentDate.value === 'string' ? new Date(currentDate.value) : currentDate.value).getMonth() - 1,
     1
   );
 };
 
 const nextMonth = () => {
   currentDate.value = new Date(
-    currentDate.value.getFullYear(),
-    currentDate.value.getMonth() + 1,
+    (typeof currentDate.value === 'string' ? new Date(currentDate.value) : currentDate.value).getFullYear(),
+    (typeof currentDate.value === 'string' ? new Date(currentDate.value) : currentDate.value).getMonth() + 1,
     1
   );
 };
