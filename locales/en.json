@@ -30,7 +30,8 @@
     "my_leave_requests": "My Leave Requests",
     "from_to": "From - To",
     "status": "Status",
-    "manager": "Manager"
+    "manager": "Manager",
+    "no_leave_requests_found": "No leave requests found"
   },
   "btn": {
     "go_back_home": "Go back Home",
@@ -43,7 +44,8 @@
     "logging": "Logging in",
     "clocked_in": "Clocked In",
     "clocked_out": "Clocked Out",
-    "add_request": "Add Request"
+    "add_request": "Add Request",
+    "submit_leave_request": "Submit Leave Request"
   },
   "form": {
     "sign_in": "Sign in",
@@ -82,7 +84,26 @@
     "terms_required": "You must accept the terms and conditions",
     "minLengthError": "Password must be 7 characters",
     "leave_request_form": "Leave Request Form",
-    "select_date": "Select date"
+    "select_date": "Select date",
+    "employee_name": "Employee Name",
+    "enter_your_name": "Enter your name",
+    "employee_id": "Employee ID",
+    "enter_your_id": "Enter your ID",
+    "leave_type": "Leave Type",
+    "select_leave_type": "Select Leave Type",
+    "vacation": "Vacation",
+    "sick_leave": "Sick Leave",
+    "parental_leave": "Parental Leave",
+    "bereavement_leave": "Bereavement Leave",
+    "medical_leave": "Medical Leave",
+    "start_date": "Start Date",
+    "end_date": "End Date",
+    "total_days_requested": "Total Days Requested",
+    "enter_number_of_days": "Enter number of days",
+    "reason_for_leave": "Reason for Leave",
+    "please_describe_the_reason_for_your_leave": "Please describe the reason for your leave",
+    "click_to_upload_documents": "Click to upload documents",
+    "attachments": "Attachments (if any)"
   },
   "head": {
     "sign_in": "Sign in",
@@ -110,7 +131,8 @@
     "successfully_check_in": "Successfully check in",
     "something_wrong": "Something wrong",
     "leave_request_submitted_successfull": "Leave request submitted successfull",
-    "failed_to_submit_request": "Failed to submit request"
+    "failed_to_submit_request": "Failed to submit request",
+    "failed_to_upload_attachments": "Failed to upload attachments: "
   },
   "status": {
     "all": "All",

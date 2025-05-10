@@ -18,86 +18,90 @@
         </div>
 
         <div class="mt-6 overflow-y-auto hide-scrollbar max-h-[calc(85vh-8rem)]">
-          <form class="space-y-6" @submit.prevent="submitForm">
-            <!-- Employee Info -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Employee Name</label>
-                <input type="text" v-model="form.employeeName"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <div class="grid grid-cols-1 md:grid-cols-6 gap-6">
+            <ClientOnly>
+              <div class="sm:col-span-3">
+                <dynamic-inputs :label="t('form.employee_name')" :placeholder="t('form.enter_your_name')" type="text"
+                  :name="t('form.employee_name')" :rules="'required'" :required="true" v-model="form.employeeName" />
               </div>
 
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Employee ID</label>
-                <input type="text"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <div class="sm:col-span-3">
+                <dynamic-inputs :label="t('form.employee_id')" :placeholder="t('form.enter_your_id')" type="text"
+                  :name="t('form.employee_id')" :rules="'required'" :required="true" />
               </div>
-            </div>
 
-            <!-- Leave Type -->
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Leave Type</label>
-              <select v-model="form.leaveType"
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <option value="" disabled>Select Leave Type</option>
-                <option value="vacation">Vacation</option>
-                <option value="sick">Sick Leave</option>
-                <option value="parental">Parental Leave</option>
-                <option value="bereavement">Bereavement Leave</option>
-                <option value="medical">Medical Leave</option>
-              </select>
-            </div>
+              <div class="sm:col-span-full">
+                <label class="block text-sm font-medium text-gray-700 mb-1">{{ $t('form.leave_type') }}</label>
+                <select v-model="form.leaveType"
+                  class="w-full px-3 py-2 transition duration-300 border rounded-md shadow-sm placeholder:text-slate-400 text-slate-700 focus:outline-none focus:border-slate-400 hover:border-slate-300 focus:shadow">
+                  <option value="" disabled>{{ $t('form.select_leave_type') }}</option>
+                  <option value="vacation">{{ $t('form.vacation') }}</option>
+                  <option value="sick">{{ $t('form.sick_leave') }}</option>
+                  <option value="parental">{{ $t('form.parental_leave') }}</option>
+                  <option value="bereavement">{{ $t('form.bereavement_leave') }}</option>
+                  <option value="medical">{{ $t('form.medical_leave') }}</option>
+                </select>
+              </div>
 
-            <!-- Date Range -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Start Date</label>
+              <div class="sm:col-span-3">
+                <label class="block text-sm font-medium text-gray-700 mb-1">{{ $t('form.start_date') }}</label>
                 <!-- date-picker component-->
                 <date-picker v-model="form.startDate" />
               </div>
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">End Date</label>
+
+              <div class="sm:col-span-3">
+                <label class="block text-sm font-medium text-gray-700 mb-1">{{ $t('form.end_date') }}</label>
                 <!-- date-picker component-->
                 <date-picker v-model="form.endDate" />
               </div>
-            </div>
 
-            <!-- Duration -->
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Total Days Requested</label>
-              <input type="number" v-model="form.duration"
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Enter number of days">
-            </div>
-
-            <!-- Reason -->
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Reason for Leave</label>
-              <textarea rows="4" v-model="form.reason"
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Please describe the reason for your leave"></textarea>
-            </div>
-
-            <!-- Attachments -->
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Attachments (if any)</label>
-              <div
-                class="flex items-center justify-center w-full border-2 border-dashed border-gray-300 rounded-md p-6">
-                <input type="file" class="hidden" id="fileInput" multiple @change="handleFileUpload">
-                <label for="fileInput" class="cursor-pointer text-gray-500 hover:text-blue-600">
-                  <icon name="mdi:cloud-upload-outline" class="w-6 h-6 me-2" />
-                  <span>Click to upload documents</span>
-                </label>
+              <div class="sm:col-span-full">
+                <dynamic-inputs :label="t('form.total_days_requested')" :placeholder="t('form.enter_number_of_days')"
+                  type="number" :name="t('form.total_days_requested')" :rules="'required'" :required="true"
+                  v-model="form.duration" />
               </div>
-            </div>
 
-            <!-- Submit Button -->
-            <button type="submit" :disabled="loading"
-              class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors duration-200">
-              <icon name="svg-spinners:90-ring-with-bg" v-if="loading" />
-              <span v-else>Submit Leave Request</span>
-            </button>
-          </form>
+              <div class="sm:col-span-full">
+                <dynamic-inputs :label="t('form.reason_for_leave')"
+                  :placeholder="t('form.please_describe_the_reason_for_your_leave')" type="textarea"
+                  :name="t('form.reason_for_leave')" :rules="'required'" :required="true" v-model="form.reason" />
+              </div>
+
+              <div class="sm:col-span-full">
+                <label class="block text-sm font-medium text-gray-700 mb-1">{{ $t('form.attachments') }}</label>
+                <div
+                  class="flex items-center justify-center w-full border-2 border-dashed border-gray-300 rounded-md p-6 h-28">
+                  <input type="file" class="hidden" id="fileInput" multiple @change="handleFileUpload">
+                  <label for="fileInput"
+                    class="cursor-pointer text-gray-500 hover:text-blue-600 flex flex-col items-center justify-center gap-2">
+                    <icon name="mdi:cloud-upload-outline" class="w-12 h-12" />
+                    <span class="text-center">{{ $t('form.click_to_upload_documents') }}</span>
+                  </label>
+                </div>
+
+                <!-- Attachments list -->
+                <div v-if="attachments.length > 0" class="mt-6 grid grid-cols-3 gap-4">
+                  <div v-for="(file, index) in attachments" :key="index" class="relative group w-32 h-28 mx-auto">
+                    <img :src="previews[index]" class="w-full h-28 object-cover rounded-lg border border-gray-200"
+                      :alt="file.name">
+                    <button @click="removeAttachment(index)"
+                      class="absolute p-1 text-white bg-red-500 rounded-full -top-2 -end-2 hover:bg-red-600 flex items-center">
+                      <icon name="material-symbols:close" class="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Submit Button -->
+              <div class="sm:col-span-full">
+                <button type="submit" :disabled="loading" @click="submitForm"
+                  class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors duration-200">
+                  <icon name="svg-spinners:90-ring-with-bg" v-if="loading" />
+                  <span v-else>{{ $t('btn.submit_leave_request') }}</span>
+                </button>
+              </div>
+            </ClientOnly>
+          </div>
         </div>
       </div>
     </div>
@@ -121,7 +125,6 @@ const { showToast, toastMessage, toastType, toastIcon, triggerToast } = useToast
 const leaveStore = useLeaveRequestsStore()
 const showModal = ref(false)
 const loading = ref(false)
-const attachments = ref<File[]>([])
 
 const form = reactive({
   employeeName: '',
@@ -132,12 +135,32 @@ const form = reactive({
   reason: '',
 })
 
+const attachments = ref<File[]>([]);
+const previews = ref<string[]>([]);
+const fileInputKey = ref(0);
+
 const handleFileUpload = (event: Event) => {
-  const input = event.target as HTMLInputElement
+  const input = event.target as HTMLInputElement;
   if (input.files) {
-    attachments.value = Array.from(input.files)
+    const files = Array.from(input.files);
+    attachments.value = [...attachments.value, ...files];
+    files.forEach(file => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        previews.value.push(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+    });
+    fileInputKey.value++;
   }
-}
+};
+
+const removeAttachment = (index: number) => {
+  URL.revokeObjectURL(previews.value[index]);
+  attachments.value.splice(index, 1);
+  previews.value.splice(index, 1);
+  fileInputKey.value++;
+};
 
 const submitForm = async () => {
   const userData = sessionStorage.getItem('user')
@@ -173,7 +196,7 @@ const submitForm = async () => {
         requestData.attachments = urls;
       } catch (error) {
         triggerToast({
-          message: 'Failed to upload attachments: ' + (error instanceof Error ? error.message : 'Unknown error'),
+          message: t('toast.failed_to_upload_attachments') + (error instanceof Error ? error.message : 'Unknown error'),
           type: 'error',
           icon: 'material-symbols:error-outline-rounded',
         });
@@ -207,4 +230,8 @@ const resetForm = () => {
   form.reason = ''
   attachments.value = []
 }
+
+onUnmounted(() => {
+  previews.value.forEach(url => URL.revokeObjectURL(url));
+});
 </script>

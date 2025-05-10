@@ -23,7 +23,7 @@
 
     <div class="mt-8">
       <div v-if="filteredRequests.length === 0" class="p-4 text-center text-gray-500">
-        No leave requests found
+        <p class="font-semibold text-2xl text-gray-700">{{ $t('dashboard.no_leave_requests_found') }}</p>
       </div>
 
       <!-- dynamic-table componenet -->
@@ -68,7 +68,7 @@ const filteredRequests = computed(() => {
 
 function handleViewRequest(request: LeaveRequest) {
   // Handle view action
-  console.log('View request:', request)
+  // console.log('View request:', request)
 }
 
 useHead({
