@@ -60,13 +60,13 @@ const toastStyles = computed(() => {
 const iconColor = computed(() => {
     switch (props.toastType) {
         case 'success':
-            return 'bg-green-300 text-green-500';
+            return 'bg-green-400 text-green-500';
         case 'error':
-            return 'bg-red-300 text-red-500';
+            return 'bg-red-400 text-red-500';
         case 'warning':
-            return 'bg-yellow-300 text-yellow-500';
+            return 'bg-yellow-400 text-yellow-500';
         default:
-            return 'bg-blue-300 text-blue-500';
+            return 'bg-blue-400 text-blue-500';
     }
 });
 
