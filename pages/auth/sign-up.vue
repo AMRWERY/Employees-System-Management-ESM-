@@ -23,7 +23,8 @@
           <div class="w-full max-w-lg">
             <h2 class="text-2xl font-semibold text-gray-800 mb-8">{{ $t('form.create_account') }}</h2>
 
-            <ClientOnly>
+            <div class="space-y-4">
+              <ClientOnly>
               <div class="grid col-span-1 sm:grid-cols-6 gap-x-6">
                 <div class="sm:col-span-3">
                   <dynamic-inputs :label="t('form.first_name')" :placeholder="t('form.enter_your_first_name')"
@@ -65,9 +66,10 @@
                 </div>
               </div>
             </ClientOnly>
+            </div>
 
             <button type="submit" :disabled="loading" @click="handleSignup"
-              class="w-full shadow-xl py-2.5 px-4 text-sm font-semibold rounded text-white bg-blue-600 hover:bg-blue-700 focus:outline-none">
+              class="w-full shadow-xl py-2.5 px-4 text-sm font-semibold rounded text-white bg-blue-600 hover:bg-blue-700 focus:outline-none mt-7">
               <div class="flex items-center justify-center" v-if="loading">
                 <span class="text-center me-2">{{ $t('btn.signing_up') }}...</span>
                 <icon name="svg-spinners:270-ring-with-bg" />

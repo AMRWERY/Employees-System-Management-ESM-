@@ -31,7 +31,10 @@
     "from_to": "From - To",
     "status": "Status",
     "manager": "Manager",
-    "no_leave_requests_found": "No leave requests found"
+    "no_leave_requests_found": "No leave requests found",
+    "leave_management": "Leave Management",
+    "leave_request_details": "Leave request details",
+    "request_type": "Request type"
   },
   "btn": {
     "go_back_home": "Go back Home",
@@ -103,7 +106,8 @@
     "reason_for_leave": "Reason for Leave",
     "please_describe_the_reason_for_your_leave": "Please describe the reason for your leave",
     "click_to_upload_documents": "Click to upload documents",
-    "attachments": "Attachments (if any)"
+    "attachments": "Attachments",
+    "status": "Status"
   },
   "head": {
     "sign_in": "Sign in",

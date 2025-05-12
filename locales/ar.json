@@ -31,7 +31,10 @@
     "from_to": "من - إلى",
     "status": "الحالة",
     "manager": "المدير",
-    "no_leave_requests_found": "لم يتم العثور على طلبات إجازة"
+    "no_leave_requests_found": "لم يتم العثور على طلبات إجازة",
+    "leave_management": "إدارة الإجازات",
+    "leave_request_details": "تفاصيل طلب الإجازة",
+    "request_type": "نوع الطلب"
   },
   "btn": {
     "go_back_home": "العودة إلى الصفحه الرئيسيه",
@@ -103,7 +106,8 @@
     "reason_for_leave": "سبب الإجازة",
     "please_describe_the_reason_for_your_leave": "يرجى وصف سبب إجازتك",
     "click_to_upload_documents": "انقر لتحميل المستندات",
-    "attachments": "المرفقات (إن وجدت)"
+    "attachments": "المرفقات",
+    "status": "الحالة"
   },
   "head": {
     "sign_in": "تسجيل الدخول",

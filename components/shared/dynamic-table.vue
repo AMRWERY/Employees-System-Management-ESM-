@@ -2,12 +2,13 @@
   <div>
     <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
       <table class="w-full text-sm text-start text-gray-500">
-        <thead class="text-xs text-gray-700 bg-gray-50">
+        <thead class="text-sm text-gray-700 bg-gray-100">
           <tr>
             <th scope="col" class="px-6 py-3">#</th>
             <th scope="col" class="px-6 py-3">{{ $t('dashboard.from_to') }}</th>
-            <th scope="col" class="px-6 py-3">{{ $t('dashboard.status') }}</th>
             <th scope="col" class="px-6 py-3">{{ $t('dashboard.manager') }}</th>
+            <th scope="col" class="px-6 py-3">{{ $t('dashboard.request_type') }}</th>
+            <th scope="col" class="px-6 py-3">{{ $t('dashboard.status') }}</th>
             <th scope="col" class="px-6 py-3">
               <span class="sr-only">actions</span>
             </th>
@@ -17,18 +18,34 @@
           <tr v-for="(request, index) in requests" :key="index"
             class="bg-white border-b border-gray-200 hover:bg-gray-50">
             <td class="px-6 py-4">{{ index + 1 }}</td>
-            <td class="px-6 py-4">{{ formatDate(request.startDate) }} - {{ formatDate(request.endDate) }}</td>
+            <td class="px-6 py-4">
+              <p class="font-semibold">{{ formatDate(request.startDate) }} - {{ formatDate(request.endDate) }}</p>
+            </td>
+            <td class="px-6 py-4">
+              <p class="font-semibold">
+                {{ request.manager }}
+              </p>
+            </td>
+            <td class="px-6 py-4">
+              <p class="font-semibold">{{ request.type }}</p>
+            </td>
             <td class="px-6 py-4">
               <span :class="statusClasses[request.status]"
                 class="flex items-center text-sm px-3 py-1.5 tracking-wide rounded-full max-w-fit cursor-pointer">
                 {{ $t(`status.${request.status}`) }}
               </span>
             </td>
-            <td class="px-6 py-4">{{ request.manager }}</td>
             <td class="px-6 py-4 text-end">
-              <div class="flex items-center">
-                <button class="me-3 cursor-pointer" title="View" @click="$emit('view', request)">
-                  <icon name="ic:outline-remove-red-eye" class="w-6 h-6 text-blue-500 hover:text-blue-700" />
+              <div class="flex items-center gap-2.5">
+                <button class="cursor-pointer" title="View" @click="$emit('view', request)">
+                  <icon name="tabler:eye" class="w-7 h-7 text-blue-500 hover:text-blue-700" />
+                </button>
+                <button class="cursor-pointer" title="View" @click="$emit('accept', request)">
+                  <icon name="material-symbols:check-small-rounded"
+                    class="w-7 h-7 text-green-500 hover:text-green-700" />
+                </button>
+                <button class="cursor-pointer" title="View" @click="$emit('reject', request)">
+                  <icon name="material-symbols:close-small-rounded" class="w-7 h-7 text-red-500 hover:text-red-700" />
                 </button>
               </div>
             </td>
@@ -53,7 +70,7 @@ const statusClasses = {
   cancelled: 'text-gray-600 bg-gray-100 hover:bg-gray-200'
 }
 
-defineEmits(['view'])
+defineEmits(['view', 'accept', 'reject'])
 
 const formatDate = (date: Date) => {
   if (!date) return '';
