@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="flex items-center justify-between my-10 flex-nowrap">
-      <p class="text-3xl font-semibold text-gray-700">{{ $t('dashboard.my_leave_requests') }}</p>
+      <p class="text-2xl font-semibold text-gray-700">{{ $t('dashboard.my_leave_requests') }}</p>
       <div class="flex items-center justify-center gap-4 ms-auto">
 
         <!-- add-leave-request component -->

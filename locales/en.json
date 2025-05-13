@@ -31,7 +31,10 @@
     "from_to": "From - To",
     "status": "Status",
     "manager": "Manager",
-    "no_leave_requests_found": "No leave requests found"
+    "no_leave_requests_found": "No leave requests found",
+    "leave_management": "Leave Management",
+    "leave_request_details": "Leave request details",
+    "request_type": "Request type"
   },
   "btn": {
     "go_back_home": "Go back Home",
@@ -45,7 +48,11 @@
     "clocked_in": "Clocked In",
     "clocked_out": "Clocked Out",
     "add_request": "Add Request",
-    "submit_leave_request": "Submit Leave Request"
+    "submit_leave_request": "Submit Leave Request",
+    "accept": "Accept",
+    "reject": "Reject",
+    "cancel": "Cancel",
+    "confirm_rejection": "Confirm rejection"
   },
   "form": {
     "sign_in": "Sign in",
@@ -103,7 +110,11 @@
     "reason_for_leave": "Reason for Leave",
     "please_describe_the_reason_for_your_leave": "Please describe the reason for your leave",
     "click_to_upload_documents": "Click to upload documents",
-    "attachments": "Attachments (if any)"
+    "attachments": "Attachments",
+    "status": "Status",
+    "sick": "Sick",
+    "rejection_reason": "Rejection reason",
+    "enter_rejection_reason": "Enter rejection reason"
   },
   "head": {
     "sign_in": "Sign in",
@@ -133,7 +144,11 @@
     "something_wrong": "Something wrong",
     "leave_request_submitted_successfull": "Leave request submitted successfull",
     "failed_to_submit_request": "Failed to submit request",
-    "failed_to_upload_attachments": "Failed to upload attachments: "
+    "failed_to_upload_attachments": "Failed to upload attachments: ",
+    "leave_request_approved_successfully": "Leave request approved successfully",
+    "failed_to_approve_leave_request": "Failed to approve leave request",
+    "leave_request_rejected_successfully": "Leave request rejected successfully",
+    "failed_to_reject_leave_request": "Failed to reject leave request"
   },
   "status": {
     "all": "All",

@@ -10,7 +10,16 @@ import {
   EmailAuthProvider,
   reauthenticateWithCredential,
 } from "firebase/auth";
-import { doc, setDoc, getDoc, updateDoc } from "firebase/firestore";
+import {
+  doc,
+  setDoc,
+  getDoc,
+  updateDoc,
+  collection,
+  query,
+  where,
+  getDocs,
+} from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 interface FirestoreTimestamp {
@@ -18,6 +27,7 @@ interface FirestoreTimestamp {
 }
 
 type UserData = {
+  [key: string]: any;
   uid: string;
   email: string | null;
   firstName?: string;
@@ -31,7 +41,8 @@ type UserData = {
   selectedCity?: string;
   loginType?: string;
   createdAt?: Date | FirestoreTimestamp;
-  [key: string]: any;
+  roledId?: string;
+  permissions?: Record<string, any>;
 };
 
 interface AuthState {
@@ -94,7 +105,7 @@ export const useAuthStore = defineStore("auth", {
           errorMessage =
             "Network error. Please check your internet connection.";
           break;
-        case "(error as any).code === 'permission-denied'":
+        case "permission-denied":
           errorMessage = "You don't have permission to perform this action";
           break;
       }
@@ -117,13 +128,16 @@ export const useAuthStore = defineStore("auth", {
             unsubscribe();
             if (user) {
               await this.fetchUserData(user.uid);
-              // Sync session storage
               sessionStorage.setItem(
                 "user",
                 JSON.stringify({
                   uid: user.uid,
                   email: user.email,
+                  firstName: this.user?.firstName,
+                  lastName: this.user?.lastName,
                   role: this.role,
+                  roledId: this.user?.roledId,
+                  permissions: this.user?.permissions,
                 })
               );
             }
@@ -183,6 +197,14 @@ export const useAuthStore = defineStore("auth", {
           email,
           password
         );
+        const rolesRef = collection(db, "ems-roles");
+        const q = query(rolesRef, where("name", "==", role));
+        const snap = await getDocs(q);
+        if (snap.empty) {
+          throw new Error("Role document not found");
+        }
+        const roleDoc = snap.docs[0];
+        const roleData = roleDoc.data();
         const user = userCredential.user;
         const userData = {
           uid: user.uid,
@@ -192,8 +214,13 @@ export const useAuthStore = defineStore("auth", {
           role: role || "employee",
           loginType: "email",
           createdAt: new Date(),
+          roledId: roleDoc.id,
+          permissions: roleData.permissions,
         };
-        await setDoc(doc(db, "ems-users", user.uid), userData);
+        await setDoc(doc(db, "ems-users", user.uid), {
+          ...userData,
+          uid: user.uid,
+        });
         sessionStorage.setItem("user", JSON.stringify(userData));
         this.role = role;
         await this.fetchUserData(user.uid);
@@ -233,6 +260,8 @@ export const useAuthStore = defineStore("auth", {
             lastName: userData.lastName,
             role: userData.role,
             loginType: userData.loginType,
+            roledId: userData.roledId,
+            permissions: userData.permissions,
           };
           sessionStorage.setItem("user", JSON.stringify(saveUserData));
         } else {
