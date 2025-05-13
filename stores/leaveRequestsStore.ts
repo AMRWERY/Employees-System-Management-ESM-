@@ -140,6 +140,41 @@ export const useLeaveRequestsStore = defineStore("leave-requests", {
         decisionBy: auth.currentUser!.uid,
       });
     },
+
+    async approveRequest(id: string) {
+  try {
+    this.loading = true;
+    const ref = doc(db, "ems-leave-requests", id);
+    await updateDoc(ref, {
+      status: "approved",
+      decisionAt: serverTimestamp(),
+      decisionBy: auth.currentUser?.uid,
+    });
+  } catch (error) {
+    console.error("Error approving request:", error);
+    throw error;
+  } finally {
+    this.loading = false;
+  }
+},
+
+async rejectRequest(id: string, reason?: string) {
+  try {
+    this.loading = true;
+    const ref = doc(db, "ems-leave-requests", id);
+    await updateDoc(ref, {
+      status: "rejected",
+      decisionAt: serverTimestamp(),
+      decisionBy: auth.currentUser?.uid,
+      rejectionReason: reason || null,
+    });
+  } catch (error) {
+    console.error("Error rejecting request:", error);
+    throw error;
+  } finally {
+    this.loading = false;
+  }
+},
   },
 
   getters: {

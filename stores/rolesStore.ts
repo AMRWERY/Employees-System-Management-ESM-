@@ -30,22 +30,17 @@ interface RoleUpdate {
 }
 
 // Default permissions structure
-interface DefaultPermissions {
-  dashboard: { view: boolean };
-  products: { view: boolean; add: boolean; edit: boolean; delete: boolean };
-  orders: { view: boolean; cancel: boolean };
-  users: { view: boolean; edit: boolean };
-}
+// interface DefaultPermissions {
+//   dashboard: { view: boolean };
+//   employees: { view: boolean; add: boolean; edit: boolean; delete: boolean, block: boolean, unblock: boolean };
+//   orders: { view: boolean; cancel: boolean };
+//   users: { view: boolean; edit: boolean };
+// }
 
 export const useRolesStore = defineStore("roles", {
   state: () => ({
     roles: [] as Role[],
-    defaultPermissions: {
-      dashboard: { view: true },
-      products: { view: false, add: false, edit: false, delete: false },
-      orders: { view: false, cancel: false },
-      users: { view: false, edit: false },
-    } as DefaultPermissions,
+    // defaultPermissions: {} as DefaultPermissions,
   }),
 
   actions: {
@@ -61,7 +56,7 @@ export const useRolesStore = defineStore("roles", {
       const docRef = doc(collection(db, "ems-roles"));
       await setDoc(docRef, {
         name: roleData.name,
-        permissions: roleData.permissions || this.defaultPermissions,
+        permissions: roleData.permissions,
       });
       await this.fetchRoles();
     },
@@ -79,7 +74,7 @@ export const useRolesStore = defineStore("roles", {
 
     async updateRoleAndSyncUsers(roleId: string, updates: RoleUpdate) {
       try {
-        // 1. Update the role document
+        //Update the role document
         const roleRef = doc(db, "ems-roles", roleId);
         const flattenedUpdates = Object.entries(updates).reduce(
           (acc, [key, value]) => {
@@ -95,33 +90,27 @@ export const useRolesStore = defineStore("roles", {
           {} as Record<string, any>
         );
         await updateDoc(roleRef, flattenedUpdates);
-
-        // 2. Get all users with this role
+        //Get all users with this role
         const usersQuery = query(
           collection(db, "ems-users"),
           where("roleId", "==", roleId)
         );
         const querySnapshot = await getDocs(usersQuery);
-
-        // 3. Batch update users
+        //update users
         let batch: WriteBatch = writeBatch(db);
         const MAX_BATCH_SIZE = 500;
         let operationCount = 0;
-
         for (const userDoc of querySnapshot.docs) {
           if (operationCount === MAX_BATCH_SIZE) {
             await batch.commit();
             batch = writeBatch(db);
             operationCount = 0;
           }
-
           const userRef = doc(db, "ems-users", userDoc.id);
           batch.update(userRef, { permissions: updates.permissions });
           operationCount++;
         }
-
         if (operationCount > 0) await batch.commit();
-
         return {
           success: true,
           affectedUsers: querySnapshot.size,

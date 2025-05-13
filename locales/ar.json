@@ -48,7 +48,11 @@
     "clocked_in": "تسجيل الدخول",
     "clocked_out": "تسجيل الخروج",
     "add_request": "إضافة طلب",
-    "submit_leave_request": "إرسال طلب إجازة"
+    "submit_leave_request": "إرسال طلب إجازة",
+    "accept": "قبول",
+    "reject": "رفض",
+    "cancel": "ألغاء",
+    "confirm_rejection": "تأكيد الرفض"
   },
   "form": {
     "sign_in": "تسجيل الدخول",
@@ -107,7 +111,10 @@
     "please_describe_the_reason_for_your_leave": "يرجى وصف سبب إجازتك",
     "click_to_upload_documents": "انقر لتحميل المستندات",
     "attachments": "المرفقات",
-    "status": "الحالة"
+    "status": "الحالة",
+    "sick": "مرضية",
+    "rejection_reason": "سبب الرفض",
+    "enter_rejection_reason": "أدخل سبب الرفض"
   },
   "head": {
     "sign_in": "تسجيل الدخول",
@@ -137,7 +144,11 @@
     "something_wrong": "هناك مشكله ما",
     "leave_request_submitted_successfull": "تم تقديم طلب الإجازة بنجاح",
     "failed_to_submit_request": "فشل في إرسال الطلب",
-    "failed_to_upload_attachments": "فشل تحميل المرفقات: "
+    "failed_to_upload_attachments": "فشل تحميل المرفقات: ",
+    "leave_request_approved_successfully": "تمت الموافقة على طلب الإجازة بنجاح",
+    "failed_to_approve_leave_request": "فشل في الموافقة على طلب الإجازة",
+    "leave_request_rejected_successfully": "تم رفض طلب الإجازة بنجاح",
+    "failed_to_reject_leave_request": "فشل في رفض طلب الإجازة"
   },
   "status": {
     "all": "الكل",

@@ -14,7 +14,7 @@ import {
 } from "firebase/firestore";
 
 interface DailyAttendance {
-  id: string; 
+  id: string;
   date: string;
   clockIns: Timestamp[];
   clockOuts: Timestamp[];
@@ -54,6 +54,16 @@ const calculateDurationInSeconds = (
   end: Timestamp
 ): number => {
   return (end.toMillis() - start.toMillis()) / 1000; // Convert milliseconds to seconds
+};
+
+const formatDuration = (totalSeconds: number): string => {
+  if (!totalSeconds) return "-";
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  return `${String(hours).padStart(2, "0")}h ${String(minutes).padStart(
+    2,
+    "0"
+  )}m`;
 };
 
 const getUTCDateString = () => new Date().toISOString().substring(0, 10);
@@ -186,18 +196,59 @@ export const useAttendanceStore = defineStore("attendance", {
       if (!authStore.user) return;
       this.loading = true;
       try {
-        const oneWeekAgo = new Date();
-        oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-        const dateString = oneWeekAgo.toISOString().substring(0, 10);
+        const now = new Date();
+        const todayUTC = new Date(
+          Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate())
+        );
+        // Calculate last week's Monday (00:00 UTC)
+        const lastWeekStart = new Date(todayUTC);
+        lastWeekStart.setUTCDate(
+          todayUTC.getUTCDate() - 7 - todayUTC.getUTCDay() + 1
+        );
+        // Set end to Sunday (23:59:59 UTC)
+        const lastWeekEnd = new Date(lastWeekStart);
+        lastWeekEnd.setUTCDate(lastWeekStart.getUTCDate() + 6);
+        lastWeekEnd.setUTCHours(23, 59, 59, 999);
+        // Format query dates
+        const startString = lastWeekStart.toISOString().split("T")[0];
+        const endString = lastWeekEnd.toISOString().split("T")[0];
+        // console.log('Querying between:', startString, '-', endString);
         const q = query(
           collection(db, "ems-attendance", authStore.user.uid, "daily-records"),
-          where("date", ">=", dateString) // <-- Use ISO string
+          where("date", ">=", startString),
+          where("date", "<=", endString)
         );
         const snapshot = await getDocs(q);
-        this.weeklySummary = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
+        // console.log('Found documents:', snapshot.docs.map(d => d.data()));
+        // Create week map
+        const summaryMap = new Map();
+        for (let i = 0; i < 7; i++) {
+          const d = new Date(lastWeekStart);
+          d.setUTCDate(lastWeekStart.getUTCDate() + i);
+          const dateKey = d.toISOString().split("T")[0];
+          summaryMap.set(dateKey, {
+            date: dateKey,
+            totalSeconds: 0,
+            day: d
+              .toLocaleDateString("en-US", {
+                weekday: "short",
+                timeZone: "UTC",
+              })
+              .split(",")[0],
+          });
+        }
+        // Merge data
+        snapshot.docs.forEach((doc) => {
+          const data = doc.data();
+          if (summaryMap.has(data.date)) {
+            summaryMap.set(data.date, {
+              ...summaryMap.get(data.date),
+              totalSeconds: data.totalSeconds,
+            });
+          }
+        });
+        // console.log('Final Summary Data:', Array.from(summaryMap.values()));
+        this.weeklySummary = Array.from(summaryMap.values());
       } catch (error) {
         this.handleError(error);
       } finally {

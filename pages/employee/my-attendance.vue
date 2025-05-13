@@ -63,7 +63,8 @@
           <div class="grid grid-cols-7 gap-2 text-center">
             <div v-for="day in attendanceStore.weeklySummary" :key="day.date" class="p-2 rounded bg-gray-50 text-sm">
               <div class="text-gray-600 mb-1">{{ day.day }}</div>
-              <div v-if="day.hours" class="text-green-600 font-medium">{{ day.hours }}h</div>
+              <div v-if="day.totalSeconds" class="text-green-600 font-medium">{{ formatDuration(day.totalSeconds) }}h
+              </div>
               <div v-else class="text-gray-400">-</div>
             </div>
           </div>
@@ -97,6 +98,13 @@ const formattedDate = useDateFormat(useNow(), 'YYYY-MM-DD (dddd)', { locales: da
 
 const formatTime = (date: Date) => {
   return useDateFormat(date, 'HH:mm a');
+};
+
+// In component script
+const formatDuration = (totalSeconds: number) => {
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  return `${String(hours).padStart(2, '0')}h ${String(minutes).padStart(2, '0')}m`;
 };
 
 const isProcessing = ref(false);

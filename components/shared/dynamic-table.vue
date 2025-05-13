@@ -37,15 +37,13 @@
             </td>
             <td class="px-6 py-4 text-end">
               <div class="flex items-center gap-2.5">
-                <button class="cursor-pointer" title="View" @click="$emit('view', request)">
+                <button class="cursor-pointer" title="View" @click="$emit('view', request)"
+                  v-if="hasPermission('leave-management', 'view')">
                   <icon name="tabler:eye" class="w-7 h-7 text-blue-500 hover:text-blue-700" />
                 </button>
-                <button class="cursor-pointer" title="View" @click="$emit('accept', request)">
-                  <icon name="material-symbols:check-small-rounded"
-                    class="w-7 h-7 text-green-500 hover:text-green-700" />
-                </button>
-                <button class="cursor-pointer" title="View" @click="$emit('reject', request)">
-                  <icon name="material-symbols:close-small-rounded" class="w-7 h-7 text-red-500 hover:text-red-700" />
+                <button class="cursor-pointer" title="delete" @click="$emit('delete', request)"
+                  v-if="hasPermission('leave-management', 'delete')">
+                  <icon name="material-symbols:delete-sharp" class="w-6 h-6 text-red-500 hover:text-red-700" />
                 </button>
               </div>
             </td>
@@ -70,7 +68,7 @@ const statusClasses = {
   cancelled: 'text-gray-600 bg-gray-100 hover:bg-gray-200'
 }
 
-defineEmits(['view', 'accept', 'reject'])
+defineEmits(['view', 'delete'])
 
 const formatDate = (date: Date) => {
   if (!date) return '';
@@ -80,4 +78,6 @@ const formatDate = (date: Date) => {
     year: 'numeric'
   }).format(date);
 };
+
+const { hasPermission } = usePermissions()
 </script>

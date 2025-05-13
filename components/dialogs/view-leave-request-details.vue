@@ -11,7 +11,7 @@
 
         <div class="mt-6 space-y-4">
           <!-- Employee Information -->
-          <div class="grid grid-cols-2 gap-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label class="text-sm font-medium text-gray-600">{{ $t('form.employee_name') }}:</label>
               <p class="mt-1 text-gray-800">{{ leaveRequest.employeeName }}</p>
@@ -69,7 +69,47 @@
               </div>
             </div>
           </div>
+
+          <div v-if="showRejectReason" class="mt-6 space-y-4">
+            <div>
+              <dynamic-inputs :label="t('form.rejection_reason')" :placeholder="t('form.enter_rejection_reason')"
+                type="textarea" :name="t('form.rejection_reason')" :rules="'required'" :required="true"
+                v-model="rejectionReason" />
+            </div>
+
+            <div class="flex justify-end gap-3">
+              <button @click="cancelRejection" class="px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg">
+                {{ $t('btn.cancel') }}
+              </button>
+              <button @click="confirmRejection"
+                class="px-4 py-2 text-white bg-red-600 hover:bg-red-700 rounded-lg flex items-center">
+                <icon name="material-symbols:warning-rounded" class="me-2" />
+                {{ $t('btn.confirm_rejection') }}
+              </button>
+            </div>
+          </div>
+
+          <div class="!mt-7 flex items-center gap-4 justify-end">
+            <button type="button" @click="handleAccept" v-if="hasPermission('leave-management', 'approve')"
+              class="px-3.5 py-2 cursor-pointer rounded-lg flex items-center justify-center text-white text-sm font-medium border-none outline-none bg-blue-600 hover:bg-blue-700 active:bg-blue-600">
+              {{ $t('btn.accept') }}
+              <icon name="material-symbols:check-small-rounded" class="ms-2" />
+            </button>
+            <button type="button" @click="initiateRejection" v-if="hasPermission('leave-management', 'cancel')"
+              class="px-3.5 py-2 cursor-pointer rounded-lg flex items-center justify-center text-white text-sm font-medium border-none outline-none bg-red-600 hover:bg-red-700 active:bg-red-600">
+              {{ $t('btn.reject') }}
+              <icon name="material-symbols:close-small-rounded" class="ms-2" />
+            </button>
+          </div>
         </div>
+      </div>
+    </div>
+
+    <!-- dynamic-toast component -->
+    <div class="fixed z-[9999] pointer-events-none bottom-5 end-1 w-96">
+      <div class="pointer-events-auto">
+        <dynamic-toast v-if="showToast" :message="toastMessage" :toastType="toastType" :duration="5000"
+          :toastIcon="toastIcon" @toastClosed="showToast = false" />
       </div>
     </div>
   </div>
@@ -82,7 +122,7 @@ const props = defineProps<{
   leaveRequest: LeaveRequest | null
 }>()
 
-const emit = defineEmits(['close'])
+const emit = defineEmits(["close", "accept", "reject"])
 
 const statusClasses = {
   pending: 'text-red-600 bg-red-100 hover:bg-red-200',
@@ -97,5 +137,70 @@ const formatDate = (date: Date) => {
     month: 'long',
     day: 'numeric'
   }).format(date)
+}
+
+const { hasPermission } = usePermissions()
+
+const { t } = useI18n()
+const leaveRequestsStore = useLeaveRequestsStore()
+const { showToast, toastMessage, toastType, toastIcon, triggerToast } = useToast();
+
+const showRejectReason = ref(false)
+const rejectionReason = ref('')
+const rejectionError = ref(false)
+
+// Modified rejection handler
+const initiateRejection = () => {
+  showRejectReason.value = true
+}
+
+const cancelRejection = () => {
+  showRejectReason.value = false
+  rejectionReason.value = ''
+  rejectionError.value = false
+}
+
+const confirmRejection = async () => {
+  if (!rejectionReason.value.trim()) {
+    rejectionError.value = true
+    return
+  }
+  try {
+    if (!props.leaveRequest?.id) return
+    await leaveRequestsStore.rejectRequest(props.leaveRequest.id, rejectionReason.value)
+    triggerToast({
+      message: t('toast.leave_request_rejected_successfully'),
+      type: 'success',
+      icon: 'mdi-check-circle',
+    })
+    setTimeout(() => emit('close'), 3000)
+  } catch (error) {
+    triggerToast({
+      message: t('toast.failed_to_reject_leave_request'),
+      type: 'error',
+      icon: 'material-symbols:error-outline-rounded',
+    })
+  } finally {
+    cancelRejection()
+  }
+}
+
+const handleAccept = async () => {
+  try {
+    if (!props.leaveRequest?.id) return
+    await leaveRequestsStore.approveRequest(props.leaveRequest.id)
+    triggerToast({
+      message: t('toast.leave_request_approved_successfully'),
+      type: 'success',
+      icon: 'mdi-check-circle',
+    });
+    setTimeout(() => emit('close'), 3000)
+  } catch (error) {
+    triggerToast({
+      message: t('toast.failed_to_approve_leave_request'),
+      type: 'error',
+      icon: 'material-symbols:error-outline-rounded',
+    });
+  }
 }
 </script>

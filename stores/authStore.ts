@@ -128,13 +128,16 @@ export const useAuthStore = defineStore("auth", {
             unsubscribe();
             if (user) {
               await this.fetchUserData(user.uid);
-              // Sync session storage
               sessionStorage.setItem(
                 "user",
                 JSON.stringify({
                   uid: user.uid,
                   email: user.email,
+                  firstName: this.user?.firstName,
+                  lastName: this.user?.lastName,
                   role: this.role,
+                  roledId: this.user?.roledId,
+                  permissions: this.user?.permissions,
                 })
               );
             }
@@ -257,6 +260,8 @@ export const useAuthStore = defineStore("auth", {
             lastName: userData.lastName,
             role: userData.role,
             loginType: userData.loginType,
+            roledId: userData.roledId,
+            permissions: userData.permissions,
           };
           sessionStorage.setItem("user", JSON.stringify(saveUserData));
         } else {
