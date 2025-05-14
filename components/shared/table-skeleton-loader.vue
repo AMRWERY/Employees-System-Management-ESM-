@@ -1,4 +1,3 @@
-<!-- components/TableSkeleton.vue -->
 <template>
     <div>
         <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
@@ -32,7 +31,7 @@
 </template>
 
 <script lang="ts" setup>
-interface TableHeader {
+export interface TableHeader {
     type?: 'image' | 'action' | 'text';
     loaderWidth?: string;
     [key: string]: any;
@@ -48,5 +47,5 @@ defineProps({
         type: Number,
         default: 5
     }
-});
+})
 </script>

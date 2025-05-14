@@ -12,30 +12,40 @@
 
     <!-- Tabs -->
     <ul class="flex gap-5 w-max bg-gray-100 p-1 rounded-full mx-auto">
-      <li v-for="tab in tabs" :key="tab.id" @click="activeTab = tab.id" :class="[
-        'tab font-semibold w-full text-center text-[15px] py-2.5 px-5 tracking-wide rounded-full cursor-pointer transition-all duration-300 max-w-fit',
-        activeTab === tab.id
-          ? 'bg-blue-600 text-white'
-          : 'text-slate-600 hover:bg-blue-600 hover:text-white'
-      ]">
-        {{ tab.label }}
-      </li>
+      <transition-group name="tab-change" tag="div" class="flex gap-5">
+        <li v-for="tab in tabs" :key="tab.id" @click="activeTab = tab.id" :class="[
+          'tab font-semibold w-full text-center text-[15px] py-2.5 px-5 tracking-wide rounded-full cursor-pointer transition-all duration-300 max-w-fit',
+          activeTab === tab.id
+            ? 'bg-blue-600 text-white'
+            : 'text-slate-600 hover:bg-blue-400 hover:text-white'
+        ]">
+          {{ tab.label }}
+        </li>
+      </transition-group>
     </ul>
 
-    <div class="mt-8">
-      <div v-if="filteredRequests.length === 0" class="p-4 text-center text-gray-500">
-        <p class="font-semibold text-2xl text-gray-700">{{ $t('dashboard.no_leave_requests_found') }}</p>
+    <transition name="fade-slide" mode="out-in">
+      <div v-if="loading" key="skeleton">
+        <table-skeleton-loader :headers="skeletonHeaders" :rows="5" />
       </div>
 
-      <!-- dynamic-table componenet -->
-      <dynamic-table :requests="filteredRequests" @view="openDetailsModal" @accept="handleChildAccept"
-        @reject="handleChildReject" v-else />
-    </div>
+      <div class="mt-8" v-else>
+        <div v-if="filteredRequests.length === 0" class="text-center">
+          <!-- no-data-message component -->
+          <no-data-message :message="$t('no_data.no_leave_requests_found')" icon="mdi:clipboard-text-outline" />
+        </div>
+
+        <!-- dynamic-table componenet -->
+        <dynamic-table :requests="filteredRequests" @view="openDetailsModal" @accept="handleChildAccept"
+          @reject="handleChildReject" v-else />
+      </div>
+    </transition>
   </div>
 </template>
 
 <script lang="ts" setup>
 import type { LeaveRequest } from '@/types/leaveRequest'
+import { type TableHeader } from '@/components/shared/table-skeleton-loader.vue'
 
 const { t } = useI18n()
 const leaveStore = useLeaveRequestsStore()
@@ -55,8 +65,30 @@ const tabs = ref<Tab[]>([
 
 const activeTab = ref<Tab['id']>('all')
 
-onMounted(() => {
-  leaveStore.fetchAllRequests()
+const loading = ref(true)
+
+// Add skeleton headers configuration
+const skeletonHeaders = ref<TableHeader[]>([
+  { type: 'text', loaderWidth: 'w-8' },
+  { type: 'text', loaderWidth: 'w-48' },
+  { type: 'text', loaderWidth: 'w-32' },
+  { type: 'text', loaderWidth: 'w-32' },
+  { type: 'text', loaderWidth: 'w-24' },
+  { type: 'action', loaderWidth: 'w-48' },
+])
+
+onMounted(async () => {
+  try {
+    await leaveStore.fetchAllRequests()
+  } catch (error) {
+    triggerToast({
+      message: t('toast.failed_to_load_requests'),
+      type: 'error',
+      icon: 'material-symbols:error-outline-rounded',
+    })
+  } finally {
+    loading.value = false
+  }
 })
 
 // Update filtered requests calculation
@@ -113,7 +145,42 @@ useHead({
 </script>
 
 <style scoped>
-.tab-content[style*="display: none"] {
-  display: none !important;
+.tab-change-enter-active,
+.tab-change-leave-active {
+  transition: all 0.3s ease;
+}
+
+.tab-change-enter-from,
+.tab-change-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+/* Content transition */
+.fade-slide-enter-active {
+  transition: all 0.3s ease-out;
+}
+
+.fade-slide-leave-active {
+  transition: all 0.2s ease-in;
+}
+
+.fade-slide-enter-from {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.fade-slide-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+.tab {
+  position: relative;
+  overflow: hidden;
+}
+
+.tab[class*='bg-blue-600']::after {
+  transform: scaleX(1);
 }
 </style>

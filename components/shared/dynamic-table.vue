@@ -27,7 +27,7 @@
               </p>
             </td>
             <td class="px-6 py-4">
-              <p class="font-semibold">{{ request.type }}</p>
+              <p class="font-semibold">{{ $t(`form.${request.type}`) }}</p>
             </td>
             <td class="px-6 py-4">
               <span :class="statusClasses[request.status]"

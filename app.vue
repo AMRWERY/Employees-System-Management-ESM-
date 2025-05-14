@@ -7,12 +7,14 @@
     </ClientOnly>
 
     <!-- dynamic-toast component -->
-    <div class="fixed z-[9999] pointer-events-none bottom-5 end-10 w-96">
-      <div class="pointer-events-auto">
-        <dynamic-toast v-if="showToast" :message="toastMessage" :toastType="toastType" :duration="toastDuration"
-          :toastIcon="toastIcon" @toastClosed="showToast = false" />
+    <teleport to='body'>
+      <div class="fixed z-[9999] pointer-events-none bottom-5 end-10 w-96">
+        <div class="pointer-events-auto">
+          <dynamic-toast v-if="showToast" :message="toastMessage" :toastType="toastType" :duration="toastDuration"
+            :toastIcon="toastIcon" @toastClosed="showToast = false" />
+        </div>
       </div>
-    </div>
+    </teleport>
   </div>
 </template>
 
