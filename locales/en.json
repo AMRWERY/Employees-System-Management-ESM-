@@ -151,7 +151,8 @@
     "leave_request_approved_successfully": "Leave request approved successfully",
     "failed_to_approve_leave_request": "Failed to approve leave request",
     "leave_request_rejected_successfully": "Leave request rejected successfully",
-    "failed_to_reject_leave_request": "Failed to reject leave request"
+    "failed_to_reject_leave_request": "Failed to reject leave request",
+    "failed_to_load_leave_requests": "Failed to load leave requests"
   },
   "status": {
     "all": "All",
@@ -162,5 +163,9 @@
   },
   "no_data": {
     "no_leave_requests_found": "No leave requests found"
+  },
+  "breadcrumb": {
+    "home": "Home",
+    "admin_leave_request": "Leave Management"
   }
 }

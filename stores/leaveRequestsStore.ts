@@ -8,6 +8,7 @@ import {
   doc,
   updateDoc,
   serverTimestamp,
+  getDoc
 } from "firebase/firestore";
 import { db, auth } from "~/firebase";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
@@ -22,6 +23,32 @@ export const useLeaveRequestsStore = defineStore("leave-requests", {
   }),
 
   actions: {
+    async getRequestById(id: string) {
+  let request = this.allRequests.find((request) => request.id === id);
+  if (!request) {
+    const docRef = doc(db, "ems-leave-requests", id);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      request = {
+        id: docSnap.id,
+        userId: data.userId,
+        employeeName: data.employeeName,
+        startDate: data.startDate?.toDate(),
+        endDate: data.endDate?.toDate(),
+        type: data.type,
+        reason: data.reason,
+        status: data.status,
+        submittedAt: data.submittedAt?.toDate(),
+        durationDays: data.durationDays,
+        manager: data.manager,
+        attachments: data.attachments || [],
+      };
+    }
+  }
+  return request;
+},
+
     async fetchAllRequests() {
       try {
         this.loading = true;
@@ -142,39 +169,39 @@ export const useLeaveRequestsStore = defineStore("leave-requests", {
     },
 
     async approveRequest(id: string) {
-  try {
-    this.loading = true;
-    const ref = doc(db, "ems-leave-requests", id);
-    await updateDoc(ref, {
-      status: "approved",
-      decisionAt: serverTimestamp(),
-      decisionBy: auth.currentUser?.uid,
-    });
-  } catch (error) {
-    console.error("Error approving request:", error);
-    throw error;
-  } finally {
-    this.loading = false;
-  }
-},
+      try {
+        this.loading = true;
+        const ref = doc(db, "ems-leave-requests", id);
+        await updateDoc(ref, {
+          status: "approved",
+          decisionAt: serverTimestamp(),
+          decisionBy: auth.currentUser?.uid,
+        });
+      } catch (error) {
+        console.error("Error approving request:", error);
+        throw error;
+      } finally {
+        this.loading = false;
+      }
+    },
 
-async rejectRequest(id: string, reason?: string) {
-  try {
-    this.loading = true;
-    const ref = doc(db, "ems-leave-requests", id);
-    await updateDoc(ref, {
-      status: "rejected",
-      decisionAt: serverTimestamp(),
-      decisionBy: auth.currentUser?.uid,
-      rejectionReason: reason || null,
-    });
-  } catch (error) {
-    console.error("Error rejecting request:", error);
-    throw error;
-  } finally {
-    this.loading = false;
-  }
-},
+    async rejectRequest(id: string, reason?: string) {
+      try {
+        this.loading = true;
+        const ref = doc(db, "ems-leave-requests", id);
+        await updateDoc(ref, {
+          status: "rejected",
+          decisionAt: serverTimestamp(),
+          decisionBy: auth.currentUser?.uid,
+          rejectionReason: reason || null,
+        });
+      } catch (error) {
+        console.error("Error rejecting request:", error);
+        throw error;
+      } finally {
+        this.loading = false;
+      }
+    },
   },
 
   getters: {

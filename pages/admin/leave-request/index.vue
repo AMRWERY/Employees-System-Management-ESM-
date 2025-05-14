@@ -1,12 +1,11 @@
 <template>
   <div>
-    <div class="flex items-center justify-between my-10 flex-nowrap">
+    <!-- breadcrumb component -->
+    <breadcrumb />
+
+    <div class="flex items-center justify-between my-6 flex-nowrap">
       <p class="text-2xl font-semibold text-gray-700">{{ $t('dashboard.leave_management') }}</p>
       <div class="flex items-center justify-center gap-4 ms-auto">
-
-        <!-- view-leave-request-details component-->
-        <view-leave-request-details v-if="selectedRequest" :leave-request="selectedRequest"
-          @close="selectedRequest = null" @accept="handleChildAccept" @reject="handleChildReject" />
       </div>
     </div>
 
@@ -67,22 +66,12 @@ const activeTab = ref<Tab['id']>('all')
 
 const loading = ref(true)
 
-// Add skeleton headers configuration
-const skeletonHeaders = ref<TableHeader[]>([
-  { type: 'text', loaderWidth: 'w-8' },
-  { type: 'text', loaderWidth: 'w-48' },
-  { type: 'text', loaderWidth: 'w-32' },
-  { type: 'text', loaderWidth: 'w-32' },
-  { type: 'text', loaderWidth: 'w-24' },
-  { type: 'action', loaderWidth: 'w-48' },
-])
-
 onMounted(async () => {
   try {
     await leaveStore.fetchAllRequests()
   } catch (error) {
     triggerToast({
-      message: t('toast.failed_to_load_requests'),
+      message: t('toast.failed_to_load_leave_requests'),
       type: 'error',
       icon: 'material-symbols:error-outline-rounded',
     })
@@ -91,7 +80,6 @@ onMounted(async () => {
   }
 })
 
-// Update filtered requests calculation
 const filteredRequests = computed(() => {
   if (activeTab.value === 'all') return leaveStore.allRequests;
   return leaveStore.allRequests.filter(request =>
@@ -103,41 +91,56 @@ const selectedRequest = ref<LeaveRequest | null>(null)
 
 const openDetailsModal = (request: LeaveRequest) => {
   selectedRequest.value = request
+  navigateTo(`./leave-request/${request.id}`)
 }
 
 const handleChildAccept = async (requestId: string) => {
   try {
-    await leaveStore.approveRequest(requestId)
+    await leaveStore.approveRequest(requestId);
+    const request = leaveStore.allRequests.find((r) => r.id === requestId);
+    if (request) request.status = 'approved'; // Update the status locally
     triggerToast({
       message: t('toast.leave_request_approved_successfully'),
       type: 'success',
       icon: 'mdi-check-circle',
-    })
+    });
   } catch (error) {
     triggerToast({
       message: t('toast.failed_to_approve_leave_request'),
       type: 'error',
       icon: 'material-symbols:error-outline-rounded',
-    })
+    });
   }
-}
+};
 
-const handleChildReject = async ({ id, reason }: { id: string, reason: string }) => {
+const handleChildReject = async ({ id, reason }: { id: string; reason: string }) => {
   try {
-    await leaveStore.rejectRequest(id, reason)
+    await leaveStore.rejectRequest(id, reason);
+    const request = leaveStore.allRequests.find((r) => r.id === id);
+    if (request) request.status = 'rejected'; // Update the status locally
     triggerToast({
       message: t('toast.leave_request_rejected_successfully'),
       type: 'success',
       icon: 'mdi-check-circle',
-    })
+    });
   } catch (error) {
     triggerToast({
       message: t('toast.failed_to_reject_leave_request'),
       type: 'error',
       icon: 'material-symbols:error-outline-rounded',
-    })
+    });
   }
-}
+};
+
+// Add skeleton headers configuration
+const skeletonHeaders = ref<TableHeader[]>([
+  { type: 'text', loaderWidth: 'w-8' },
+  { type: 'text', loaderWidth: 'w-48' },
+  { type: 'text', loaderWidth: 'w-32' },
+  { type: 'text', loaderWidth: 'w-32' },
+  { type: 'text', loaderWidth: 'w-24' },
+  { type: 'action', loaderWidth: 'w-48' },
+])
 
 useHead({
   titleTemplate: () => t('head.leave_management'),
