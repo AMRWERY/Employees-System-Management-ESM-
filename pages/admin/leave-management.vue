@@ -32,8 +32,7 @@
       <div class="mt-8" v-else>
         <div v-if="filteredRequests.length === 0" class="text-center">
           <!-- no-data-message component -->
-          <no-data-message :message="$t('no_data.no_leave_requests_found')"
-            icon="streamline:interface-validation-check-square-1-check-form-validation-checkmark-success-add-addition-box-square" />
+          <no-data-message :message="$t('no_data.no_leave_requests_found')" icon="mdi:clipboard-text-outline" />
         </div>
 
         <!-- dynamic-table componenet -->
