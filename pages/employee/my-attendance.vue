@@ -71,21 +71,13 @@
         </div>
       </div>
     </div>
-
-    <!-- dynamic-toast component -->
-    <div class="fixed z-50 pointer-events-none bottom-5 end-1 w-96">
-      <div class="pointer-events-auto">
-        <dynamic-toast v-if="showToast" :message="toastMessage" :toastType="toastType" :duration="5000"
-          :toastIcon="toastIcon" @toastClosed="showToast = false" />
-      </div>
-    </div>
   </div>
 </template>
 
 <script lang="ts" setup>
 const { t } = useI18n();
 const attendanceStore = useAttendanceStore();
-const { showToast, toastMessage, toastType, toastIcon, triggerToast } = useToast();
+const { triggerToast } = useToast();
 
 onMounted(async () => {
   await attendanceStore.fetchTodayRecord();

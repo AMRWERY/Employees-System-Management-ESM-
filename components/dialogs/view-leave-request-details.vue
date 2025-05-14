@@ -105,13 +105,7 @@
       </div>
     </div>
 
-    <!-- dynamic-toast component -->
-    <div class="fixed z-[9999] pointer-events-none bottom-5 end-1 w-96">
-      <div class="pointer-events-auto">
-        <dynamic-toast v-if="showToast" :message="toastMessage" :toastType="toastType" :duration="5000"
-          :toastIcon="toastIcon" @toastClosed="showToast = false" />
-      </div>
-    </div>
+
   </div>
 </template>
 
@@ -142,14 +136,11 @@ const formatDate = (date: Date) => {
 const { hasPermission } = usePermissions()
 
 const { t } = useI18n()
-const leaveRequestsStore = useLeaveRequestsStore()
-const { showToast, toastMessage, toastType, toastIcon, triggerToast } = useToast();
 
 const showRejectReason = ref(false)
 const rejectionReason = ref('')
 const rejectionError = ref(false)
 
-// Modified rejection handler
 const initiateRejection = () => {
   showRejectReason.value = true
 }
@@ -160,47 +151,20 @@ const cancelRejection = () => {
   rejectionError.value = false
 }
 
+const handleAccept = () => {
+  emit('accept', props.leaveRequest?.id)
+  emit('close')
+}
+
 const confirmRejection = async () => {
   if (!rejectionReason.value.trim()) {
     rejectionError.value = true
     return
   }
-  try {
-    if (!props.leaveRequest?.id) return
-    await leaveRequestsStore.rejectRequest(props.leaveRequest.id, rejectionReason.value)
-    triggerToast({
-      message: t('toast.leave_request_rejected_successfully'),
-      type: 'success',
-      icon: 'mdi-check-circle',
-    })
-    setTimeout(() => emit('close'), 3000)
-  } catch (error) {
-    triggerToast({
-      message: t('toast.failed_to_reject_leave_request'),
-      type: 'error',
-      icon: 'material-symbols:error-outline-rounded',
-    })
-  } finally {
-    cancelRejection()
-  }
-}
-
-const handleAccept = async () => {
-  try {
-    if (!props.leaveRequest?.id) return
-    await leaveRequestsStore.approveRequest(props.leaveRequest.id)
-    triggerToast({
-      message: t('toast.leave_request_approved_successfully'),
-      type: 'success',
-      icon: 'mdi-check-circle',
-    });
-    setTimeout(() => emit('close'), 3000)
-  } catch (error) {
-    triggerToast({
-      message: t('toast.failed_to_approve_leave_request'),
-      type: 'error',
-      icon: 'material-symbols:error-outline-rounded',
-    });
-  }
+  emit('reject', {
+    id: props.leaveRequest?.id,
+    reason: rejectionReason.value
+  })
+  emit('close')
 }
 </script>

@@ -2,30 +2,38 @@ export interface ToastOptions {
   message: string;
   type: "success" | "error" | "warning" | "info";
   icon?: string;
+  duration?: number;
 }
 
 export function useToast() {
-  const showToast = ref<boolean>(false);
-  const toastMessage = ref<string>("");
-  const toastType = ref<string>("");
-  const toastIcon = ref<string>("");
+  const toastState = useState("globalToast", () => ({
+    show: false,
+    message: "",
+    type: "info" as "success" | "error" | "warning" | "info",
+    icon: "",
+    duration: 4000,
+  }));
 
-  const triggerToast = (options: ToastOptions): void => {
-    toastMessage.value = options.message || "";
-    toastType.value = options.type || "";
-    toastIcon.value = options.icon || "";
-    showToast.value = true;
+  const triggerToast = (options: ToastOptions) => {
+    toastState.value = {
+      show: true,
+      message: options.message,
+      type: options.type,
+      icon: options.icon || "",
+      duration: options.duration || 3000,
+    };
 
     setTimeout(() => {
-      showToast.value = false;
-    }, 3000);
+      toastState.value.show = false;
+    }, toastState.value.duration);
   };
 
   return {
-    showToast,
-    toastMessage,
-    toastType,
-    toastIcon,
+    showToast: computed(() => toastState.value.show),
+    toastMessage: computed(() => toastState.value.message),
+    toastType: computed(() => toastState.value.type),
+    toastIcon: computed(() => toastState.value.icon),
+    toastDuration: computed(() => toastState.value.duration),
     triggerToast,
   };
 }
