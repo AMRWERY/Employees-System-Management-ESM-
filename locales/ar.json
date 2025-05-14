@@ -159,5 +159,8 @@
     "approved": "موافقة",
     "rejected": "مرفوض",
     "cancelled": "تم الإلغاء"
+  },
+  "no_data": {
+    "no_leave_requests_found": "لم يتم العثور على طلبات إجازة"
   }
 }

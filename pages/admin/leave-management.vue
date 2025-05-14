@@ -25,9 +25,15 @@
     </ul>
 
     <transition name="fade-slide" mode="out-in">
-      <div class="mt-8">
-        <div v-if="filteredRequests.length === 0" class="p-4 text-center text-gray-500">
-          <p class="font-semibold text-2xl text-gray-700">{{ $t('dashboard.no_leave_requests_found') }}</p>
+      <div v-if="loading" key="skeleton">
+        <table-skeleton-loader :headers="skeletonHeaders" :rows="5" />
+      </div>
+
+      <div class="mt-8" v-else>
+        <div v-if="filteredRequests.length === 0" class="text-center">
+          <!-- no-data-message component -->
+          <no-data-message :message="$t('no_data.no_leave_requests_found')"
+            icon="streamline:interface-validation-check-square-1-check-form-validation-checkmark-success-add-addition-box-square" />
         </div>
 
         <!-- dynamic-table componenet -->
@@ -40,6 +46,7 @@
 
 <script lang="ts" setup>
 import type { LeaveRequest } from '@/types/leaveRequest'
+import { type TableHeader } from '@/components/shared/table-skeleton-loader.vue'
 
 const { t } = useI18n()
 const leaveStore = useLeaveRequestsStore()
@@ -59,8 +66,30 @@ const tabs = ref<Tab[]>([
 
 const activeTab = ref<Tab['id']>('all')
 
-onMounted(() => {
-  leaveStore.fetchAllRequests()
+const loading = ref(true)
+
+// Add skeleton headers configuration
+const skeletonHeaders = ref<TableHeader[]>([
+  { type: 'text', loaderWidth: 'w-8' },
+  { type: 'text', loaderWidth: 'w-48' },
+  { type: 'text', loaderWidth: 'w-32' },
+  { type: 'text', loaderWidth: 'w-32' },
+  { type: 'text', loaderWidth: 'w-24' },
+  { type: 'action', loaderWidth: 'w-48' },
+])
+
+onMounted(async () => {
+  try {
+    await leaveStore.fetchAllRequests()
+  } catch (error) {
+    triggerToast({
+      message: t('toast.failed_to_load_requests'),
+      type: 'error',
+      icon: 'material-symbols:error-outline-rounded',
+    })
+  } finally {
+    loading.value = false
+  }
 })
 
 // Update filtered requests calculation

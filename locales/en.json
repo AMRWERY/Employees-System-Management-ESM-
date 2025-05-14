@@ -159,5 +159,8 @@
     "approved": "Approved",
     "rejected": "Rejected",
     "cancelled": "Cancelled"
+  },
+  "no_data": {
+    "no_leave_requests_found": "No leave requests found"
   }
 }
