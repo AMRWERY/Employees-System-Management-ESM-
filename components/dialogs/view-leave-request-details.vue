@@ -83,7 +83,6 @@
               </button>
               <button @click="confirmRejection"
                 class="px-4 py-2 text-white bg-red-600 hover:bg-red-700 rounded-lg flex items-center">
-                <icon name="material-symbols:warning-rounded" class="me-2" />
                 {{ $t('btn.confirm_rejection') }}
               </button>
             </div>
