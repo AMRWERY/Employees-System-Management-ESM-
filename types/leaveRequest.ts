@@ -13,4 +13,5 @@ export interface LeaveRequest {
   manager?: string;
   decisionAt?: Date;
   decisionBy?: string;
+  rejectionReason?: string;
 }

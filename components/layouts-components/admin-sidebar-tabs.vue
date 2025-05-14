@@ -60,7 +60,7 @@
             </nuxt-link>
           </li>
           <li>
-            <nuxt-link-locale to="/admin/leave-management"
+            <nuxt-link-locale to="/admin/leave-request"
               class="flex items-center p-2 text-white rounded-lg group ps-7"
               exact-active-class="bg-gray-400 text-white hover:bg-gray-500">
               {{ $t('layouts.leave_management') }}

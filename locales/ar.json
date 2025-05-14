@@ -151,7 +151,8 @@
     "leave_request_approved_successfully": "تمت الموافقة على طلب الإجازة بنجاح",
     "failed_to_approve_leave_request": "فشل في الموافقة على طلب الإجازة",
     "leave_request_rejected_successfully": "تم رفض طلب الإجازة بنجاح",
-    "failed_to_reject_leave_request": "فشل في رفض طلب الإجازة"
+    "failed_to_reject_leave_request": "فشل في رفض طلب الإجازة",
+    "failed_to_load_leave_requests": "فشل تحميل طلبات الإجازة"
   },
   "status": {
     "all": "الكل",
@@ -162,5 +163,9 @@
   },
   "no_data": {
     "no_leave_requests_found": "لم يتم العثور على طلبات إجازة"
+  },
+  "breadcrumb": {
+    "home": "الرئيسيه",
+    "admin_leave_request": "إدارة الإجازات"
   }
 }
