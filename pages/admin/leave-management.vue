@@ -6,7 +6,7 @@
 
         <!-- view-leave-request-details component-->
         <view-leave-request-details v-if="selectedRequest" :leave-request="selectedRequest"
-          @close="selectedRequest = null" />
+          @close="selectedRequest = null" @accept="handleChildAccept" @reject="handleChildReject" />
       </div>
     </div>
 
@@ -28,8 +28,8 @@
       </div>
 
       <!-- dynamic-table componenet -->
-      <dynamic-table :requests="filteredRequests" @view="openDetailsModal" @accept="handleAccept" @reject="handleReject"
-        v-else />
+      <dynamic-table :requests="filteredRequests" @view="openDetailsModal" @accept="handleChildAccept"
+        @reject="handleChildReject" v-else />
     </div>
   </div>
 </template>
@@ -38,6 +38,8 @@
 import type { LeaveRequest } from '@/types/leaveRequest'
 
 const { t } = useI18n()
+const leaveStore = useLeaveRequestsStore()
+const { triggerToast } = useToast()
 
 interface Tab {
   id: LeaveRequest['status'] | 'all'
@@ -52,8 +54,6 @@ const tabs = ref<Tab[]>([
 ])
 
 const activeTab = ref<Tab['id']>('all')
-
-const leaveStore = useLeaveRequestsStore()
 
 onMounted(() => {
   leaveStore.fetchAllRequests()
@@ -73,12 +73,38 @@ const openDetailsModal = (request: LeaveRequest) => {
   selectedRequest.value = request
 }
 
-const handleAccept = (request: LeaveRequest) => {
-  // Handle accept logic
+const handleChildAccept = async (requestId: string) => {
+  try {
+    await leaveStore.approveRequest(requestId)
+    triggerToast({
+      message: t('toast.leave_request_approved_successfully'),
+      type: 'success',
+      icon: 'mdi-check-circle',
+    })
+  } catch (error) {
+    triggerToast({
+      message: t('toast.failed_to_approve_leave_request'),
+      type: 'error',
+      icon: 'material-symbols:error-outline-rounded',
+    })
+  }
 }
 
-const handleReject = (request: LeaveRequest) => {
-  // Handle reject logic
+const handleChildReject = async ({ id, reason }: { id: string, reason: string }) => {
+  try {
+    await leaveStore.rejectRequest(id, reason)
+    triggerToast({
+      message: t('toast.leave_request_rejected_successfully'),
+      type: 'success',
+      icon: 'mdi-check-circle',
+    })
+  } catch (error) {
+    triggerToast({
+      message: t('toast.failed_to_reject_leave_request'),
+      type: 'error',
+      icon: 'material-symbols:error-outline-rounded',
+    })
+  }
 }
 
 useHead({

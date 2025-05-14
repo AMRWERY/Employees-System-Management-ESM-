@@ -25,47 +25,49 @@
 
             <div class="space-y-4">
               <ClientOnly>
-              <div class="grid col-span-1 sm:grid-cols-6 gap-x-6">
-                <div class="sm:col-span-3">
-                  <dynamic-inputs :label="t('form.first_name')" :placeholder="t('form.enter_your_first_name')"
-                    type="text" name="first_name" :rules="'required|alpha_spaces'" :required="true"
-                    v-model="firstName" />
+                <div class="grid col-span-1 sm:grid-cols-6 gap-x-6">
+                  <div class="sm:col-span-3">
+                    <dynamic-inputs :label="t('form.first_name')" :placeholder="t('form.enter_your_first_name')"
+                      type="text" name="first_name" :rules="'required|alpha_spaces'" :required="true"
+                      v-model="firstName" />
+                  </div>
+
+                  <div class="sm:col-span-3">
+                    <dynamic-inputs :label="t('form.last_name')" :placeholder="t('form.enter_your_last_name')"
+                      type="text" name="last_name" :rules="'required|alpha_spaces'" :required="true"
+                      v-model="lastName" />
+                  </div>
                 </div>
 
-                <div class="sm:col-span-3">
-                  <dynamic-inputs :label="t('form.last_name')" :placeholder="t('form.enter_your_last_name')" type="text"
-                    name="last_name" :rules="'required|alpha_spaces'" :required="true" v-model="lastName" />
+                <div class="col-span-full">
+                  <dynamic-inputs :label="t('form.email')" :placeholder="t('form.enter_your_email')" type="email"
+                    name="email" :rules="'required|email'" :required="true" v-model="email" />
                 </div>
-              </div>
 
-              <div class="col-span-full">
-                <dynamic-inputs :label="t('form.email')" :placeholder="t('form.enter_your_email')" type="email"
-                  name="email" :rules="'required|email'" :required="true" v-model="email" />
-              </div>
-
-              <div class="col-span-full">
-                <dynamic-inputs :label="t('form.password')" :placeholder="t('form.enter_your_password')" type="password"
-                  name="password" :rules="'required|minLength:7'" :required="true" v-model="password" />
-              </div>
-
-              <div class="mb-6 flex items-start">
-                <div class="flex items-center h-5">
-                  <input id="terms" type="checkbox"
-                    class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 rounded" v-model="termsAccepted"
-                    name="terms" :value="true" :rules="{ required: true }" />
+                <div class="col-span-full">
+                  <dynamic-inputs :label="t('form.password')" :placeholder="t('form.enter_your_password')"
+                    type="password" name="password" :rules="'required|minLength:7'" :required="true"
+                    v-model="password" />
                 </div>
-                <div class="ms-3 flex flex-col">
-                  <label for="terms" class="block text-sm text-slate-500">
-                    {{ $t('form.accept_terms') }}
-                    <nuxt-link to="" class="text-blue-600 hover:underline">
-                      {{ $t('form.terms_and_conditions') }}
-                    </nuxt-link>
-                  </label>
-                  <span v-if="termsError" class="font-medium text-red-600 block">{{ termsError
+
+                <div class="mb-6 flex items-start">
+                  <div class="flex items-center h-5">
+                    <input id="terms" type="checkbox"
+                      class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 rounded" v-model="termsAccepted"
+                      name="terms" :value="true" :rules="{ required: true }" />
+                  </div>
+                  <div class="ms-3 flex flex-col">
+                    <label for="terms" class="block text-sm text-slate-500">
+                      {{ $t('form.accept_terms') }}
+                      <nuxt-link to="" class="text-blue-600 hover:underline">
+                        {{ $t('form.terms_and_conditions') }}
+                      </nuxt-link>
+                    </label>
+                    <span v-if="termsError" class="font-medium text-red-600 block">{{ termsError
                     }}</span>
+                  </div>
                 </div>
-              </div>
-            </ClientOnly>
+              </ClientOnly>
             </div>
 
             <button type="submit" :disabled="loading" @click="handleSignup"
@@ -89,14 +91,6 @@
           </div>
         </div>
       </div>
-
-      <!-- dynamic-toast component -->
-      <div class="fixed z-50 pointer-events-none bottom-5 start-5 w-96">
-        <div class="pointer-events-auto">
-          <dynamic-toast v-if="showToast" :message="toastMessage" :toastType="toastType" :duration="5000"
-            :toastIcon="toastIcon" @toastClosed="showToast = false" />
-        </div>
-      </div>
     </div>
   </div>
 </template>
@@ -110,7 +104,7 @@ const email = ref('');
 const password = ref('');
 const loading = ref(false);
 const errorMessage = ref('');
-const { showToast, toastMessage, toastType, toastIcon, triggerToast } = useToast();
+const { triggerToast } = useToast();
 
 const { value: termsAccepted, errorMessage: termsError } = useField<boolean>(
   'terms',
