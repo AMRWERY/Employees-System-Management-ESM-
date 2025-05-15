@@ -23,31 +23,34 @@ interface DailyAttendance {
   role: string;
 }
 
+interface WeekRecord {
+  id: string;
+  date: string;
+  clockIns: Timestamp[];
+  clockOuts: Timestamp[];
+  totalSeconds: number;
+  uid: string;
+  role: string;
+}
+
+interface WeekSummaryRecord {
+  date: string;
+  day: string;
+  totalSeconds: number;
+}
+
+interface MonthlyRecord {
+  date: string;
+  totalSeconds: number;
+}
+
 interface AttendanceState {
   todayRecord: DailyAttendance | null;
-  weeklySummary: any[];
+  weeklySummary: WeekSummaryRecord[];
+  monthlySummary: MonthlyRecord[];
   loading: boolean;
   error: string | null;
 }
-
-const calculateDuration = (start: Timestamp, end: Timestamp): string => {
-  const diff = end.toMillis() - start.toMillis();
-  const hours = Math.floor(diff / (1000 * 60 * 60));
-  const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-  return `${hours}h ${minutes}m`;
-};
-
-// const formatTotalTime = (totalSeconds: number): string => {
-//   const hours = Math.floor(totalSeconds / 3600);
-//   const minutes = Math.floor((totalSeconds % 3600) / 60);
-//   const seconds = Math.floor(totalSeconds % 60);
-//   return `${hours}h ${minutes}m ${seconds}s`;
-// };
-
-// // Convert seconds to minutes (for decimal display)
-// const secondsToMinutes = (seconds: number): number => {
-//   return seconds / 60;
-// };
 
 const calculateDurationInSeconds = (
   start: Timestamp,
@@ -66,12 +69,22 @@ const formatDuration = (totalSeconds: number): string => {
   )}m`;
 };
 
-const getUTCDateString = () => new Date().toISOString().substring(0, 10);
+const getUTCDateString = (date?: Date) => {
+  const now = date || new Date();
+  // Always use start of day in user's timezone to ensure consistent date handling
+  const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const localDate = new Date(
+    now.toLocaleString("en-US", { timeZone: userTimezone })
+  );
+  localDate.setHours(0, 0, 0, 0);
+  return localDate.toISOString().split("T")[0];
+};
 
 export const useAttendanceStore = defineStore("attendance", {
   state: (): AttendanceState => ({
     todayRecord: null,
     weeklySummary: [],
+    monthlySummary: [],
     loading: false,
     error: null,
   }),
@@ -82,7 +95,8 @@ export const useAttendanceStore = defineStore("attendance", {
       if (!authStore.user) throw new Error("User not authenticated");
       this.loading = true;
       try {
-        const date = getUTCDateString();
+        const currentTime = new Date();
+        const date = getUTCDateString(currentTime);
         const docRef = doc(
           db,
           "ems-attendance",
@@ -90,18 +104,29 @@ export const useAttendanceStore = defineStore("attendance", {
           "daily-records",
           date
         );
-        await setDoc(
-          docRef,
-          {
-            date,
-            uid: authStore.user.uid,
-            role: authStore.user.role || "employee",
-            clockIns: arrayUnion(Timestamp.now()),
-            clockOuts: [],
-            totalSeconds: 0,
-          },
-          { merge: true }
-        );
+        // First get the existing record
+        const docSnap = await getDoc(docRef);
+        const clockInTime = Timestamp.fromDate(currentTime);
+        if (docSnap.exists()) {
+          // Document exists, just add new clock in
+          await updateDoc(docRef, {
+            clockIns: arrayUnion(clockInTime),
+          });
+        } else {
+          // Create new document
+          await setDoc(
+            docRef,
+            {
+              date,
+              uid: authStore.user.uid,
+              role: authStore.user.role || "employee",
+              clockIns: [clockInTime],
+              clockOuts: [],
+              totalSeconds: 0,
+            },
+            { merge: true }
+          );
+        }
         await this.fetchTodayRecord();
       } catch (error) {
         this.handleError(error);
@@ -193,64 +218,96 @@ export const useAttendanceStore = defineStore("attendance", {
 
     async fetchWeeklySummary() {
       const authStore = useAuthStore();
-      if (!authStore.user) return;
+      if (!authStore.user) throw new Error("User not authenticated");
       this.loading = true;
       try {
-        const now = new Date();
-        const todayUTC = new Date(
-          Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate())
-        );
-        // Calculate last week's Monday (00:00 UTC)
-        const lastWeekStart = new Date(todayUTC);
-        lastWeekStart.setUTCDate(
-          todayUTC.getUTCDate() - 7 - todayUTC.getUTCDay() + 1
-        );
-        // Set end to Sunday (23:59:59 UTC)
-        const lastWeekEnd = new Date(lastWeekStart);
-        lastWeekEnd.setUTCDate(lastWeekStart.getUTCDate() + 6);
-        lastWeekEnd.setUTCHours(23, 59, 59, 999);
-        // Format query dates
-        const startString = lastWeekStart.toISOString().split("T")[0];
-        const endString = lastWeekEnd.toISOString().split("T")[0];
-        // console.log('Querying between:', startString, '-', endString);
+        // Get start and end of past week
+        const today = new Date();
+        const endOfWeek = new Date(today);
+        endOfWeek.setDate(today.getDate() - 1); // Yesterday
+        const startOfWeek = new Date(endOfWeek);
+        startOfWeek.setDate(endOfWeek.getDate() - 6); // 7 days before yesterday
+        // Initialize weekly summary
+        this.weeklySummary = Array.from({ length: 7 }, (_, i) => {
+          const date = new Date(startOfWeek);
+          date.setDate(startOfWeek.getDate() + i);
+          return {
+            date: getUTCDateString(date),
+            day: date.toLocaleString("en-US", { weekday: "short" }),
+            totalSeconds: 0,
+          };
+        });
+        // Fetch attendance records for the week
         const q = query(
           collection(db, "ems-attendance", authStore.user.uid, "daily-records"),
-          where("date", ">=", startString),
-          where("date", "<=", endString)
+          where("date", ">=", getUTCDateString(startOfWeek)),
+          where("date", "<=", getUTCDateString(endOfWeek))
         );
-        const snapshot = await getDocs(q);
-        // console.log('Found documents:', snapshot.docs.map(d => d.data()));
-        // Create week map
-        const summaryMap = new Map();
-        for (let i = 0; i < 7; i++) {
-          const d = new Date(lastWeekStart);
-          d.setUTCDate(lastWeekStart.getUTCDate() + i);
-          const dateKey = d.toISOString().split("T")[0];
-          summaryMap.set(dateKey, {
-            date: dateKey,
-            totalSeconds: 0,
-            day: d
-              .toLocaleDateString("en-US", {
-                weekday: "short",
-                timeZone: "UTC",
-              })
-              .split(",")[0],
-          });
-        }
-        // Merge data
-        snapshot.docs.forEach((doc) => {
+        const querySnapshot = await getDocs(q);
+        querySnapshot.forEach((doc) => {
           const data = doc.data();
-          if (summaryMap.has(data.date)) {
-            summaryMap.set(data.date, {
-              ...summaryMap.get(data.date),
-              totalSeconds: data.totalSeconds,
-            });
+          const dayIndex = this.weeklySummary.findIndex(
+            (day) => day.date === data.date
+          );
+          if (dayIndex !== -1) {
+            this.weeklySummary[dayIndex].totalSeconds = data.totalSeconds || 0;
           }
         });
-        // console.log('Final Summary Data:', Array.from(summaryMap.values()));
-        this.weeklySummary = Array.from(summaryMap.values());
       } catch (error) {
         this.handleError(error);
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    async fetchMonthlySummary(year: number, month: number) {
+      try {
+        this.loading = true;
+        const auth = useAuthStore();
+        if (!auth.user?.uid) {
+          throw new Error("User not authenticated");
+        }
+        const startDate = new Date(year, month - 1, 1); // month is 1-based
+        startDate.setHours(0, 0, 0, 0);
+        // Get last day of the current month
+        const endDate = new Date(year, month, 0);
+        endDate.setHours(23, 59, 59, 999); // Get the collection of daily records for this user
+        const dailyRecordsRef = collection(
+          db,
+          "ems-attendance",
+          auth.user.uid,
+          "daily-records"
+        );
+        const q = query(
+          dailyRecordsRef,
+          where("date", ">=", startDate.toISOString().split("T")[0]),
+          where("date", "<=", endDate.toISOString().split("T")[0])
+        );
+        const querySnapshot = await getDocs(q);
+        const monthData: MonthlyRecord[] = querySnapshot.docs.map((doc) => {
+          const data = doc.data() as DailyAttendance;
+          let totalSeconds = 0;
+          // Calculate total seconds from all clock in/out pairs
+          if (data.clockIns && data.clockOuts) {
+            for (
+              let i = 0;
+              i < Math.min(data.clockIns.length, data.clockOuts.length);
+              i++
+            ) {
+              const clockIn = data.clockIns[i];
+              const clockOut = data.clockOuts[i];
+              totalSeconds += calculateDurationInSeconds(clockIn, clockOut);
+            }
+          }
+          return {
+            date: data.date,
+            totalSeconds: totalSeconds,
+          };
+        });
+        this.monthlySummary = monthData;
+      } catch (error) {
+        console.error("Error fetching monthly summary:", error);
+        this.error = "Failed to fetch monthly summary";
       } finally {
         this.loading = false;
       }
@@ -258,23 +315,18 @@ export const useAttendanceStore = defineStore("attendance", {
   },
 
   getters: {
-    clockedIn: (state) => {
-      return state.todayRecord
+    clockedIn: (state) =>
+      state.todayRecord
         ? state.todayRecord.clockIns.length > state.todayRecord.clockOuts.length
-        : false;
-    },
+        : false,
 
-    formattedTodayEntries(state) {
+    formattedTodayEntries: (state) => {
       if (!state.todayRecord) return [];
       return state.todayRecord.clockIns.map((clockIn, index) => ({
         time: clockIn.toDate(),
-        type: "in" as const,
+        type: "in",
         ...(state.todayRecord?.clockOuts[index] && {
           clockOut: state.todayRecord.clockOuts[index].toDate(),
-          duration: calculateDuration(
-            clockIn,
-            state.todayRecord.clockOuts[index]
-          ),
         }),
       }));
     },

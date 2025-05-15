@@ -35,7 +35,11 @@
     "leave_management": "Leave Management",
     "leave_request_details": "Leave request details",
     "request_type": "Request type",
-    "missing_employee_id": "Missing employee id"
+    "missing_employee_id": "Missing employee id",
+    "monthly_summary": "Monthly summary",
+    "total_days": "Total days",
+    "avg_hours": "Avgerage hours",
+    "total_hours": "Total hours"
   },
   "btn": {
     "go_back_home": "Go back Home",
@@ -168,5 +172,28 @@
   "breadcrumb": {
     "home": "Home",
     "admin_leave_request": "Leave Management"
+  },
+  "days": {
+    "mon": "Mon",
+    "tue": "Tue",
+    "wed": "Wed",
+    "thu": "Thu",
+    "fri": "Fri",
+    "sat": "Sat",
+    "sun": "Sun"
+  },
+  "months": {
+    "january": "January",
+    "february": "February",
+    "march": "March",
+    "april": "April",
+    "may": "May",
+    "june": "June",
+    "july": "July",
+    "august": "August",
+    "september": "September",
+    "october": "October",
+    "november": "November",
+    "december": "December"
   }
 }
