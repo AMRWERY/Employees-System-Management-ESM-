@@ -8,7 +8,8 @@
           <p class="text-gray-600 text-sm mt-1 flex items-center gap-2">
             {{ t('dashboard.you_re_currently') }}
             <icon name="fxemoji:alarmclock" />
-            <span :class="attendanceStore.clockedIn ? 'text-green-600 underline font-semibold' : 'text-red-600 underline font-semibold'">
+            <span
+              :class="attendanceStore.clockedIn ? 'text-green-600 underline font-semibold' : 'text-red-600 underline font-semibold'">
               {{ attendanceStore.clockedIn ? t('dashboard.clocked_in') : t('dashboard.clocked_out') }}
             </span>
           </p>
@@ -58,15 +59,20 @@
         <!-- Weekly Summary -->
         <div class="mt-8 pt-6 border-t border-gray-200">
           <h3 class="text-lg font-semibold mb-4">{{ t('dashboard.past_week_summary') }}</h3>
-          <div class="grid grid-cols-7 gap-2 text-center">
-            <div v-for="day in attendanceStore.weeklySummary" :key="day.date" 
-                 class="p-2 rounded" 
-                 :class="day.totalSeconds > 0 ? 'bg-green-50' : 'bg-gray-50'">
-              <div class="text-gray-600 mb-1">{{ t(`days.${day.day.toLowerCase()}`) }}</div>
-              <div v-if="day.totalSeconds > 0" class="text-green-600 font-medium">
+          <div class="grid grid-cols-7 gap-1 sm:gap-2 md:gap-3">
+            <div v-for="(day, index) in attendanceStore.weeklySummary" :key="day.date"
+              class="weekly-day p-2 sm:p-3 rounded-lg transition-all duration-200 text-center" :class="{
+                'bg-green-50 shadow-sm hover:bg-green-100': day.totalSeconds > 0,
+                'bg-gray-50 hover:bg-gray-100': day.totalSeconds === 0,
+                'ring-2 ring-blue-500': isSameDate(new Date(day.date), new Date())
+              }" :title="formatDateForTooltip(day.date)">
+              <div class="text-xs sm:text-sm text-gray-600 font-medium mb-1">
+                {{ t(`days.${day.day.toLowerCase()}`) }}
+              </div>
+              <div v-if="day.totalSeconds > 0" class="text-green-600 font-medium text-xs sm:text-sm">
                 {{ formatDuration(day.totalSeconds) }}
               </div>
-              <div v-else class="text-gray-400">-</div>
+              <div v-else class="text-gray-400 text-xs sm:text-sm">-</div>
             </div>
           </div>
         </div>
@@ -74,24 +80,12 @@
         <!-- Monthly Summary -->
         <div class="mt-8 pt-6 border-t border-gray-200">
           <h3 class="text-lg font-semibold mb-4">{{ t('dashboard.monthly_summary') }}</h3>
-          <div class="grid grid-cols-7 gap-2 text-center">
-            <div v-for="day in attendanceStore.monthlySummary" :key="day.date" 
-                 class="p-2 rounded" 
-                 :class="day.totalSeconds > 0 ? 'bg-green-50' : 'bg-gray-50'">
-              <div class="text-gray-600 mb-1">{{ formatDate(new Date(day.date)) }}</div>
-              <div v-if="day.totalSeconds > 0" class="text-green-600 font-medium">
-                {{ formatDuration(day.totalSeconds) }}
-              </div>
-              <div v-else class="text-gray-400">-</div>
-            </div>
-          </div>
-
           <!-- Monthly Stats -->
           <div class="mt-4 grid grid-cols-3 gap-4">
             <div class="p-3 rounded bg-green-50">
               <div class="text-sm text-gray-600">{{ t('dashboard.total_days') }}</div>
               <div class="text-xl font-bold text-green-600">
-                {{ attendanceStore.monthlySummary.filter(d => d.totalSeconds > 0).length }}
+                {{attendanceStore.monthlySummary.filter(d => d.totalSeconds > 0).length}}
               </div>
             </div>
             <div class="p-3 rounded bg-blue-50">
@@ -113,33 +107,33 @@
         <div class="monthly-summary mt-8">
           <div class="calendar-header flex justify-between items-center mb-4">
             <button @click="previousMonth" class="btn btn-ghost">
-              <i class="fas fa-chevron-left"></i>
+              <icon name="heroicons-solid:arrow-sm-left" class="rtl:rotate-180" />
             </button>
             <h2 class="text-xl font-semibold">{{ currentMonthYear }}</h2>
             <button @click="nextMonth" class="btn btn-ghost">
-              <i class="fas fa-chevron-right"></i>
+              <icon name="heroicons-solid:arrow-sm-right" class="rtl:rotate-180" />
             </button>
           </div>
-          
+
           <div class="calendar-grid">
-            <!-- Days of week header -->
-            <div class="grid grid-cols-7 gap-2 mb-2">
-              <div v-for="day in daysOfWeek" :key="day" class="text-center font-semibold">
+            <div class="grid grid-cols-7 gap-1 sm:gap-2 mb-2">
+              <div v-for="day in daysOfWeek" :key="day" class="text-center font-semibold text-sm sm:text-base">
                 {{ day }}
               </div>
             </div>
-            
+
             <!-- Calendar days -->
-            <div class="grid grid-cols-7 gap-2">
-              <div v-for="day in displayCalendarDays" :key="day.date" 
-                   class="calendar-day p-2 text-center" 
-                   :class="{
-                     'bg-gray-100': !day.isCurrentMonth,
-                     'attendance-present': day.hasAttendance,
-                     'current-day': day.isToday
-                   }">
-                {{ day.dayOfMonth }}
-                <div v-if="day.hasAttendance" class="attendance-time text-xs">
+            <div class="grid grid-cols-7 gap-1 sm:gap-2 md:gap-3">
+              <div v-for="day in displayCalendarDays" :key="day.date"
+                class="calendar-day relative aspect-square p-1 sm:p-2 md:p-3 text-center rounded-lg" :class="{
+                  'bg-gray-100': !day.isCurrentMonth,
+                  'attendance-present bg-green-50 hover:bg-green-100': day.hasAttendance,
+                  'current-day ring-2 ring-blue-500': day.isToday,
+                  'hover:bg-gray-50': !day.hasAttendance && day.isCurrentMonth
+                }">
+                <span class="text-xs sm:text-sm md:text-base font-medium">{{ day.dayOfMonth }}</span>
+                <div v-if="day.hasAttendance"
+                  class="attendance-time text-[9px] sm:text-xs md:text-sm text-green-600 mt-1">
                   {{ formatDuration(day.totalSeconds) }}
                 </div>
               </div>
@@ -175,13 +169,14 @@ onMounted(async () => {
 const dayLocale = localStorage.getItem('locale') || 'en-US';
 const formattedDate = useDateFormat(useNow(), 'YYYY-MM-DD (dddd)', { locales: dayLocale });
 
-const formatTime = (date: Date) => {
+const formatTime = (date: Date | undefined) => {
+  if (!date) return '';
   return useDateFormat(date, 'HH:mm a').value;
 };
 
-const formatDate = (date: Date) => {
-  return useDateFormat(date, 'dd MMM', { locales: dayLocale }).value;
-};
+// const formatDate = (date: Date) => {
+//   return useDateFormat(date, 'dd MMM', { locales: dayLocale }).value;
+// };
 
 const formatDuration = (totalSeconds: number) => {
   const hours = Math.floor(totalSeconds / 3600);
@@ -194,7 +189,7 @@ const isProcessing = ref(false);
 const calculateAverageHours = () => {
   const daysWithHours = attendanceStore.monthlySummary?.filter(day => day.totalSeconds > 0) ?? [];
   if (daysWithHours.length === 0) return '0h';
-  
+
   const totalSeconds = daysWithHours.reduce((sum, day) => sum + (day.totalSeconds ?? 0), 0);
   const avgSeconds = totalSeconds / daysWithHours.length;
   return formatDuration(avgSeconds);
@@ -236,50 +231,70 @@ const toggleClock = async () => {
   }
 };
 
-useHead({
-  titleTemplate: () => t('head.my_attendance'),
-});
-
 const currentDate = ref(new Date());
 
-const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day =>
+  t(`days.${day.toLowerCase()}`)
+);
+
+const currentMonth = ref(new Date().getMonth());
+const currentYear = ref(new Date().getFullYear());
 
 const currentMonthYear = computed(() => {
-  return currentDate.value.toLocaleDateString('default', { 
-    month: 'long', 
-    year: 'numeric' 
-  });
+  const date = new Date(currentYear.value, currentMonth.value);
+  const month = t(`months.${date.toLocaleString('en', { month: 'long' }).toLowerCase()}`);
+  return `${month} ${currentYear.value}`;
 });
 
+const previousMonth = async () => {
+  if (currentMonth.value === 0) {
+    currentMonth.value = 11;
+    currentYear.value--;
+  } else {
+    currentMonth.value--;
+  }
+  await attendanceStore.fetchMonthlySummary(currentYear.value, currentMonth.value + 1);
+};
+
+const nextMonth = async () => {
+  if (currentMonth.value === 11) {
+    currentMonth.value = 0;
+    currentYear.value++;
+  } else {
+    currentMonth.value++;
+  }
+  await attendanceStore.fetchMonthlySummary(currentYear.value, currentMonth.value + 1);
+};
+
 const displayCalendarDays = computed<CalendarDay[]>(() => {
-  const year = currentDate.value.getFullYear();
-  const month = currentDate.value.getMonth();
+  const year = currentYear.value;
+  const month = currentMonth.value;
   const firstDay = new Date(year, month, 1);
   const lastDay = new Date(year, month + 1, 0);
   const days: CalendarDay[] = [];
-
   // Add days from previous month
   const firstDayOfWeek = firstDay.getDay();
   for (let i = firstDayOfWeek - 1; i >= 0; i--) {
-    const date = new Date(year, month, -i);
+    const date = new Date(year, month, 1);
+    date.setDate(date.getDate() - i);
+    const localDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
     days.push({
-      date: date.toISOString().split('T')[0],
-      dayOfMonth: date.getDate(),
+      date: localDate.toISOString().split('T')[0],
+      dayOfMonth: localDate.getDate(),
       isCurrentMonth: false,
-      isToday: isSameDate(date, new Date()),
+      isToday: isSameDate(localDate, new Date()),
       hasAttendance: false,
       totalSeconds: 0
     });
   }
-
   // Add days of current month
   for (let i = 1; i <= lastDay.getDate(); i++) {
     const date = new Date(year, month, i);
-    const dateString = date.toISOString().split('T')[0];
+    const localDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    const dateString = localDate.toISOString().split('T')[0];
     const attendance = attendanceStore.monthlySummary.find(
       (a) => a.date === dateString
     );
-
     days.push({
       date: dateString,
       dayOfMonth: i,
@@ -289,79 +304,94 @@ const displayCalendarDays = computed<CalendarDay[]>(() => {
       totalSeconds: attendance?.totalSeconds || 0
     });
   }
-
   // Add days from next month to complete the grid
   const remainingDays = 42 - days.length; // 6 rows × 7 days
   for (let i = 1; i <= remainingDays; i++) {
     const date = new Date(year, month + 1, i);
+    const localDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
     days.push({
-      date: date.toISOString().split('T')[0],
-      dayOfMonth: i,
+      date: localDate.toISOString().split('T')[0],
+      dayOfMonth: localDate.getDate(),
       isCurrentMonth: false,
-      isToday: isSameDate(date, new Date()),
+      isToday: isSameDate(localDate, new Date()),
       hasAttendance: false,
       totalSeconds: 0
     });
   }
-
   return days;
 });
 
-function previousMonth() {
-  currentDate.value = new Date(
-    currentDate.value.getFullYear(),
-    currentDate.value.getMonth() - 1,
-    1
-  );
-  fetchMonthData();
-}
-
-function nextMonth() {
-  currentDate.value = new Date(
-    currentDate.value.getFullYear(),
-    currentDate.value.getMonth() + 1,
-    1
-  );
-  fetchMonthData();
-}
-
 function isSameDate(date1: Date, date2: Date): boolean {
-  return date1.getDate() === date2.getDate() &&
-         date1.getMonth() === date2.getMonth() &&
-         date1.getFullYear() === date2.getFullYear();
+  const d1 = new Date(date1.getFullYear(), date1.getMonth(), date1.getDate());
+  const d2 = new Date(date2.getFullYear(), date2.getMonth(), date2.getDate());
+  return d1.getTime() === d2.getTime();
 }
 
-async function fetchMonthData() {
-  await attendanceStore.fetchMonthlySummary(
-    currentDate.value.getFullYear(),
-    currentDate.value.getMonth() + 1
-  );
+// async function fetchMonthData() {
+//   await attendanceStore.fetchMonthlySummary(
+//     currentDate.value.getFullYear(),
+//     currentDate.value.getMonth() + 1
+//   );
+// }
+
+// const formatShortDate = (dateStr: string): string => {
+//   const date = new Date(dateStr);
+//   return date.getDate().toString().padStart(2, '0');
+// };
+
+const formatDateForTooltip = (dateStr: string): string => {
+  const date = new Date(dateStr);
+  const month = t(`months.${date.toLocaleString('en', { month: 'long' }).toLowerCase()}`);
+  return `${date.getDate()} ${month}`;
 }
 
-// Initial month data is already fetched in the main onMounted callback
+useHead({
+  titleTemplate: () => t('head.my_attendance'),
+});
 </script>
 
 <style scoped>
 .calendar-day {
-  aspect-ratio: 1;
-  border: 1px solid #e2e8f0;
-  min-height: 80px;
+  transition: all 0.2s ease-in-out;
 }
 
-.calendar-day.bg-gray-100 {
-  opacity: 0.7;
+@media (max-width: 640px) {
+  .calendar-day {
+    min-height: 40px;
+  }
 }
 
-.attendance-present {
-  background-color: #e6fffa;
+@media (min-width: 641px) and (max-width: 1024px) {
+  .calendar-day {
+    min-height: 60px;
+  }
 }
 
-.current-day {
-  border: 2px solid #4299e1;
+@media (min-width: 1025px) {
+  .calendar-day {
+    min-height: 80px;
+  }
 }
 
-.attendance-time {
-  color: #2c5282;
-  margin-top: 4px;
+.weekly-day {
+  position: relative;
+  overflow: hidden;
+  min-height: 70px;
+}
+
+.weekly-day:hover {
+  transform: translateY(-1px);
+}
+
+@media (min-width: 640px) {
+  .weekly-day {
+    min-height: 85px;
+  }
+}
+
+@media (min-width: 768px) {
+  .weekly-day {
+    min-height: 100px;
+  }
 }
 </style>
