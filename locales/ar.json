@@ -34,7 +34,8 @@
     "no_leave_requests_found": "لم يتم العثور على طلبات إجازة",
     "leave_management": "إدارة الإجازات",
     "leave_request_details": "تفاصيل طلب الإجازة",
-    "request_type": "نوع الطلب"
+    "request_type": "نوع الطلب",
+    "missing_employee_id": "رقم الموظف مفقود"
   },
   "btn": {
     "go_back_home": "العودة إلى الصفحه الرئيسيه",

@@ -3,14 +3,14 @@
     <button role="button" @click="showModal = true"
       class="text-white bg-[#3b5998] hover:bg-[#3b5998]/90 focus:ring-4 focus:outline-none focus:ring-[#3b5998]/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center flex items-center justify-center gap-2">
       <icon name="heroicons-solid:plus" class="w-5 h-5" />
-      {{ $t('btn.add_request') }}
+      {{ t('btn.add_request') }}
     </button>
 
     <div v-if="showModal"
       class="fixed inset-0 flex flex-wrap justify-center items-center w-full h-full z-[1000] before:fixed before:inset-0 before:w-full before:h-full before:bg-[rgba(0,0,0,0.5)] overflow-auto">
       <div class="w-full max-w-xl bg-white shadow-lg rounded-lg p-4 relative">
         <div class="flex items-center pb-3 border-b border-gray-300">
-          <h3 class="text-slate-900 text-xl font-semibold flex-1">{{ $t('form.leave_request_form') }}</h3>
+          <h3 class="text-slate-900 text-xl font-semibold flex-1">{{ t('form.leave_request_form') }}</h3>
           <button role="button" @click="showModal = false">
             <icon name="material-symbols:close-small-rounded"
               class="ms-2 cursor-pointer shrink-0 text-gray-400 hover:text-red-500" />
@@ -23,34 +23,33 @@
               <div class="sm:col-span-3">
                 <dynamic-inputs :label="t('form.employee_name')" :placeholder="t('form.enter_your_name')" type="text"
                   :name="t('form.employee_name')" :rules="'required'" :required="true" v-model="form.employeeName" />
-              </div>
-
-              <div class="sm:col-span-3">
+              </div>              <div class="sm:col-span-3">
                 <dynamic-inputs :label="t('form.employee_id')" :placeholder="t('form.enter_your_id')" type="text"
-                  :name="t('form.employee_id')" :rules="'required'" :required="true" />
+                  :name="t('form.employee_id')" :rules="'required'" :required="true" disabled
+                  v-model="form.employeeId" />
               </div>
 
               <div class="sm:col-span-full">
-                <label class="block text-sm font-medium text-gray-700 mb-1">{{ $t('form.leave_type') }}</label>
+                <label class="block text-sm font-medium text-gray-700 mb-1">{{ t('form.leave_type') }}</label>
                 <select v-model="form.leaveType"
                   class="w-full px-3 py-2 transition duration-300 border rounded-md shadow-sm placeholder:text-slate-400 text-slate-700 focus:outline-none focus:border-slate-400 hover:border-slate-300 focus:shadow">
-                  <option value="" disabled>{{ $t('form.select_leave_type') }}</option>
-                  <option value="vacation">{{ $t('form.vacation') }}</option>
-                  <option value="sick">{{ $t('form.sick_leave') }}</option>
-                  <option value="parental">{{ $t('form.parental_leave') }}</option>
-                  <option value="bereavement">{{ $t('form.bereavement_leave') }}</option>
-                  <option value="medical">{{ $t('form.medical_leave') }}</option>
+                  <option value="" disabled>{{ t('form.select_leave_type') }}</option>
+                  <option value="vacation">{{ t('form.vacation') }}</option>
+                  <option value="sick">{{ t('form.sick_leave') }}</option>
+                  <option value="parental">{{ t('form.parental_leave') }}</option>
+                  <option value="bereavement">{{ t('form.bereavement_leave') }}</option>
+                  <option value="medical">{{ t('form.medical_leave') }}</option>
                 </select>
               </div>
 
               <div class="sm:col-span-3">
-                <label class="block text-sm font-medium text-gray-700 mb-1">{{ $t('form.start_date') }}</label>
+                <label class="block text-sm font-medium text-gray-700 mb-1">{{ t('form.start_date') }}</label>
                 <!-- date-picker component-->
                 <date-picker v-model="form.startDate" />
               </div>
 
               <div class="sm:col-span-3">
-                <label class="block text-sm font-medium text-gray-700 mb-1">{{ $t('form.end_date') }}</label>
+                <label class="block text-sm font-medium text-gray-700 mb-1">{{ t('form.end_date') }}</label>
                 <!-- date-picker component-->
                 <date-picker v-model="form.endDate" />
               </div>
@@ -68,14 +67,14 @@
               </div>
 
               <div class="sm:col-span-full">
-                <label class="block text-sm font-medium text-gray-700 mb-1">{{ $t('form.attachments') }}</label>
+                <label class="block text-sm font-medium text-gray-700 mb-1">{{ t('form.attachments') }}</label>
                 <div
                   class="flex items-center justify-center w-full border-2 border-dashed border-gray-300 rounded-md p-6 h-28">
                   <input type="file" class="hidden" id="fileInput" multiple @change="handleFileUpload">
                   <label for="fileInput"
                     class="cursor-pointer text-gray-500 hover:text-blue-600 flex flex-col items-center justify-center gap-2">
                     <icon name="mdi:cloud-upload-outline" class="w-12 h-12" />
-                    <span class="text-center">{{ $t('form.click_to_upload_documents') }}</span>
+                    <span class="text-center">{{ t('form.click_to_upload_documents') }}</span>
                   </label>
                 </div>
 
@@ -97,7 +96,7 @@
                 <button type="submit" :disabled="loading" @click="submitForm"
                   class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors duration-200">
                   <icon name="svg-spinners:90-ring-with-bg" v-if="loading" />
-                  <span v-else>{{ $t('btn.submit_leave_request') }}</span>
+                  <span v-else>{{ t('btn.submit_leave_request') }}</span>
                 </button>
               </div>
             </ClientOnly>
@@ -118,8 +117,13 @@ const leaveStore = useLeaveRequestsStore()
 const showModal = ref(false)
 const loading = ref(false)
 
+// Get user data from session storage
+const userData = sessionStorage.getItem('user')
+const parsedUserData = userData ? JSON.parse(userData) : null
+
 const form = reactive({
-  employeeName: '',
+  employeeName: parsedUserData?.firstName + ' ' + parsedUserData?.lastName || '',
+  employeeId: parsedUserData?.employeeId || '',
   leaveType: '',
   startDate: null as Date | null,
   endDate: null as Date | null,
@@ -157,13 +161,24 @@ const removeAttachment = (index: number) => {
 const submitForm = async () => {
   const userData = sessionStorage.getItem('user')
   const parsedUserData = userData ? JSON.parse(userData) : null
+  // console.log('User data from session:', parsedUserData)
+
   if (!parsedUserData?.uid) return
   else if (!form.startDate || !form.endDate) return;
-  if (!form.employeeName || !form.leaveType) return;
+  if (!form.employeeName || !form.leaveType || !form.employeeId) {
+    // console.log('Form validation failed:', form)
+    triggerToast({
+      message: t('toast.please_fill_all_required_fields'),
+      type: 'error',
+      icon: 'material-symbols:error-outline-rounded',
+    });
+    return;
+  }
   try {
-    loading.value = true
+    loading.value = true    
     const requestData: Omit<LeaveRequest, 'id'> = {
       userId: parsedUserData?.uid,
+      employeeId: form.employeeId, // Use employeeId from form data
       employeeName: form.employeeName,
       startDate: form.startDate,
       endDate: form.endDate,
@@ -174,6 +189,7 @@ const submitForm = async () => {
       durationDays: parseInt(form.duration),
       attachments: [] as string[], // To store download URLs
     }
+    // console.log('Submitting request with data:', requestData)
     // Upload attachments if any
     if (attachments.value.length > 0) {
       try {
@@ -215,12 +231,21 @@ const submitForm = async () => {
 }
 
 const resetForm = () => {
+  // Keep the employeeId from sessionStorage
+  const savedEmployeeId = form.employeeId
+  const savedEmployeeName = form.employeeName
+  
+  // Reset all fields
   form.leaveType = ''
   form.startDate = null
   form.endDate = null
   form.duration = ''
   form.reason = ''
   attachments.value = []
+  
+  // Restore employee info
+  form.employeeId = savedEmployeeId
+  form.employeeName = savedEmployeeName
 }
 
 onUnmounted(() => {

@@ -33,7 +33,7 @@ export default defineNuxtPlugin((nuxtApp) => {
         }
       }
     } catch (error) {
-      console.error("Error applying stored locale:", error);
+      // console.error("Error applying stored locale:", error);
     }
   };
 

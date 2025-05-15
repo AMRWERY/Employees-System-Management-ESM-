@@ -116,7 +116,7 @@ export const useRolesStore = defineStore("roles", {
           affectedUsers: querySnapshot.size,
         };
       } catch (error) {
-        console.error("Update failed:", error);
+        // console.error("Update failed:", error);
         throw error;
       }
     },

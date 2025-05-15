@@ -4,7 +4,7 @@
     <breadcrumb />
 
     <div class="flex items-center justify-between my-6 flex-nowrap">
-      <p class="text-2xl font-semibold text-gray-700">{{ $t('dashboard.leave_management') }}</p>
+      <p class="text-2xl font-semibold text-gray-700">{{ t('dashboard.leave_management') }}</p>
       <div class="flex items-center justify-center gap-4 ms-auto">
       </div>
     </div>
@@ -31,7 +31,7 @@
       <div class="mt-8" v-else>
         <div v-if="filteredRequests.length === 0" class="text-center">
           <!-- no-data-message component -->
-          <no-data-message :message="$t('no_data.no_leave_requests_found')" icon="mdi:clipboard-text-outline" />
+          <no-data-message :message="t('no_data.no_leave_requests_found')" icon="mdi:clipboard-text-outline" />
         </div>
 
         <!-- dynamic-table componenet -->
@@ -98,7 +98,7 @@ const handleChildAccept = async (requestId: string) => {
   try {
     await leaveStore.approveRequest(requestId);
     const request = leaveStore.allRequests.find((r) => r.id === requestId);
-    if (request) request.status = 'approved'; // Update the status locally
+    if (request) request.status = 'approved';
     triggerToast({
       message: t('toast.leave_request_approved_successfully'),
       type: 'success',
@@ -117,7 +117,7 @@ const handleChildReject = async ({ id, reason }: { id: string; reason: string })
   try {
     await leaveStore.rejectRequest(id, reason);
     const request = leaveStore.allRequests.find((r) => r.id === id);
-    if (request) request.status = 'rejected'; // Update the status locally
+    if (request) request.status = 'rejected';
     triggerToast({
       message: t('toast.leave_request_rejected_successfully'),
       type: 'success',

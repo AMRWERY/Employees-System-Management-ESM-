@@ -19,7 +19,7 @@ export const usePdf = () => {
     try {
       return await $html2pdf().from(element).set(mergedOptions).save()
     } catch (error) {
-      console.error('Error exporting to PDF:', error)
+      // console.error('Error exporting to PDF:', error)
       throw error
     }
   }

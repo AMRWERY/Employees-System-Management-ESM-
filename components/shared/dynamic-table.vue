@@ -5,10 +5,10 @@
         <thead class="text-sm text-gray-700 bg-gray-100">
           <tr>
             <th scope="col" class="px-6 py-3">#</th>
-            <th scope="col" class="px-6 py-3">{{ $t('dashboard.from_to') }}</th>
-            <th scope="col" class="px-6 py-3">{{ $t('dashboard.manager') }}</th>
-            <th scope="col" class="px-6 py-3">{{ $t('dashboard.request_type') }}</th>
-            <th scope="col" class="px-6 py-3">{{ $t('dashboard.status') }}</th>
+            <th scope="col" class="px-6 py-3">{{ t('dashboard.from_to') }}</th>
+            <th scope="col" class="px-6 py-3">{{ t('dashboard.manager') }}</th>
+            <th scope="col" class="px-6 py-3">{{ t('dashboard.request_type') }}</th>
+            <th scope="col" class="px-6 py-3">{{ t('dashboard.status') }}</th>
             <th scope="col" class="px-6 py-3">
               <span class="sr-only">actions</span>
             </th>
@@ -27,12 +27,12 @@
               </p>
             </td>
             <td class="px-6 py-4">
-              <p class="font-semibold">{{ $t(`form.${request.type}`) }}</p>
+              <p class="font-semibold">{{ t(`form.${request.type}`) }}</p>
             </td>
             <td class="px-6 py-4">
               <span :class="statusClasses[request.status]"
                 class="flex items-center text-sm px-3 py-1.5 tracking-wide rounded-full max-w-fit cursor-pointer">
-                {{ $t(`status.${request.status}`) }}
+                {{ t(`status.${request.status}`) }}
               </span>
             </td>
             <td class="px-6 py-4 text-end">
@@ -56,6 +56,8 @@
 
 <script lang="ts" setup>
 import type { LeaveRequest } from '@/types/leaveRequest'
+
+const { t } = useI18n()
 
 const props = defineProps<{
   requests: LeaveRequest[]

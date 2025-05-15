@@ -34,7 +34,8 @@
     "no_leave_requests_found": "No leave requests found",
     "leave_management": "Leave Management",
     "leave_request_details": "Leave request details",
-    "request_type": "Request type"
+    "request_type": "Request type",
+    "missing_employee_id": "Missing employee id"
   },
   "btn": {
     "go_back_home": "Go back Home",

@@ -3,7 +3,7 @@
     <div class="relative w-max mx-auto">
       <button type="button" ref="toggleButton" @click.stop="toggleDropdown"
         class="px-5 py-2.5 border border-gray-300 text-slate-900 text-sm font-medium outline-none bg-white hover:bg-gray-50 flex items-center justify-between min-w-[190px] w-full">
-        {{ $t('btn.download_data') }}
+        {{ t('btn.download_data') }}
         <icon name="ic:sharp-keyboard-arrow-down" class="w-5 text-gray-500 ms-3 transition-transform"
           :class="{ 'rotate-180': isOpen }" />
       </button>
@@ -73,7 +73,7 @@ const handleItemClick = (item: DropdownItem) => {
 const downloadPdf = () => {
   const tableElement = document.getElementById(props.tableId)
   if (tableElement) {
-    console.log('Exporting table to PDF:', props.tableId, props.filename)
+    // console.log('Exporting table to PDF:', props.tableId, props.filename)
     try {
       exportToPdf(tableElement, {
         filename: `${props.filename}.pdf`,
@@ -81,24 +81,24 @@ const downloadPdf = () => {
         jsPDF: { format: 'a4', orientation: 'landscape' }
       })
     } catch (error) {
-      console.error('Error exporting to PDF:', error)
+      // console.error('Error exporting to PDF:', error)
     }
   } else {
-    console.error(`Table with ID ${props.tableId} not found`)
+    // console.error(`Table with ID ${props.tableId} not found`)
   }
 }
 
 const downloadExcel = () => {
   const tableElement = document.getElementById(props.tableId) as HTMLTableElement
   if (tableElement) {
-    console.log('Exporting table to Excel:', props.tableId, props.filename)
+    // console.log('Exporting table to Excel:', props.tableId, props.filename)
     try {
       exportTableToExcel(tableElement, `${props.filename}.xlsx`)
     } catch (error) {
-      console.error('Error exporting to Excel:', error)
+      // console.error('Error exporting to Excel:', error)
     }
   } else {
-    console.error(`Table with ID ${props.tableId} not found`)
+    // console.error(`Table with ID ${props.tableId} not found`)
   }
 }
 

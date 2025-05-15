@@ -33,6 +33,7 @@ export const useLeaveRequestsStore = defineStore("leave-requests", {
       request = {
         id: docSnap.id,
         userId: data.userId,
+        employeeId: data.employeeId,
         employeeName: data.employeeName,
         startDate: data.startDate?.toDate(),
         endDate: data.endDate?.toDate(),
@@ -64,6 +65,7 @@ export const useLeaveRequestsStore = defineStore("leave-requests", {
               return {
                 id: d.id,
                 userId: data.userId,
+                employeeId: data.employeeId,
                 employeeName: data.employeeName,
                 startDate: data.startDate?.toDate(),
                 endDate: data.endDate?.toDate(),
@@ -79,14 +81,14 @@ export const useLeaveRequestsStore = defineStore("leave-requests", {
             this.loading = false;
           },
           (error) => {
-            console.error("Firestore error:", error);
-            this.error = error.message;
+            // console.error("Firestore error:", error);
+            // this.error = error.message;
             this.loading = false;
           }
         );
         return unsubscribe;
       } catch (error) {
-        console.error("Store error:", error);
+        // console.error("Store error:", error);
         this.loading = false;
       }
     },
@@ -128,14 +130,14 @@ export const useLeaveRequestsStore = defineStore("leave-requests", {
             this.loading = false;
           },
           (error) => {
-            console.error("[9] Firestore error:", error);
+            // console.error("[9] Firestore error:", error);
             this.error = error.message;
             this.loading = false;
           }
         );
         return unsubscribe;
       } catch (error) {
-        console.error("[10] Store error:", error);
+        // console.error("[10] Store error:", error);
         this.loading = false;
       }
     },
@@ -178,7 +180,7 @@ export const useLeaveRequestsStore = defineStore("leave-requests", {
           decisionBy: auth.currentUser?.uid,
         });
       } catch (error) {
-        console.error("Error approving request:", error);
+        // console.error("Error approving request:", error);
         throw error;
       } finally {
         this.loading = false;
@@ -196,7 +198,7 @@ export const useLeaveRequestsStore = defineStore("leave-requests", {
           rejectionReason: reason || null,
         });
       } catch (error) {
-        console.error("Error rejecting request:", error);
+        // console.error("Error rejecting request:", error);
         throw error;
       } finally {
         this.loading = false;

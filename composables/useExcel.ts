@@ -21,7 +21,7 @@ export const useExcel = () => {
       // Generate and download file
       $xlsx.writeFile(workbook, filename)
     } catch (error) {
-      console.error('Error exporting to Excel:', error)
+      // console.error('Error exporting to Excel:', error)
       throw error
     }
   }
