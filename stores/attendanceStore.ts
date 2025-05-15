@@ -23,9 +23,31 @@ interface DailyAttendance {
   role: string;
 }
 
+interface WeekRecord {
+  id: string;
+  date: string;
+  clockIns: Timestamp[];
+  clockOuts: Timestamp[];
+  totalSeconds: number;
+  uid: string;
+  role: string;
+}
+
+interface WeekSummaryRecord {
+  date: string;
+  day: string;
+  totalSeconds: number;
+}
+
+interface MonthlyRecord {
+  date: string;
+  totalSeconds: number;
+}
+
 interface AttendanceState {
   todayRecord: DailyAttendance | null;
-  weeklySummary: any[];
+  weeklySummary: WeekSummaryRecord[];
+  monthlySummary: MonthlyRecord[];
   loading: boolean;
   error: string | null;
 }
@@ -72,9 +94,29 @@ export const useAttendanceStore = defineStore("attendance", {
   state: (): AttendanceState => ({
     todayRecord: null,
     weeklySummary: [],
+    monthlySummary: [],
     loading: false,
     error: null,
   }),
+
+  getters: {
+    clockedIn: (state) =>
+      state.todayRecord
+        ? state.todayRecord.clockIns.length > state.todayRecord.clockOuts.length
+        : false,
+
+    formattedTodayEntries: (state) => {
+      if (!state.todayRecord) return [];
+
+      return state.todayRecord.clockIns.map((clockIn, index) => ({
+        time: clockIn.toDate(),
+        type: "in",
+        ...(state.todayRecord?.clockOuts[index] && {
+          clockOut: state.todayRecord.clockOuts[index].toDate(),
+        }),
+      }));
+    },
+  },
 
   actions: {
     async clockIn() {
@@ -192,91 +234,100 @@ export const useAttendanceStore = defineStore("attendance", {
     },
 
     async fetchWeeklySummary() {
-      const authStore = useAuthStore();
-      if (!authStore.user) return;
-      this.loading = true;
       try {
-        const now = new Date();
-        const todayUTC = new Date(
-          Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate())
-        );
-        // Calculate last week's Monday (00:00 UTC)
-        const lastWeekStart = new Date(todayUTC);
-        lastWeekStart.setUTCDate(
-          todayUTC.getUTCDate() - 7 - todayUTC.getUTCDay() + 1
-        );
-        // Set end to Sunday (23:59:59 UTC)
-        const lastWeekEnd = new Date(lastWeekStart);
-        lastWeekEnd.setUTCDate(lastWeekStart.getUTCDate() + 6);
-        lastWeekEnd.setUTCHours(23, 59, 59, 999);
-        // Format query dates
-        const startString = lastWeekStart.toISOString().split("T")[0];
-        const endString = lastWeekEnd.toISOString().split("T")[0];
-        // console.log('Querying between:', startString, '-', endString);
-        const q = query(
-          collection(db, "ems-attendance", authStore.user.uid, "daily-records"),
-          where("date", ">=", startString),
-          where("date", "<=", endString)
-        );
-        const snapshot = await getDocs(q);
-        // console.log('Found documents:', snapshot.docs.map(d => d.data()));
-        // Create week map
-        const summaryMap = new Map();
-        for (let i = 0; i < 7; i++) {
-          const d = new Date(lastWeekStart);
-          d.setUTCDate(lastWeekStart.getUTCDate() + i);
-          const dateKey = d.toISOString().split("T")[0];
-          summaryMap.set(dateKey, {
-            date: dateKey,
-            totalSeconds: 0,
-            day: d
-              .toLocaleDateString("en-US", {
-                weekday: "short",
-                timeZone: "UTC",
-              })
-              .split(",")[0],
-          });
+        this.loading = true;
+        const auth = useAuthStore();
+        if (!auth.user?.uid) {
+          throw new Error('User not authenticated');
         }
-        // Merge data
-        snapshot.docs.forEach((doc) => {
-          const data = doc.data();
-          if (summaryMap.has(data.date)) {
-            summaryMap.set(data.date, {
-              ...summaryMap.get(data.date),
-              totalSeconds: data.totalSeconds,
-            });
-          }
+
+        const now = new Date();
+        const today = now.getDay(); // 0-6, where 0 is Sunday
+        const firstDay = new Date(now);
+        firstDay.setDate(now.getDate() - 6); // Get 6 days before today
+        firstDay.setHours(0, 0, 0, 0);
+
+        const lastDay = new Date(now); // Today
+        lastDay.setHours(23, 59, 59, 999);
+
+        const attendanceRef = collection(db, 'attendance');
+        const q = query(
+          attendanceRef,
+          where('userId', '==', auth.user.uid),
+          where('date', '>=', firstDay.toISOString().split('T')[0]),
+          where('date', '<=', lastDay.toISOString().split('T')[0])
+        );
+
+        const querySnapshot = await getDocs(q);
+        const records: Record<string, DailyAttendance> = {};
+        
+        querySnapshot.forEach((doc) => {
+          const data = doc.data() as DailyAttendance;
+          records[data.date] = data;
         });
-        // console.log('Final Summary Data:', Array.from(summaryMap.values()));
-        this.weeklySummary = Array.from(summaryMap.values());
+
+        const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+        this.weeklySummary = Array(7)
+          .fill(null)
+          .map((_, index) => {
+            const date = new Date(firstDay);
+            date.setDate(firstDay.getDate() + index);
+            const dateString = date.toISOString().split('T')[0];
+            const record = records[dateString];
+
+            return {
+              date: dateString,
+              day: days[date.getDay()],
+              totalSeconds: record?.totalSeconds || 0,
+            };
+          });
       } catch (error) {
-        this.handleError(error);
+        console.error("Error fetching weekly summary:", error);
+        this.error = "Failed to fetch weekly summary";
       } finally {
         this.loading = false;
       }
     },
-  },
 
-  getters: {
-    clockedIn: (state) => {
-      return state.todayRecord
-        ? state.todayRecord.clockIns.length > state.todayRecord.clockOuts.length
-        : false;
-    },
+    async fetchMonthlySummary(year: number, month: number) {
+      try {
+        this.loading = true;
+        const auth = useAuthStore();
+        if (!auth.user?.uid) {
+          throw new Error('User not authenticated');
+        }
 
-    formattedTodayEntries(state) {
-      if (!state.todayRecord) return [];
-      return state.todayRecord.clockIns.map((clockIn, index) => ({
-        time: clockIn.toDate(),
-        type: "in" as const,
-        ...(state.todayRecord?.clockOuts[index] && {
-          clockOut: state.todayRecord.clockOuts[index].toDate(),
-          duration: calculateDuration(
-            clockIn,
-            state.todayRecord.clockOuts[index]
-          ),
-        }),
-      }));
-    },
-  },
+        // Create start and end dates for the month
+        const startDate = new Date(year, month - 1, 1); // month is 1-based
+        startDate.setHours(0, 0, 0, 0);
+        
+        const endDate = new Date(year, month, 0); // Last day of the month
+        endDate.setHours(23, 59, 59, 999);
+
+        const attendanceRef = collection(db, 'attendance');
+        const q = query(
+          attendanceRef,
+          where('userId', '==', auth.user.uid),
+          where('date', '>=', startDate.toISOString().split('T')[0]),
+          where('date', '<=', endDate.toISOString().split('T')[0])
+        );
+
+        const querySnapshot = await getDocs(q);
+        const monthData: MonthlyRecord[] = querySnapshot.docs.map(doc => {
+          const data = doc.data() as DailyAttendance;
+          return {
+            date: data.date,
+            totalSeconds: data.totalSeconds || 0
+          };
+        });
+
+        this.monthlySummary = monthData;
+      } catch (error) {
+        console.error("Error fetching monthly summary:", error);
+        this.error = "Failed to fetch monthly summary";
+      } finally {
+        this.loading = false;
+      }
+    }
+  }
 });

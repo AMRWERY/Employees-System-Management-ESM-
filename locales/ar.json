@@ -35,7 +35,11 @@
     "leave_management": "إدارة الإجازات",
     "leave_request_details": "تفاصيل طلب الإجازة",
     "request_type": "نوع الطلب",
-    "missing_employee_id": "رقم الموظف مفقود"
+    "missing_employee_id": "رقم الموظف مفقود",
+    "monthly_summary": "ملخص شهري",
+    "total_days": "إجمالي الأيام",
+    "avg_hours": "متوسط ​​الساعات",
+    "total_hours": "إجمالي الساعات"
   },
   "btn": {
     "go_back_home": "العودة إلى الصفحه الرئيسيه",
@@ -168,5 +172,14 @@
   "breadcrumb": {
     "home": "الرئيسيه",
     "admin_leave_request": "إدارة الإجازات"
+  },
+  "days": {
+    "mon": "الاثنين",
+    "tue": "الثلاثاء",
+    "wed": "الأربعاء",
+    "thu": "الخميس",
+    "fri": "الجمعة",
+    "sat": "السبت",
+    "sun": "الأحد"
   }
 }
