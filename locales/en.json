@@ -57,7 +57,8 @@
     "accept": "Accept",
     "reject": "Reject",
     "cancel": "Cancel",
-    "confirm_rejection": "Confirm rejection"
+    "confirm_rejection": "Confirm rejection",
+    "withdraw_request": "Withdraw request"
   },
   "form": {
     "sign_in": "Sign in",
@@ -157,7 +158,9 @@
     "failed_to_approve_leave_request": "Failed to approve leave request",
     "leave_request_rejected_successfully": "Leave request rejected successfully",
     "failed_to_reject_leave_request": "Failed to reject leave request",
-    "failed_to_load_leave_requests": "Failed to load leave requests"
+    "failed_to_load_leave_requests": "Failed to load leave requests",
+    "leave_request_withdrawn_successfully": "Leave request withdrawn successfully",
+    "failed_to_withdraw_request": "Failed to withdraw request"
   },
   "status": {
     "all": "All",

@@ -57,7 +57,7 @@
           <label class="text-sm font-medium text-gray-600">{{ t('form.rejection_reason') }}:</label>
           <p class="mt-1 text-gray-800 whitespace-pre-wrap p-3 bg-red-50 rounded-lg border border-red-100">{{
             leaveRequest?.rejectionReason
-            }}</p>
+          }}</p>
         </div>
 
         <!-- Attachments -->

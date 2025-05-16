@@ -22,7 +22,6 @@
         </li>
       </transition-group>
     </ul>
-
     <transition name="fade-slide" mode="out-in">
       <div v-if="loading" key="skeleton">
         <table-skeleton-loader :headers="skeletonHeaders" :rows="5" />
@@ -39,6 +38,11 @@
           @reject="handleChildReject" v-else />
       </div>
     </transition>
+
+    <!-- delete-dialog component -->
+    <!-- <delete-dialog :show="showDeleteDialog" :title="t('dashboard.confirm_delete_leave_request')"
+      :message="t('dashboard.delete_leave_request_message')" :confirm-text="t('btn.yes_delete')"
+      :cancel-text="t('btn.no_cancel')" :loading="deleteLoading" @close="closeDeleteDialog" @confirm="confirmDelete" /> -->
   </div>
 </template>
 
@@ -63,7 +67,6 @@ const tabs = ref<Tab[]>([
 ])
 
 const activeTab = ref<Tab['id']>('all')
-
 const loading = ref(true)
 
 onMounted(async () => {
@@ -85,12 +88,9 @@ const filteredRequests = computed(() => {
   return leaveStore.allRequests.filter(request =>
     request.status === activeTab.value
   );
-});
-
-const selectedRequest = ref<LeaveRequest | null>(null)
+})
 
 const openDetailsModal = (request: LeaveRequest) => {
-  selectedRequest.value = request
   navigateTo(`./leave-request/${request.id}`)
 }
 

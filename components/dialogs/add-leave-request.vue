@@ -21,11 +21,12 @@
           <div class="grid grid-cols-1 md:grid-cols-6 gap-6">
             <ClientOnly>
               <div class="sm:col-span-3">
-                <dynamic-inputs :label="t('form.employee_name')" :placeholder="t('form.enter_your_name')" type="text"
-                  :name="t('form.employee_name')" :rules="'required'" :required="true" v-model="form.employeeName" />
-              </div>              <div class="sm:col-span-3">
-                <dynamic-inputs :label="t('form.employee_id')" :placeholder="t('form.enter_your_id')" type="text"
-                  :name="t('form.employee_id')" :rules="'required'" :required="true" disabled
+                <dynamic-inputs :label="t('form.employee_name')" :name="t('form.employee_name')" :disabled="true"
+                  readonly v-model="form.employeeName" />
+              </div>
+
+              <div class="sm:col-span-3">
+                <dynamic-inputs :label="t('form.employee_id')" :name="t('form.employee_id')" :disabled="true" readonly
                   v-model="form.employeeId" />
               </div>
 
@@ -175,7 +176,7 @@ const submitForm = async () => {
     return;
   }
   try {
-    loading.value = true    
+    loading.value = true
     const requestData: Omit<LeaveRequest, 'id'> = {
       userId: parsedUserData?.uid,
       employeeId: form.employeeId, // Use employeeId from form data
@@ -234,7 +235,7 @@ const resetForm = () => {
   // Keep the employeeId from sessionStorage
   const savedEmployeeId = form.employeeId
   const savedEmployeeName = form.employeeName
-  
+
   // Reset all fields
   form.leaveType = ''
   form.startDate = null
@@ -242,7 +243,7 @@ const resetForm = () => {
   form.duration = ''
   form.reason = ''
   attachments.value = []
-  
+
   // Restore employee info
   form.employeeId = savedEmployeeId
   form.employeeName = savedEmployeeName

@@ -9,6 +9,7 @@ import {
   updateDoc,
   serverTimestamp,
   getDoc,
+  deleteDoc,
   type QuerySnapshot,
   type DocumentData,
 } from "firebase/firestore";
@@ -211,6 +212,63 @@ export const useLeaveRequestsStore = defineStore("leave-requests", {
         decisionAt: serverTimestamp(),
         decisionBy: auth.currentUser?.uid,
       });
+    },
+
+    async deleteRequest(id: string) {
+      try {
+        this.loading = true;
+        const ref = doc(db, "ems-leave-requests", id);
+        
+        // First check if the document exists
+        const docSnap = await getDoc(ref);
+        if (!docSnap.exists()) {
+          throw new Error("Leave request not found");
+        }
+
+        // Then try to delete it
+        await deleteDoc(ref);
+      } catch (error) {
+        this.error = error instanceof Error ? error.message : "Failed to delete leave request";
+        throw error;
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    async withdrawRequest(id: string) {
+      try {
+        this.loading = true;
+        const ref = doc(db, "ems-leave-requests", id);
+        
+        // First check if the document exists and get its data
+        const docSnap = await getDoc(ref);
+        if (!docSnap.exists()) {
+          throw new Error("Leave request not found");
+        }
+
+        const data = docSnap.data();
+        
+        // Check if the request can be withdrawn
+        if (data.status !== 'pending') {
+          throw new Error("Only pending requests can be withdrawn");
+        }
+        
+        if (data.userId !== auth.currentUser?.uid) {
+          throw new Error("You can only withdraw your own requests");
+        }
+
+        // Update the request status to withdrawn
+        await updateDoc(ref, {
+          status: "cancelled",
+          decisionAt: serverTimestamp(),
+          decisionBy: auth.currentUser?.uid,
+        });
+      } catch (error) {
+        this.error = error instanceof Error ? error.message : "Failed to withdraw leave request";
+        throw error;
+      } finally {
+        this.loading = false;
+      }
     },
   },
 
