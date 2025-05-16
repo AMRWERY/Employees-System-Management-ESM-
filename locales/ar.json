@@ -57,7 +57,8 @@
     "accept": "قبول",
     "reject": "رفض",
     "cancel": "ألغاء",
-    "confirm_rejection": "تأكيد الرفض"
+    "confirm_rejection": "تأكيد الرفض",
+    "withdraw_request": "طلب ألغاء"
   },
   "form": {
     "sign_in": "تسجيل الدخول",
@@ -157,7 +158,9 @@
     "failed_to_approve_leave_request": "فشل في الموافقة على طلب الإجازة",
     "leave_request_rejected_successfully": "تم رفض طلب الإجازة بنجاح",
     "failed_to_reject_leave_request": "فشل في رفض طلب الإجازة",
-    "failed_to_load_leave_requests": "فشل تحميل طلبات الإجازة"
+    "failed_to_load_leave_requests": "فشل تحميل طلبات الإجازة",
+    "leave_request_withdrawn_successfully": "تم ألغاء طلب الإجازة بنجاح",
+    "failed_to_withdraw_request": "فشل في ألغاء الطلب"
   },
   "status": {
     "all": "الكل",

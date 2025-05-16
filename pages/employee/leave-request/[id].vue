@@ -74,6 +74,15 @@
         </div>
       </div>
     </div>
+
+    <!-- Action buttons for employee -->
+    <div class="mt-6 flex justify-end" v-if="canWithdraw">
+      <button @click="handleWithdraw" :disabled="withdrawLoading"
+        class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 flex items-center gap-2 disabled:bg-red-400 disabled:cursor-not-allowed">
+        <icon name="svg-spinners:90-ring-with-bg" v-if="withdrawLoading" class="w-5 h-5" />
+        <span v-else>{{ t('btn.withdraw_request') }}</span>
+      </button>
+    </div>
   </div>
 </template>
 
@@ -81,34 +90,68 @@
 import type { LeaveRequest } from '@/types/leaveRequest'
 
 const { t } = useI18n()
+const { triggerToast } = useToast()
 const route = useRoute()
 const leaveStore = useLeaveRequestsStore()
 
 const leaveRequest = ref<LeaveRequest | null>(null)
+const withdrawLoading = ref(false)
+
+// Get user data from session storage
+const userData = sessionStorage.getItem('user')
+const parsedUserData = userData ? JSON.parse(userData) : null
 
 onMounted(async () => {
   try {
     const request = await leaveStore.getRequestById(route.params.id as string)
     if (request) {
       leaveRequest.value = request
-      // console.log('Leave request loaded:', {
-      //   status: request.status,
-      //   rejectionReason: request.rejectionReason
-      // })
     }
   } catch (error) {
     showError({ statusCode: 500, message: 'Failed to load request' })
   }
 })
 
-const emit = defineEmits(["close", "accept", "reject"])
+// Compute if the request can be withdrawn
+const canWithdraw = computed(() => {
+  if (!leaveRequest.value || !parsedUserData?.uid) return false
+  return (
+    leaveRequest.value.status === 'pending' && // Only pending requests can be withdrawn
+    leaveRequest.value.userId === parsedUserData.uid
+  )
+})
+
+const handleWithdraw = async () => {
+  if (!leaveRequest.value?.id) return
+  try {
+    withdrawLoading.value = true
+    await leaveStore.withdrawRequest(leaveRequest.value.id)
+    // Update the local request status
+    if (leaveRequest.value) {
+      leaveRequest.value.status = 'cancelled'
+    }
+    triggerToast({
+      message: t('toast.leave_request_withdrawn_successfully'),
+      type: 'success',
+      icon: 'mdi-check-circle',
+    })
+  } catch (error) {
+    triggerToast({
+      message: error instanceof Error ? error.message : t('toast.failed_to_withdraw_request'),
+      type: 'error',
+      icon: 'material-symbols:error-outline-rounded',
+    })
+  } finally {
+    withdrawLoading.value = false
+  }
+}
 
 const statusClasses = {
   pending: 'text-yellow-600 bg-yellow-100 hover:bg-yellow-200',
   approved: 'text-green-600 bg-green-100 hover:bg-green-200',
   rejected: 'text-red-600 bg-red-100 hover:bg-red-200',
   cancelled: 'text-gray-600 bg-gray-100 hover:bg-gray-200'
-}
+} as const
 
 const formatDate = (date: Date) => {
   return new Intl.DateTimeFormat('en-GB', {
