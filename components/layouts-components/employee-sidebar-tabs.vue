@@ -6,7 +6,7 @@
           exact-active-class="bg-gray-400 text-white hover:bg-gray-500">
           <icon name="material-symbols:dashboard" class="w-5 h-5 transition duration-75 group-hover:text-white"
             :class="{ 'text-gray-400': $route.path === '/', 'text-white': $route.path !== '/' }" aria-hidden="true" />
-          <span class="flex-1 ms-3 whitespace-nowrap">{{ $t('layouts.dashboard') }}</span>
+          <span class="flex-1 ms-3 whitespace-nowrap">{{ t('layouts.dashboard') }}</span>
         </nuxt-link-locale>
       </li>
 
@@ -16,7 +16,7 @@
           <icon name="icon-park-solid:personal-privacy"
             class="flex-shrink-0 w-5 h-5 text-gray-400 transition duration-75 group-hover:text-white"
             aria-hidden="true" />
-          <span class="flex-1 ms-3 text-start whitespace-nowrap">{{ $t('layouts.personal') }}</span>
+          <span class="flex-1 ms-3 text-start whitespace-nowrap">{{ t('layouts.personal') }}</span>
           <icon name="material-symbols:keyboard-arrow-down-rounded" class="w-5 h-5"
             :class="{ 'rotate-180': openDropdowns.personal }" aria-hidden="true" />
         </button>
@@ -25,19 +25,20 @@
             <nuxt-link-locale to="/employee/my-attendance"
               class="flex items-center p-2 text-white rounded-lg group ps-7"
               exact-active-class="bg-gray-400 text-white hover:bg-gray-500">
-              {{ $t('layouts.my_attendance') }}
+              {{ t('layouts.my_attendance') }}
             </nuxt-link-locale>
           </li>
           <li>
-            <nuxt-link-locale to="/employee/my-leave-requests" class="flex items-center p-2 text-white rounded-lg group ps-7"
+            <nuxt-link-locale to="/employee/leave-request"
+              class="flex items-center p-2 text-white rounded-lg group ps-7"
               exact-active-class="bg-gray-400 text-white hover:bg-gray-500">
-              {{ $t('layouts.my_leave_requests') }}
+              {{ t('layouts.my_leave_requests') }}
             </nuxt-link-locale>
           </li>
           <li>
             <nuxt-link to="" class="flex items-center p-2 text-white rounded-lg group ps-7"
               exact-active-class="bg-gray-400 text-white hover:bg-gray-500">
-              {{ $t('layouts.my_performance_reviews') }}
+              {{ t('layouts.my_performance_reviews') }}
             </nuxt-link>
           </li>
         </ul>
@@ -48,7 +49,7 @@
           exact-active-class="bg-gray-400 text-white hover:bg-gray-500">
           <icon name="solar:hand-money-linear" class="w-5 h-5 transition duration-75 group-hover:text-white"
             :class="{ 'text-gray-400': $route.path === '', 'text-white': $route.path !== '' }" aria-hidden="true" />
-          <span class="flex-1 ms-3 whitespace-nowrap">{{ $t('layouts.my_payslips_payroll') }}</span>
+          <span class="flex-1 ms-3 whitespace-nowrap">{{ t('layouts.my_payslips_payroll') }}</span>
         </nuxt-link>
       </li>
     </div>
@@ -68,4 +69,6 @@ const toggleDropdown = (name: DropdownNames) => {
 }
 
 const { hasAnyRole } = useUserRoles()
+
+const { t } = useI18n()
 </script>

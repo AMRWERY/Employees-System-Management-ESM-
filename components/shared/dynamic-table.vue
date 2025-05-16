@@ -64,9 +64,9 @@ const props = defineProps<{
 }>()
 
 const statusClasses = {
-  pending: 'text-red-600 bg-red-100 hover:bg-red-200',
+  pending: 'text-yellow-600 bg-yellow-100 hover:bg-yellow-200',
   approved: 'text-green-600 bg-green-100 hover:bg-green-200',
-  rejected: 'text-yellow-600 bg-yellow-100 hover:bg-yellow-200',
+  rejected: 'text-red-600 bg-red-100 hover:bg-red-200',
   cancelled: 'text-gray-600 bg-gray-100 hover:bg-gray-200'
 }
 
