@@ -8,7 +8,9 @@ import {
   doc,
   updateDoc,
   serverTimestamp,
-  getDoc
+  getDoc,
+  type QuerySnapshot,
+  type DocumentData,
 } from "firebase/firestore";
 import { db, auth } from "~/firebase";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
@@ -16,39 +18,42 @@ import type { LeaveRequest } from "@/types/leaveRequest";
 
 export const useLeaveRequestsStore = defineStore("leave-requests", {
   state: () => ({
-    myRequests: [] as any[],
-    allRequests: [] as any[],
+    myRequests: [] as LeaveRequest[],
+    allRequests: [] as LeaveRequest[],
     loading: false,
     error: "",
   }),
 
   actions: {
     async getRequestById(id: string) {
-  let request = this.allRequests.find((request) => request.id === id);
-  if (!request) {
-    const docRef = doc(db, "ems-leave-requests", id);
-    const docSnap = await getDoc(docRef);
-    if (docSnap.exists()) {
-      const data = docSnap.data();
-      request = {
-        id: docSnap.id,
-        userId: data.userId,
-        employeeId: data.employeeId,
-        employeeName: data.employeeName,
-        startDate: data.startDate?.toDate(),
-        endDate: data.endDate?.toDate(),
-        type: data.type,
-        reason: data.reason,
-        status: data.status,
-        submittedAt: data.submittedAt?.toDate(),
-        durationDays: data.durationDays,
-        manager: data.manager,
-        attachments: data.attachments || [],
-      };
-    }
-  }
-  return request;
-},
+      let request = this.allRequests.find((request) => request.id === id);
+      if (!request) {
+        const docRef = doc(db, "ems-leave-requests", id);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          request = {
+            id: docSnap.id,
+            userId: data.userId,
+            employeeId: data.employeeId,
+            employeeName: data.employeeName,
+            startDate: data.startDate?.toDate(),
+            endDate: data.endDate?.toDate(),
+            type: data.type,
+            reason: data.reason,
+            status: data.status,
+            submittedAt: data.submittedAt?.toDate(),
+            durationDays: data.durationDays,
+            manager: data.manager,
+            attachments: data.attachments || [],
+            rejectionReason: data.rejectionReason,
+            decisionAt: data.decisionAt?.toDate(),
+            decisionBy: data.decisionBy,
+          };
+        }
+      }
+      return request;
+    },
 
     async fetchAllRequests() {
       try {
@@ -59,7 +64,7 @@ export const useLeaveRequestsStore = defineStore("leave-requests", {
         );
         const unsubscribe = onSnapshot(
           q,
-          (snapshot) => {
+          (snapshot: QuerySnapshot<DocumentData>) => {
             this.allRequests = snapshot.docs.map((d) => {
               const data = d.data();
               return {
@@ -76,20 +81,24 @@ export const useLeaveRequestsStore = defineStore("leave-requests", {
                 durationDays: data.durationDays,
                 manager: data.manager,
                 attachments: data.attachments || [],
+                rejectionReason: data.rejectionReason,
+                decisionAt: data.decisionAt?.toDate(),
+                decisionBy: data.decisionBy,
               };
             });
             this.loading = false;
           },
-          (error) => {
-            // console.error("Firestore error:", error);
-            // this.error = error.message;
+          (error: Error) => {
+            this.error = error.message;
             this.loading = false;
           }
         );
         return unsubscribe;
       } catch (error) {
-        // console.error("Store error:", error);
         this.loading = false;
+        if (error instanceof Error) {
+          this.error = error.message;
+        }
       }
     },
 
@@ -106,15 +115,13 @@ export const useLeaveRequestsStore = defineStore("leave-requests", {
         );
         const unsubscribe = onSnapshot(
           q,
-          (snapshot) => {
-            if (snapshot.empty) {
-              // console.warn('No documents found in collection');
-            }
+          (snapshot: QuerySnapshot<DocumentData>) => {
             this.myRequests = snapshot.docs.map((d) => {
               const data = d.data();
               return {
                 id: d.id,
                 userId: data.userId,
+                employeeId: data.employeeId,
                 employeeName: data.employeeName,
                 startDate: data.startDate?.toDate(),
                 endDate: data.endDate?.toDate(),
@@ -125,20 +132,24 @@ export const useLeaveRequestsStore = defineStore("leave-requests", {
                 durationDays: data.durationDays,
                 manager: data.manager,
                 attachments: data.attachments || [],
+                rejectionReason: data.rejectionReason,
+                decisionAt: data.decisionAt?.toDate(),
+                decisionBy: data.decisionBy,
               };
             });
             this.loading = false;
           },
-          (error) => {
-            // console.error("[9] Firestore error:", error);
+          (error: Error) => {
             this.error = error.message;
             this.loading = false;
           }
         );
         return unsubscribe;
       } catch (error) {
-        // console.error("[10] Store error:", error);
         this.loading = false;
+        if (error instanceof Error) {
+          this.error = error.message;
+        }
       }
     },
 
@@ -160,16 +171,6 @@ export const useLeaveRequestsStore = defineStore("leave-requests", {
       return getDownloadURL(snapshot.ref);
     },
 
-    async cancelRequest(id: string) {
-      // only allow cancel while still pending
-      const ref = doc(db, "ems-leave-requests", id);
-      await updateDoc(ref, {
-        status: "cancelled",
-        decisionAt: serverTimestamp(),
-        decisionBy: auth.currentUser!.uid,
-      });
-    },
-
     async approveRequest(id: string) {
       try {
         this.loading = true;
@@ -180,7 +181,6 @@ export const useLeaveRequestsStore = defineStore("leave-requests", {
           decisionBy: auth.currentUser?.uid,
         });
       } catch (error) {
-        // console.error("Error approving request:", error);
         throw error;
       } finally {
         this.loading = false;
@@ -198,11 +198,19 @@ export const useLeaveRequestsStore = defineStore("leave-requests", {
           rejectionReason: reason || null,
         });
       } catch (error) {
-        // console.error("Error rejecting request:", error);
         throw error;
       } finally {
         this.loading = false;
       }
+    },
+
+    async cancelRequest(id: string) {
+      const ref = doc(db, "ems-leave-requests", id);
+      await updateDoc(ref, {
+        status: "cancelled",
+        decisionAt: serverTimestamp(),
+        decisionBy: auth.currentUser?.uid,
+      });
     },
   },
 

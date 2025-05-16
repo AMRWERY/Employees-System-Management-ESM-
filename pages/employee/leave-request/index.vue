@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="flex items-center justify-between my-10 flex-nowrap">
-      <p class="text-2xl font-semibold text-gray-700">{{ $t('dashboard.my_leave_requests') }}</p>
+      <p class="text-2xl font-semibold text-gray-700">{{ t('dashboard.my_leave_requests') }}</p>
       <div class="flex items-center justify-center gap-4 ms-auto">
 
         <!-- add-leave-request component -->
@@ -23,11 +23,11 @@
 
     <div class="mt-8">
       <div v-if="filteredRequests.length === 0" class="p-4 text-center text-gray-500">
-        <p class="font-semibold text-2xl text-gray-700">{{ $t('dashboard.no_leave_requests_found') }}</p>
+        <p class="font-semibold text-2xl text-gray-700">{{ t('dashboard.no_leave_requests_found') }}</p>
       </div>
 
       <!-- dynamic-table componenet -->
-      <dynamic-table :requests="filteredRequests" @view="handleViewRequest" v-else />
+      <dynamic-table :requests="filteredRequests" @view="openDetailsModal" v-else />
     </div>
   </div>
 </template>
@@ -58,6 +58,13 @@ onMounted(() => {
   leaveStore.fetchMyRequests()
 })
 
+const selectedRequest = ref<LeaveRequest | null>(null)
+
+const openDetailsModal = (request: LeaveRequest) => {
+  selectedRequest.value = request
+  navigateTo(`./leave-request/${request.id}`)
+}
+
 // Update filtered requests calculation
 const filteredRequests = computed(() => {
   if (activeTab.value === 'all') return leaveStore.myRequests;
@@ -65,11 +72,6 @@ const filteredRequests = computed(() => {
     request.status === activeTab.value
   );
 });
-
-function handleViewRequest(request: LeaveRequest) {
-  // Handle view action
-  // console.log('View request:', request)
-}
 
 useHead({
   titleTemplate: () => t('head.my_leave_requests'),

@@ -50,12 +50,13 @@
 
         <div>
           <label class="text-sm font-medium text-gray-600">{{ t('form.reason_for_leave') }}:</label>
-          <p class="mt-1 text-gray-800 whitespace-pre-wrap p-2 bg-gray-100 rounded-lg">{{ leaveRequest.reason }}</p>
+          <p class="mt-1 text-gray-800 whitespace-pre-wrap p-3 bg-gray-100 rounded-lg">{{ leaveRequest.reason }}</p>
         </div>
 
         <div v-if="leaveRequest?.status === 'rejected'">
           <label class="text-sm font-medium text-gray-600">{{ t('form.rejection_reason') }}:</label>
-          <p class="mt-1 text-gray-800 whitespace-pre-wrap p-2 bg-gray-100 rounded-lg">{{ leaveRequest?.rejectionReason
+          <p class="mt-1 text-gray-800 whitespace-pre-wrap p-3 bg-red-50 rounded-lg border border-red-100">{{
+            leaveRequest?.rejectionReason
             }}</p>
         </div>
 
@@ -140,9 +141,9 @@ onMounted(async () => {
 const emit = defineEmits(["close", "accept", "reject"])
 
 const statusClasses = {
-  pending: 'text-red-600 bg-red-100 hover:bg-red-200',
+  pending: 'text-yellow-600 bg-yellow-100 hover:bg-yellow-200',
   approved: 'text-green-600 bg-green-100 hover:bg-green-200',
-  rejected: 'text-yellow-600 bg-yellow-100 hover:bg-yellow-200',
+  rejected: 'text-red-600 bg-red-100 hover:bg-red-200',
   cancelled: 'text-gray-600 bg-gray-100 hover:bg-gray-200'
 }
 
@@ -234,4 +235,8 @@ const handleReject = async () => {
     isRejectLoading.value = false;
   }
 };
+
+useHead({
+  titleTemplate: () => t('head.leave_management'),
+});
 </script>
