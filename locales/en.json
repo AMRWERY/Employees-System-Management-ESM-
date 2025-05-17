@@ -39,7 +39,13 @@
     "monthly_summary": "Monthly summary",
     "total_days": "Total days",
     "avg_hours": "Avgerage hours",
-    "total_hours": "Total hours"
+    "total_hours": "Total hours",
+    "employees": "Employees",
+    "employee_id": "Employee ID",
+    "email": "Email",
+    "delete_employee_title": "Are you sure you want to delete this?",
+    "delete_employee_confirmation_01": "You are about to delete {name}",
+    "delete_employee_confirmation_02": "This action cannot be undone."
   },
   "btn": {
     "go_back_home": "Go back Home",
@@ -123,7 +129,8 @@
     "sick": "Sick Leave",
     "parental": "Parental Leave",
     "bereavement": "Bereavement Leave",
-    "medical": "Medical Leave"
+    "medical": "Medical Leave",
+    "search_by_email": "Search by email"
   },
   "head": {
     "sign_in": "Sign in",
@@ -131,7 +138,8 @@
     "reset_password": "Reset password",
     "my_attendance": "My Attendance",
     "my_leave_requests": "My Leave Requests",
-    "leave_management": "Leave Management"
+    "leave_management": "Leave Management",
+    "employees": "Employees"
   },
   "error_page": {
     "you_are_all_alone_here": "You are all alone here 😁"
@@ -160,21 +168,31 @@
     "failed_to_reject_leave_request": "Failed to reject leave request",
     "failed_to_load_leave_requests": "Failed to load leave requests",
     "leave_request_withdrawn_successfully": "Leave request withdrawn successfully",
-    "failed_to_withdraw_request": "Failed to withdraw request"
+    "failed_to_withdraw_request": "Failed to withdraw request",
+    "failed_to_load_employees": "Failed to load employees",
+    "employee_unblocked": "Employee unblocked",
+    "employee_blocked": "Employee blocked",
+    "failed_to_toggle_block": "Failed to toggle block",
+    "employee_deleted": "Employee deleted",
+    "failed_to_delete_employee": "Failed to delete employee"
   },
   "status": {
     "all": "All",
     "pending": "Pending",
     "approved": "Approved",
     "rejected": "Rejected",
-    "cancelled": "Cancelled"
+    "cancelled": "Cancelled",
+    "blocked": "Blocked",
+    "active": "Active"
   },
   "no_data": {
-    "no_leave_requests_found": "No leave requests found"
+    "no_leave_requests_found": "No leave requests found",
+    "no_employees_found": "No employees found"
   },
   "breadcrumb": {
     "home": "Home",
-    "admin_leave_request": "Leave Management"
+    "admin_leave_request": "Leave Management",
+    "admin_employees": "Employees"
   },
   "days": {
     "mon": "Mon",

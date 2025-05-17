@@ -21,21 +21,70 @@
       </li>
     </ul>
 
-    <div class="mt-8">
-      <div v-if="filteredRequests.length === 0" class="p-4 text-center text-gray-500">
-        <p class="font-semibold text-2xl text-gray-700">{{ t('dashboard.no_leave_requests_found') }}</p>
+    <div v-if="loading" key="skeleton">
+      <!-- table-skeleton-loader component -->
+      <table-skeleton-loader :headers="skeletonHeaders" :rows="5" />
+    </div>
+
+    <div class="mt-8" v-else>
+      <div v-if="filteredRequests.length === 0" class="text-center">
+        <!-- no-data-message component -->
+        <no-data-message :message="t('no_data.no_leave_requests_found')" icon="icon-park-outline:vacation" />
       </div>
 
-      <!-- dynamic-table componenet -->
-      <dynamic-table :requests="filteredRequests" @view="openDetailsModal" v-else />
+      <!-- dynamic-table component -->
+      <dynamic-table v-else :items="filteredRequests" :columns="tableColumns" :has-view="true"
+        @view="(item: LeaveRequest) => openDetailsModal(item)" />
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
+import { type TableHeader } from '@/components/shared/table-skeleton-loader.vue'
 import type { LeaveRequest } from '@/types/leaveRequest'
+import type { Column } from '@/components/shared/dynamic-table.vue'
 
 const { t } = useI18n()
+const leaveStore = useLeaveRequestsStore()
+const { triggerToast } = useToast()
+const loading = ref(true)
+
+const formatDate = (date: Date | null) => {
+  if (!date) return '';
+  return new Intl.DateTimeFormat('en-GB', {
+    day: 'numeric',
+    month: 'numeric',
+    year: 'numeric'
+  }).format(new Date(date));
+};
+
+const tableColumns = computed(() => {
+  const columns: Column<LeaveRequest>[] = [
+    {
+      key: 'index',
+      label: '#',
+      format: (row: LeaveRequest, index?: number) => String((index ?? 0) + 1)
+    },
+    {
+      key: 'dates',
+      label: t('dashboard.from_to'),
+      format: (request: LeaveRequest) => `${formatDate(request.startDate)} - ${formatDate(request.endDate)}`
+    },
+    { key: 'employeeId', label: t('dashboard.employee_id') },
+    { key: 'manager', label: t('dashboard.manager') },
+    {
+      key: 'type',
+      label: t('dashboard.request_type'),
+      format: (request: LeaveRequest) => t(`form.${request.type}`)
+    },
+    {
+      key: 'status',
+      label: t('dashboard.status'),
+      format: (request: LeaveRequest) => t(`status.${request.status}`)
+    }
+  ];
+  return columns;
+});
 
 interface Tab {
   id: LeaveRequest['status'] | 'all'
@@ -52,10 +101,19 @@ const tabs = ref<Tab[]>([
 
 const activeTab = ref<Tab['id']>('all')
 
-const leaveStore = useLeaveRequestsStore()
-
-onMounted(() => {
-  leaveStore.fetchMyRequests()
+onMounted(async () => {
+  loading.value = true
+  try {
+    await leaveStore.fetchMyRequests()
+  } catch (error) {
+    triggerToast({
+      message: t('toast.failed_to_load_leave_requests'),
+      type: 'error',
+      icon: 'material-symbols:error-outline-rounded',
+    })
+  } finally {
+    loading.value = false
+  }
 })
 
 const selectedRequest = ref<LeaveRequest | null>(null)
@@ -72,6 +130,17 @@ const filteredRequests = computed(() => {
     request.status === activeTab.value
   );
 });
+
+// Add skeleton headers configuration
+const skeletonHeaders = ref<TableHeader[]>([
+  { type: 'text', loaderWidth: 'w-32' }, // Index
+  { type: 'text', loaderWidth: 'w-64' }, // Dates
+  { type: 'text', loaderWidth: 'w-48' }, // Employee ID
+  { type: 'text', loaderWidth: 'w-48' }, // Manager
+  { type: 'text', loaderWidth: 'w-48' }, // Type
+  { type: 'text', loaderWidth: 'w-32' }, // Status
+  { type: 'action', loaderWidth: 'w-32' }, // Actions
+])
 
 useHead({
   titleTemplate: () => t('head.my_leave_requests'),

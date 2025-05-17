@@ -4,45 +4,56 @@
       <table class="w-full text-sm text-start text-gray-500">
         <thead class="text-sm text-gray-700 bg-gray-100">
           <tr>
-            <th scope="col" class="px-6 py-3">#</th>
-            <th scope="col" class="px-6 py-3">{{ t('dashboard.from_to') }}</th>
-            <th scope="col" class="px-6 py-3">{{ t('dashboard.manager') }}</th>
-            <th scope="col" class="px-6 py-3">{{ t('dashboard.request_type') }}</th>
-            <th scope="col" class="px-6 py-3">{{ t('dashboard.status') }}</th>
-            <th scope="col" class="px-6 py-3">
+            <th v-for="(column, index) in columns" :key="index" scope="col" class="px-6 py-3">
+              {{ column.label }}
+            </th>
+            <th scope="col" class="px-6 py-3" v-if="hasView || hasDelete || hasBlock">
               <span class="sr-only">actions</span>
             </th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(request, index) in requests" :key="index"
-            class="bg-white border-b border-gray-200 hover:bg-gray-50">
-            <td class="px-6 py-4">{{ index + 1 }}</td>
-            <td class="px-6 py-4">
-              <p class="font-semibold">{{ formatDate(request.startDate) }} - {{ formatDate(request.endDate) }}</p>
+          <tr v-for="(item, index) in items" :key="index" class="bg-white border-b border-gray-200 hover:bg-gray-50">
+            <td v-for="(column, colIndex) in columns" :key="colIndex" class="px-6 py-4">
+              <template v-if="column.key === 'status'">
+                <span v-if="item.status"
+                  :class="['px-2.5 py-1 rounded-full text-sm font-medium', getStatusClass(item.status)]">
+                  <template v-if="column.format">
+                    {{ column.format(item) }}
+                  </template>
+                  <template v-else>
+                    {{ item.status }}
+                  </template>
+                </span>
+                <template v-else>
+                  <template v-if="column.format">
+                    {{ column.format(item) }}
+                  </template>
+                  <template v-else>
+                    {{ getValue(item, column.key) }}
+                  </template>
+                </template>
+              </template>
+
+              <template v-else-if="column.format">
+                {{ column.format(item, index) }}
+              </template>
+
+              <template v-else>
+                {{ getValue(item, column.key) }}
+              </template>
             </td>
-            <td class="px-6 py-4">
-              <p class="font-semibold">
-                {{ request.manager }}
-              </p>
-            </td>
-            <td class="px-6 py-4">
-              <p class="font-semibold">{{ t(`form.${request.type}`) }}</p>
-            </td>
-            <td class="px-6 py-4">
-              <span :class="statusClasses[request.status]"
-                class="flex items-center text-sm px-3 py-1.5 tracking-wide rounded-full max-w-fit cursor-pointer">
-                {{ t(`status.${request.status}`) }}
-              </span>
-            </td>
-            <td class="px-6 py-4 text-end">
-              <div class="flex items-center gap-2.5">
-                <button class="cursor-pointer" title="View" @click="$emit('view', request)"
-                  v-if="hasPermission('leave-management', 'view')">
+
+            <td v-if="hasView || hasDelete || hasBlock" class="px-6 py-4 text-end">
+              <div class="flex items-center gap-3">
+                <button v-if="hasView" class="cursor-pointer" title="View" @click="$emit('view', item)">
                   <icon name="tabler:eye" class="w-7 h-7 text-blue-500 hover:text-blue-700" />
                 </button>
-                <button class="cursor-pointer" title="delete" @click="$emit('delete', request)"
-                  v-if="hasPermission('leave-management', 'delete')">
+                <button v-if="hasBlock" class="cursor-pointer" title="Block" @click="$emit('block', item)">
+                  <icon name="material-symbols:block" class="w-6 h-6"
+                    :class="[item.isBlocked ? 'text-green-500 hover:text-green-700' : 'text-red-500 hover:text-red-700']" />
+                </button>
+                <button v-if="hasDelete" class="cursor-pointer" title="Delete" @click="$emit('delete', item)">
                   <icon name="material-symbols:delete-sharp" class="w-6 h-6 text-red-500 hover:text-red-700" />
                 </button>
               </div>
@@ -55,31 +66,52 @@
 </template>
 
 <script lang="ts" setup>
-import type { LeaveRequest } from '@/types/leaveRequest'
+export interface Column<T = any> {
+  key: keyof T | string;
+  label: string;
+  format?: (row: T, index?: number) => string;
+}
 
-const { t } = useI18n()
+interface TableItem {
+  [key: string]: any;
+  status?: string;
+  isBlocked?: boolean;
+}
+
+type StatusType = 'pending' | 'approved' | 'rejected' | 'cancelled';
 
 const props = defineProps<{
-  requests: LeaveRequest[]
+  items: readonly any[];
+  columns: Column[];
+  hasView?: boolean;
+  hasDelete?: boolean;
+  hasBlock?: boolean;
 }>()
 
-const statusClasses = {
+defineEmits<{
+  <T = any>(event: 'view', item: T): void;
+  <T = any>(event: 'delete', item: T): void;
+  <T = any>(event: 'block', item: T): void;
+}>()
+
+const statusClasses: Record<StatusType, string> = {
   pending: 'text-yellow-600 bg-yellow-100 hover:bg-yellow-200',
   approved: 'text-green-600 bg-green-100 hover:bg-green-200',
   rejected: 'text-red-600 bg-red-100 hover:bg-red-200',
   cancelled: 'text-gray-600 bg-gray-100 hover:bg-gray-200'
 }
 
-defineEmits(['view', 'delete'])
+const getStatusClass = (status: string | undefined): string => {
+  if (!status) return '';
+  return status in statusClasses ? statusClasses[status as StatusType] : '';
+}
 
-const formatDate = (date: Date) => {
-  if (!date) return '';
-  return new Intl.DateTimeFormat('en-GB', {
-    day: 'numeric',
-    month: 'numeric',
-    year: 'numeric'
-  }).format(date);
-};
+const getValue = (item: TableItem, key: string | number | symbol): any => {
+  if (typeof key === 'string') {
+    return item[key];
+  }
+  return '';
+}
 
-const { hasPermission } = usePermissions()
+// const { hasPermission } = usePermissions()
 </script>

@@ -31,28 +31,60 @@
         <div v-if="filteredRequests.length === 0" class="text-center">
           <!-- no-data-message component -->
           <no-data-message :message="t('no_data.no_leave_requests_found')" icon="mdi:clipboard-text-outline" />
-        </div>
-
-        <!-- dynamic-table componenet -->
-        <dynamic-table :requests="filteredRequests" @view="openDetailsModal" @accept="handleChildAccept"
-          @reject="handleChildReject" v-else />
+        </div> <dynamic-table v-else :items="filteredRequests" :columns="tableColumns" :has-view="true"
+          @view="(item: LeaveRequest) => openDetailsModal(item)" />
       </div>
     </transition>
-
-    <!-- delete-dialog component -->
-    <!-- <delete-dialog :show="showDeleteDialog" :title="t('dashboard.confirm_delete_leave_request')"
-      :message="t('dashboard.delete_leave_request_message')" :confirm-text="t('btn.yes_delete')"
-      :cancel-text="t('btn.no_cancel')" :loading="deleteLoading" @close="closeDeleteDialog" @confirm="confirmDelete" /> -->
   </div>
 </template>
 
 <script lang="ts" setup>
 import type { LeaveRequest } from '@/types/leaveRequest'
-import { type TableHeader } from '@/components/shared/table-skeleton-loader.vue'
+import type { TableHeader } from '@/components/shared/table-skeleton-loader.vue'
+import type { Column } from '@/components/shared/dynamic-table.vue'
 
 const { t } = useI18n()
 const leaveStore = useLeaveRequestsStore()
 const { triggerToast } = useToast()
+
+const formatDate = (date: Date | null) => {
+  if (!date) return '';
+  return new Intl.DateTimeFormat('en-GB', {
+    day: 'numeric',
+    month: 'numeric',
+    year: 'numeric'
+  }).format(new Date(date));
+};
+
+const tableColumns = computed(() => {
+  const columns: Column<LeaveRequest>[] = [
+    {
+      key: 'index',
+      label: '#',
+      format: (row: LeaveRequest, index?: number) => String((index ?? 0) + 1)
+    },
+    {
+      key: 'dates',
+      label: t('dashboard.from_to'),
+      format: (request: LeaveRequest) => `${formatDate(request.startDate)} - ${formatDate(request.endDate)}`
+    },
+    {
+      key: 'manager',
+      label: t('dashboard.manager')
+    },
+    {
+      key: 'type',
+      label: t('dashboard.request_type'),
+      format: (request: LeaveRequest) => t(`form.${request.type}`)
+    },
+    {
+      key: 'status',
+      label: t('dashboard.status'),
+      format: (request: LeaveRequest) => t(`status.${request.status}`)
+    }
+  ];
+  return columns;
+})
 
 interface Tab {
   id: LeaveRequest['status'] | 'all'
@@ -94,43 +126,43 @@ const openDetailsModal = (request: LeaveRequest) => {
   navigateTo(`./leave-request/${request.id}`)
 }
 
-const handleChildAccept = async (requestId: string) => {
-  try {
-    await leaveStore.approveRequest(requestId);
-    const request = leaveStore.allRequests.find((r) => r.id === requestId);
-    if (request) request.status = 'approved';
-    triggerToast({
-      message: t('toast.leave_request_approved_successfully'),
-      type: 'success',
-      icon: 'mdi-check-circle',
-    });
-  } catch (error) {
-    triggerToast({
-      message: t('toast.failed_to_approve_leave_request'),
-      type: 'error',
-      icon: 'material-symbols:error-outline-rounded',
-    });
-  }
-};
+// const handleChildAccept = async (requestId: string) => {
+//   try {
+//     await leaveStore.approveRequest(requestId);
+//     const request = leaveStore.allRequests.find((r) => r.id === requestId);
+//     if (request) request.status = 'approved';
+//     triggerToast({
+//       message: t('toast.leave_request_approved_successfully'),
+//       type: 'success',
+//       icon: 'mdi-check-circle',
+//     });
+//   } catch (error) {
+//     triggerToast({
+//       message: t('toast.failed_to_approve_leave_request'),
+//       type: 'error',
+//       icon: 'material-symbols:error-outline-rounded',
+//     });
+//   }
+// };
 
-const handleChildReject = async ({ id, reason }: { id: string; reason: string }) => {
-  try {
-    await leaveStore.rejectRequest(id, reason);
-    const request = leaveStore.allRequests.find((r) => r.id === id);
-    if (request) request.status = 'rejected';
-    triggerToast({
-      message: t('toast.leave_request_rejected_successfully'),
-      type: 'success',
-      icon: 'mdi-check-circle',
-    });
-  } catch (error) {
-    triggerToast({
-      message: t('toast.failed_to_reject_leave_request'),
-      type: 'error',
-      icon: 'material-symbols:error-outline-rounded',
-    });
-  }
-};
+// const handleChildReject = async ({ id, reason }: { id: string; reason: string }) => {
+//   try {
+//     await leaveStore.rejectRequest(id, reason);
+//     const request = leaveStore.allRequests.find((r) => r.id === id);
+//     if (request) request.status = 'rejected';
+//     triggerToast({
+//       message: t('toast.leave_request_rejected_successfully'),
+//       type: 'success',
+//       icon: 'mdi-check-circle',
+//     });
+//   } catch (error) {
+//     triggerToast({
+//       message: t('toast.failed_to_reject_leave_request'),
+//       type: 'error',
+//       icon: 'material-symbols:error-outline-rounded',
+//     });
+//   }
+// };
 
 // Add skeleton headers configuration
 const skeletonHeaders = ref<TableHeader[]>([
