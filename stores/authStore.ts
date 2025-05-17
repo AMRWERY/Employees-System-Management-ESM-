@@ -128,7 +128,8 @@ export const useAuthStore = defineStore("auth", {
           const unsubscribe = auth.onAuthStateChanged(async (user) => {
             unsubscribe();
             if (user) {
-              await this.fetchUserData(user.uid);              sessionStorage.setItem(
+              await this.fetchUserData(user.uid);
+              sessionStorage.setItem(
                 "user",
                 JSON.stringify({
                   uid: user.uid,
@@ -206,9 +207,10 @@ export const useAuthStore = defineStore("auth", {
         }
         const roleDoc = snap.docs[0];
         const roleData = roleDoc.data();
-        const user = userCredential.user;        // Generate random 4-digit number for employee ID
+        const user = userCredential.user; // Generate random 4-digit number for employee ID
         const randomNum = Math.floor(1000 + Math.random() * 9000);
-        const employeeId = `ems-${randomNum}`;        const userData = {
+        const employeeId = `ems-${randomNum}`;
+        const userData = {
           uid: user.uid,
           email: user.email,
           firstName: firstName,
@@ -216,8 +218,9 @@ export const useAuthStore = defineStore("auth", {
           employeeId: employeeId,
           role: role || "employee",
           loginType: "email",
-          createdAt: new Date(),          roledId: roleDoc.id,
-          permissions: roleData.permissions
+          createdAt: new Date(),
+          roledId: roleDoc.id,
+          permissions: roleData.permissions,
         };
         await setDoc(doc(db, "ems-users", user.uid), {
           ...userData,
@@ -255,7 +258,8 @@ export const useAuthStore = defineStore("auth", {
         if (userDoc.exists()) {
           const userData = userDoc.data();
           this.role = userData?.role || "employee";
-          const saveUserData = {            uid: userData.uid,
+          const saveUserData = {
+            uid: userData.uid,
             email: userData.email,
             firstName: userData.firstName,
             lastName: userData.lastName,
