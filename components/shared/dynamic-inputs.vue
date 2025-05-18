@@ -39,7 +39,7 @@
 
       <!-- error messages -->
       <div class="mt-1">
-        <span class="font-medium text-red-600">{{ errors[name] }}</span>
+        <span class="text-red-500">{{ errors[name] }}</span>
       </div>
     </Form>
   </div>

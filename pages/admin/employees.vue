@@ -6,14 +6,22 @@
     <div class="flex items-center justify-between my-6 flex-nowrap">
       <p class="text-2xl font-semibold text-gray-700">{{ t('dashboard.employees') }}</p>
       <div class="flex items-center justify-center gap-4 ms-auto">
-        <!-- Search input -->
-        <div class="relative">
-          <input type="text" v-model="searchTerm" :placeholder="t('form.search_by_email')"
-            class="px-4 py-2 pr-10 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full" />
-          <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-            <icon name="heroicons-solid:magnifying-glass" class="w-5 h-5 text-gray-400" />
-          </div>
-        </div>
+
+        <!-- base-button component -->
+        <base-button :default-icon="false" @click="showAddDialog = true">
+          {{ t('btn.add_employee') }}
+        </base-button>
+
+        <!-- add-employee component -->
+        <add-employee v-model="showAddDialog" @save="handleSave" />
+      </div>
+    </div>
+    <!-- Search input -->
+    <div class="relative w-[300px]">
+      <input type="text" v-model="searchTerm" :placeholder="t('form.search_by_email')"
+        class="px-4 py-2 pe-10 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full" />
+      <div class="absolute inset-y-0 end-0 flex items-center pe-3 pointer-events-none">
+        <icon name="heroicons-solid:magnifying-glass" class="w-5 h-5 text-gray-400" />
       </div>
     </div>
 
@@ -198,6 +206,18 @@ const deleteEmployee = async (employee: Employee) => {
     }
   }
 }
+
+const showAddDialog = ref(false);
+
+const handleSave = async () => {
+  try {
+    // Your save logic
+    showAddDialog.value = false;
+    // triggerToast({...});
+  } catch (error) {
+    // Error handling
+  }
+};
 
 useHead({
   titleTemplate: () => t('head.employees'),
