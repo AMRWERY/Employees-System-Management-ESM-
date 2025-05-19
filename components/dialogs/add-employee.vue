@@ -53,10 +53,6 @@
           </div>
 
           <div class="border-t border-gray-300 pt-3 flex justify-end gap-4">
-            <!-- <button id="closeButton" type="button" @click="$emit('update:modelValue', false)"
-              class="px-4 py-2 rounded-lg text-slate-900 text-sm font-medium border-none outline-none tracking-wide bg-gray-200 hover:bg-gray-300 active:bg-gray-200">{{
-                t('btn.cancel') }}</button> -->
-
             <!-- base-button component -->
             <base-button :default-icon="false" type="submit" @click="$emit('save')">
               {{ t('btn.add') }}
