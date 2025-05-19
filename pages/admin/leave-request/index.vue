@@ -31,7 +31,8 @@
         <div v-if="filteredRequests.length === 0" class="text-center">
           <!-- no-data-message component -->
           <no-data-message :message="t('no_data.no_leave_requests_found')" icon="mdi:clipboard-text-outline" />
-        </div> <dynamic-table v-else :items="filteredRequests" :columns="tableColumns" :has-view="true"
+        </div>
+        <dynamic-table v-else :items="filteredRequests" :columns="tableColumns" :has-view="true"
           @view="(item: LeaveRequest) => openDetailsModal(item)" />
       </div>
     </transition>

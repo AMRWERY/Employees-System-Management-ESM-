@@ -68,15 +68,7 @@ export const useEmployeesStore = defineStore("employees", {
       const start = (this.currentPage - 1) * this.employeesPerPage;
       const end = this.currentPage * this.employeesPerPage;
       const filtered = this.filteredEmployees;
-      // console.log("Updating pagination:", {
-      //   start,
-      //   end,
-      //   totalFiltered: filtered.length,
-      //   currentPage: this.currentPage,
-      // });
       this.paginatedEmployees = filtered.slice(start, end);
-
-      // Adjust current page if we're past the last page
       const maxPage = Math.max(
         1,
         Math.ceil(filtered.length / this.employeesPerPage)

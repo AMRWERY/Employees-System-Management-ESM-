@@ -46,7 +46,12 @@
     "delete_employee_title": "Are you sure you want to delete this?",
     "delete_employee_confirmation_01": "You are about to delete {name}",
     "delete_employee_confirmation_02": "This action cannot be undone.",
-    "add_employee": "Add employee"
+    "add_employee": "Add employee",
+    "teams": "Teams / Derpartments",
+    "add_team": "Add team / derpartments",
+    "name": "Name",
+    "department_id": "Department ID",
+    "lead_id": "Lead ID"
   },
   "btn": {
     "go_back_home": "Go back Home",
@@ -67,7 +72,8 @@
     "confirm_rejection": "Confirm rejection",
     "withdraw_request": "Withdraw request",
     "add_employee": "Add employee",
-    "add": "Add"
+    "add": "Add",
+    "add_team": "Add team"
   },
   "form": {
     "sign_in": "Sign in",
@@ -139,7 +145,11 @@
     "enter_email": "Enter email address",
     "enter_password": "Enter password",
     "teams": "Teams / Derpartments",
-    "select_team": "Select team/derpartment"
+    "select_team": "Select team/derpartment",
+    "department_name": "Department name",
+    "enter_department_name": "Enter department name",
+    "description": "Description",
+    "enter_description": "Enter department short description here"
   },
   "head": {
     "sign_in": "Sign in",
@@ -148,7 +158,8 @@
     "my_attendance": "My Attendance",
     "my_leave_requests": "My Leave Requests",
     "leave_management": "Leave Management",
-    "employees": "Employees"
+    "employees": "Employees",
+    "teams": "Teams / Derpartments"
   },
   "error_page": {
     "you_are_all_alone_here": "You are all alone here 😁"
@@ -183,7 +194,10 @@
     "employee_blocked": "Employee blocked",
     "failed_to_toggle_block": "Failed to toggle block",
     "employee_deleted": "Employee deleted",
-    "failed_to_delete_employee": "Failed to delete employee"
+    "failed_to_delete_employee": "Failed to delete employee",
+    "failed_to_load_teams": "Failed to load derpartments",
+    "team_added_successfully": "Department added successfully",
+    "failed_to_add_team": "Failed to add department"
   },
   "status": {
     "all": "All",
@@ -196,12 +210,14 @@
   },
   "no_data": {
     "no_leave_requests_found": "No leave requests found",
-    "no_employees_found": "No employees found"
+    "no_employees_found": "No employees found",
+    "no_teams_found": "No teams / departments found"
   },
   "breadcrumb": {
     "home": "Home",
     "admin_leave_request": "Leave Management",
-    "admin_employees": "Employees"
+    "admin_employees": "Employees",
+    "admin_teams": "Teams / Derpartments"
   },
   "days": {
     "mon": "Mon",
