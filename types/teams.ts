@@ -8,13 +8,26 @@ export interface Teams {
   createdAt: Date;
 }
 
+export interface Member {
+  id: string;
+  employeeId: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  position: string;
+  teamId: string;
+  departmentId: string;
+  isBlocked: boolean;
+  createdAt?: Date;
+}
+
 export interface TeamState {
   teams: Teams[];
   paginatedTeams: Teams[];
   currentPage: number;
   teamsPerPage: number;
   currentTeam: any | null;
-  members: any[];
+  members: Member[];
   loading: boolean;
   error: string;
   searchTeamsByName: string;

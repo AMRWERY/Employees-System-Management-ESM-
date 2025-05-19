@@ -174,10 +174,6 @@ const formatTime = (date: Date | undefined) => {
   return useDateFormat(date, 'HH:mm a').value;
 };
 
-// const formatDate = (date: Date) => {
-//   return useDateFormat(date, 'dd MMM', { locales: dayLocale }).value;
-// };
-
 const formatDuration = (totalSeconds: number) => {
   const hours = Math.floor(totalSeconds / 3600);
   const minutes = Math.floor((totalSeconds % 3600) / 60);

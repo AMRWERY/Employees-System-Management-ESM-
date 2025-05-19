@@ -1,7 +1,6 @@
 import {
   collection,
   doc,
-  getDoc,
   addDoc,
   updateDoc,
   onSnapshot,
@@ -10,7 +9,7 @@ import {
   serverTimestamp,
 } from "firebase/firestore";
 import { db, auth } from "@/firebase";
-import type { Teams, TeamState } from "@/types/teams";
+import type { Teams, TeamState, Member } from "@/types/teams";
 
 const generateIdFromName = (name: string) => {
   return name
@@ -31,6 +30,7 @@ export const useTeamStore = defineStore("teams", {
     loading: false,
     error: "",
     searchTeamsByName: "",
+    unsubscribeListeners: [] as (() => void)[],
   }),
 
   actions: {
@@ -61,26 +61,34 @@ export const useTeamStore = defineStore("teams", {
       );
     },
 
-    async fetchOne(teamId: string) {
+    async fetchUsersByDepartment(departmentId: string) {
       this.loading = true;
-      const teamRef = doc(db, "ems-teams", teamId);
-      const teamSnap = await getDoc(teamRef);
-      this.currentTeam = { id: teamSnap.id, ...teamSnap.data() };
-      const q = query(
-        collection(db, "ems-users"),
-        where("teamId", "==", teamId)
-      );
-      onSnapshot(
-        q,
-        (snap) => {
-          this.members = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+      try {
+        const q = query(
+          collection(db, "ems-users"),
+          where("departmentId", "==", departmentId)
+        );
+        const unsubscribe = onSnapshot(q, (snap) => {
+          this.members = snap.docs.map(
+            (d) =>
+              ({
+                id: d.id,
+                firstName: d.data().firstName,
+                lastName: d.data().lastName,
+                email: d.data().email,
+                position: d.data().position,
+                employeeId: d.data().employeeId,
+                departmentId: d.data().departmentId,
+                isBlocked: d.data().isBlocked,
+              } as Member)
+          );
           this.loading = false;
-        },
-        (err) => {
-          this.error = err.message;
-          this.loading = false;
-        }
-      );
+        });
+        this.unsubscribeListeners.push(unsubscribe);
+      } catch (err) {
+        this.error = (err as Error).message;
+        this.loading = false;
+      }
     },
 
     async createTeam(teamData: { name: string; description?: string }) {

@@ -24,6 +24,7 @@
     </ul>
     <transition name="fade-slide" mode="out-in">
       <div v-if="loading" key="skeleton">
+        <!-- table-skeleton-loader component -->
         <table-skeleton-loader :headers="skeletonHeaders" :rows="5" />
       </div>
 
@@ -32,6 +33,8 @@
           <!-- no-data-message component -->
           <no-data-message :message="t('no_data.no_leave_requests_found')" icon="mdi:clipboard-text-outline" />
         </div>
+
+        <!-- dynamic-table component -->
         <dynamic-table v-else :items="filteredRequests" :columns="tableColumns" :has-view="true"
           @view="(item: LeaveRequest) => openDetailsModal(item)" />
       </div>
@@ -48,14 +51,7 @@ const { t } = useI18n()
 const leaveStore = useLeaveRequestsStore()
 const { triggerToast } = useToast()
 
-const formatDate = (date: Date | null) => {
-  if (!date) return '';
-  return new Intl.DateTimeFormat('en-GB', {
-    day: 'numeric',
-    month: 'numeric',
-    year: 'numeric'
-  }).format(new Date(date));
-};
+const { formatDate } = useDateFormat();
 
 const tableColumns = computed(() => {
   const columns: Column<LeaveRequest>[] = [
