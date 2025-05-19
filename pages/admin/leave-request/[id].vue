@@ -147,13 +147,7 @@ const statusClasses = {
   cancelled: 'text-gray-600 bg-gray-100 hover:bg-gray-200'
 }
 
-const formatDate = (date: Date) => {
-  return new Intl.DateTimeFormat('en-GB', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  }).format(date)
-}
+const { formatDate } = useDateFormat();
 
 const { hasPermission } = usePermissions()
 

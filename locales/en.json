@@ -51,7 +51,8 @@
     "add_team": "Add team / derpartments",
     "name": "Name",
     "department_id": "Department ID",
-    "lead_id": "Lead ID"
+    "lead_id": "Lead ID",
+    "position": "Position"
   },
   "btn": {
     "go_back_home": "Go back Home",

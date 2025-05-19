@@ -49,14 +49,7 @@ const leaveStore = useLeaveRequestsStore()
 const { triggerToast } = useToast()
 const loading = ref(true)
 
-const formatDate = (date: Date | null) => {
-  if (!date) return '';
-  return new Intl.DateTimeFormat('en-GB', {
-    day: 'numeric',
-    month: 'numeric',
-    year: 'numeric'
-  }).format(new Date(date));
-};
+const { formatDate } = useDateFormat();
 
 const tableColumns = computed(() => {
   const columns: Column<LeaveRequest>[] = [

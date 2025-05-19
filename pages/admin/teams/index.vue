@@ -26,7 +26,7 @@
         <no-data-message :message="t('no_data.no_teams_found')" icon="fluent:people-team-20-filled" />
       </div>
 
-      <dynamic-table v-else :items="paginatedTeams" :columns="tableColumns" :has-view="true" />
+      <dynamic-table v-else :items="paginatedTeams" :columns="tableColumns" :has-view="true" @view="viewTeam" />
     </div>
   </div>
 </template>
@@ -44,15 +44,6 @@ const {
   // currentPage,
   // totalPages
 } = storeToRefs(teamsStore)
-
-const formatDate = (date: Date | null) => {
-  if (!date) return '';
-  return new Intl.DateTimeFormat('en-GB', {
-    day: 'numeric',
-    month: 'numeric',
-    year: 'numeric'
-  }).format(new Date(date));
-};
 
 const tableColumns = computed(() => {
   const columns: Column<Teams>[] = [
@@ -104,6 +95,12 @@ onMounted(async () => {
     loading.value = false
   }
 })
+
+const router = useRouter();
+
+const viewTeam = (team: Teams) => {
+  router.push(`/admin/teams/${team.departmentId}`);
+};
 
 // Add skeleton headers configuration
 const skeletonHeaders = ref<TableHeader[]>([
