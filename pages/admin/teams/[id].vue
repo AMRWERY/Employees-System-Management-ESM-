@@ -13,7 +13,14 @@
     <div class="relative w-[300px] mb-4">
       <input type="text" v-model="searchTerm" :placeholder="t('form.search_by_email')"
         class="px-4 py-2 pe-10 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full" />
+      <div class="absolute inset-y-0 end-0 flex items-center pe-3 pointer-events-none">
+        <icon name="heroicons-solid:magnifying-glass" class="w-5 h-5 text-gray-400" />
+      </div>
     </div>
+    <!-- <div class="relative w-[300px] mb-4">
+      <input type="text" v-model="searchTerm" :placeholder="t('form.search_by_email')"
+        class="px-4 py-2 pe-10 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full" />
+    </div> -->
 
     <div v-if="loading" key="skeleton">
       <!-- table-skeleton-loader component -->
@@ -22,7 +29,7 @@
 
     <div v-else>
       <!-- dynamic-table component -->
-      <dynamic-table v-if="employees.length > 0" :items="filteredEmployees" :columns="tableColumns" :has-view="true" />
+      <dynamic-table v-if="employees.length > 0" :items="filteredEmployees" :columns="tableColumns" :has-view="true" @view="viewEmployeeDetails" />
 
       <div v-else class="text-center">
         <!-- no-data-message component -->
@@ -143,6 +150,11 @@ const skeletonHeaders = ref<TableHeader[]>([
 ])
 
 const route = useRoute()
+const router = useRouter();
+
+const viewEmployeeDetails = (member: Member) => {
+  router.push(`/admin/teams/employees/${member.id}`);
+};
 
 watch(searchTerm, (value: string) => {
   teamsStore.setSearchTerm(value)

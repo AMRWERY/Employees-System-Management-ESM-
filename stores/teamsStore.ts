@@ -1,6 +1,7 @@
 import {
   collection,
   doc,
+  getDoc,
   addDoc,
   updateDoc,
   onSnapshot,
@@ -80,6 +81,8 @@ export const useTeamStore = defineStore("teams", {
                 employeeId: d.data().employeeId,
                 departmentId: d.data().departmentId,
                 isBlocked: d.data().isBlocked,
+                role: d.data().role,
+                createdAt: d.data().createdAt?.toDate(),
               } as Member)
           );
           this.loading = false;
@@ -87,6 +90,40 @@ export const useTeamStore = defineStore("teams", {
         this.unsubscribeListeners.push(unsubscribe);
       } catch (err) {
         this.error = (err as Error).message;
+        this.loading = false;
+      }
+    },
+
+    async fetchEmployeeById(employeeId: string): Promise<Member | null> {
+      this.loading = true;
+      try {
+        // Check existing members first
+        const existing = this.members.find((m) => m.id === employeeId);
+        if (existing) return existing;
+        // Fetch from Firestore
+        const docRef = doc(db, "ems-users", employeeId);
+        const docSnap = await getDoc(docRef);
+        if (!docSnap.exists()) return null;
+        const data = docSnap.data();
+        const employee = {
+          id: docSnap.id,
+          firstName: data.firstName,
+          lastName: data.lastName,
+          email: data.email,
+          position: data.position,
+          employeeId: data.employeeId,
+          departmentId: data.departmentId,
+          isBlocked: data.isBlocked,
+          createdAt: data.createdAt?.toDate(),
+          role: data.role,
+        } as Member;
+        // Add to members array
+        this.members.push(employee);
+        return employee;
+      } catch (error) {
+        console.error("Error fetching employee:", error);
+        return null;
+      } finally {
         this.loading = false;
       }
     },
@@ -173,6 +210,13 @@ export const useTeamStore = defineStore("teams", {
         const name = team.name?.toLowerCase() || "";
         return name.includes(state.searchTeamsByName);
       });
+    },
+
+    getDepartmentName: (state) => (departmentId: string) => {
+      const department = state.teams.find(
+        (team) => team.departmentId === departmentId
+      );
+      return department?.name || "Unknown Department";
     },
   },
 });
