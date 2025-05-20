@@ -19,6 +19,7 @@ export interface Member {
   departmentId: string;
   isBlocked: boolean;
   createdAt?: Date;
+  role: string
 }
 
 export interface TeamState {
