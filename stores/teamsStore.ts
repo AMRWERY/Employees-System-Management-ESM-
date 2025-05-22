@@ -8,6 +8,7 @@ import {
   query,
   where,
   serverTimestamp,
+  runTransaction
 } from "firebase/firestore";
 import { db, auth } from "@/firebase";
 import type { Teams, TeamState, Member } from "@/types/teams";
@@ -153,14 +154,62 @@ export const useTeamStore = defineStore("teams", {
       // If you also update users’ teamId fields, do so here or via Cloud Function
     },
 
-    async addMember(teamId: string, userId: string) {
-      const teamRef = doc(db, "ems-teams", teamId);
-      await updateDoc(teamRef, {
-        memberIds: [...this.currentTeam.memberIds, userId],
-      });
-      // optional: update user doc
-      await updateDoc(doc(db, "ems-users", userId), { teamId });
-    },
+    // async addMember(teamId: string, employeeId: string) {
+    //   try {
+    //     const teamRef = doc(db, "ems-teams", teamId);
+    //     const teamSnap = await getDoc(teamRef);
+    //     if (!teamSnap.exists()) {
+    //       throw new Error("Team not found");
+    //     }
+    //     const teamData = teamSnap.data();
+    //     const currentMembers = teamData?.memberIds || [];
+    //     // Prevent duplicates
+    //     if (!currentMembers.includes(employeeId)) {
+    //       await updateDoc(teamRef, {
+    //         memberIds: [...currentMembers, employeeId],
+    //       });
+    //     }
+    //     // Update employee document
+    //     await updateDoc(doc(db, "ems-users", employeeId), {
+    //       teamId: teamId,
+    //     });
+    //   } catch (error) {
+    //     console.error("Error adding team member:", error);
+    //     throw error;
+    //   }
+    // },
+    async addMember(teamId: string, employeeUID: string) {
+  const teamRef = doc(db, "ems-teams", teamId);
+  try {
+    // Using transaction for atomic update
+    await runTransaction(db, async (transaction) => {
+      const teamDoc = await transaction.get(teamRef);
+      if (!teamDoc.exists()) throw new Error("Team not found");
+      const currentMembers = teamDoc.data()?.memberIds || [];
+      if (!currentMembers.includes(employeeUID)) {
+        transaction.update(teamRef, {
+          memberIds: [...currentMembers, employeeUID]
+        });
+      }
+    });
+    // Update employee's team reference
+    await updateDoc(doc(db, "ems-users", employeeUID), {
+      teamId: teamId
+    });
+  } catch (error) {
+    console.error("Error adding team member:", error);
+    throw error;
+  }
+},
+    
+    // async addMember(teamId: string, userId: string) {
+    //   const teamRef = doc(db, "ems-teams", teamId);
+    //   await updateDoc(teamRef, {
+    //     memberIds: [...this.currentTeam.memberIds, userId],
+    //   });
+    //   // optional: update user doc
+    //   await updateDoc(doc(db, "ems-users", userId), { teamId });
+    // },
 
     async removeMember(teamId: string, userId: string) {
       const teamRef = doc(db, "ems-teams", teamId);

@@ -1,13 +1,17 @@
-import { db } from "@/firebase";
+import { db, auth } from "@/firebase";
 import {
   collection,
   deleteDoc,
   doc,
+  getDoc,
+  setDoc,
+  serverTimestamp,
   updateDoc,
   getDocs,
   query,
   where,
 } from "firebase/firestore";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 import type { DocumentData, QueryDocumentSnapshot } from "firebase/firestore";
 import type { Employee, EmployeeState } from "@/types/employee";
 
@@ -23,18 +27,12 @@ export const useEmployeesStore = defineStore("employees", {
 
   actions: {
     async fetchEmployees(): Promise<void> {
-      // console.log("Fetching employees...");
       const employeesQuery = query(
         collection(db, "ems-users"),
         where("role", "==", "employee")
       );
       try {
         const querySnapshot = await getDocs(employeesQuery);
-        // console.log(
-        //   "Got snapshot with",
-        //   querySnapshot.docs.length,
-        //   "documents"
-        // );
         this.employees = querySnapshot.docs.map(
           (doc: QueryDocumentSnapshot<DocumentData>) => {
             const data = doc.data();
@@ -48,6 +46,7 @@ export const useEmployeesStore = defineStore("employees", {
               permissions: data.permissions || {},
               roledId: data.roledId || null,
               isBlocked: data.isBlocked,
+              position: data.position,
               ...data,
             } satisfies Employee;
           }
@@ -55,12 +54,115 @@ export const useEmployeesStore = defineStore("employees", {
         this.employees = this.employees.filter(
           (user) => user.email !== "test-admin@ems.com"
         );
-        // console.log("Filtered employees:", this.employees.length);
         this.updatePagination();
-        // console.log("Updated pagination:", this.paginatedEmployees.length);
       } catch (error) {
-        // console.error("Error fetching employees:", error);
         throw error;
+      }
+    },
+
+    async createEmployee(employeeData: {
+      firstName: string;
+      lastName: string;
+      email: string;
+      password: string;
+      teamId?: string;
+      position?: string;
+    }) {
+      let userCredential: Awaited<
+        ReturnType<typeof createUserWithEmailAndPassword>
+      > | null = null;
+      try {
+        // console.log("Starting employee creation process");
+        userCredential = await createUserWithEmailAndPassword(
+          auth,
+          employeeData.email,
+          employeeData.password
+        );
+        // console.log("Auth user created successfully", userCredential.user.uid);
+        const rolesStore = useRolesStore();
+        await rolesStore.fetchRoles();
+        const employeeRole = rolesStore.roles.find(
+          (r) => r.name === "employee"
+        );
+        if (!employeeRole) {
+          // console.error("Employee role not found");
+          throw new Error("Employee role not configured");
+        }
+        // console.log("Found employee role", employeeRole.id);
+        const employeeId = `ems-${Math.floor(1000 + Math.random() * 9000)}`;
+        // console.log("Generated employee ID", employeeId);
+        const userData = {
+          uid: userCredential.user.uid,
+          employeeId: employeeId,
+          firstName: employeeData.firstName,
+          lastName: employeeData.lastName,
+          email: employeeData.email,
+          position: employeeData.position || "Employee",
+          role: "employee",
+          roledId: employeeRole.id,
+          permissions: employeeRole.permissions || {},
+          isBlocked: false,
+          loginType: "email",
+          createdAt: serverTimestamp(),
+        };
+        // console.log(
+        //   "Attempting to create user document",
+        //   userCredential.user.uid
+        // );
+        await setDoc(doc(db, "ems-users", userCredential.user.uid), userData);
+        // console.log("User document created successfully");
+        if (employeeData.teamId) {
+          try {
+            // console.log("Attempting to add user to team", employeeData.teamId);
+            const teamRef = doc(db, "ems-teams", employeeData.teamId);
+            const teamDoc = await getDoc(teamRef);
+            if (teamDoc.exists()) {
+              const memberIds = teamDoc.data().memberIds || [];
+              await updateDoc(teamRef, {
+                memberIds: [...memberIds, userCredential.user.uid],
+              });
+              // console.log("User added to team successfully");
+            } else {
+              console.warn("Team not found, skipping team assignment");
+            }
+          } catch (teamError) {
+            console.error("Error adding user to team:", teamError);
+            // Continue even if team assignment fails
+          }
+        }
+        await this.fetchEmployees();
+        // console.log("Employee creation completed successfully");
+        return userCredential.user.uid;
+      } catch (error) {
+        console.error("Employee creation failed:", error);
+        // If we failed after creating the auth user, try to clean up
+        if (userCredential?.user) {
+          try {
+            // console.log("Attempting to delete auth user after error");
+            await userCredential.user.delete();
+            // console.log("Auth user deleted successfully");
+          } catch (deleteError) {
+            console.error(
+              "Failed to clean up auth user after error:",
+              deleteError
+            );
+          }
+        }
+        throw error;
+      }
+    },
+
+    async getDepartmentForTeam(teamId?: string): Promise<string> {
+      if (!teamId) return "";
+      try {
+        const teamDoc = await getDoc(doc(db, "ems-teams", teamId));
+        if (!teamDoc.exists()) throw new Error("Team not found");
+        const departmentId = teamDoc.data().departmentId;
+        if (!departmentId) throw new Error("Selected team has no department");
+        return departmentId;
+      } catch (error) {
+        console.error("Error fetching team department:", error);
+        return "";
       }
     },
 

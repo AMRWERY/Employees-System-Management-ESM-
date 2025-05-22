@@ -150,7 +150,9 @@
     "department_name": "Department name",
     "enter_department_name": "Enter department name",
     "description": "Description",
-    "enter_description": "Enter department short description here"
+    "enter_description": "Enter department short description here",
+    "position": "Position",
+    "enter_position": "Enter position"
   },
   "head": {
     "sign_in": "Sign in",

@@ -5,7 +5,7 @@
         class="fixed inset-0 p-4 flex flex-wrap justify-end items-end w-full h-full z-[1000] before:fixed before:inset-0 before:w-full before:h-full before:bg-[rgba(0,0,0,0.5)] overflow-auto">
         <div class="w-full max-w-lg bg-white shadow-lg rounded-lg p-6 relative">
           <div class="flex items-center pb-3 border-b border-gray-300">
-            <h3 class="text-slate-900 text-xl font-semibold flex-1">{{ t('dashboard.add_employee') }}</h3>
+            <h3 class="text-slate-900 text-xl font-semibold flex-1 capitalize">{{ t('dashboard.add_employee') }}</h3>
             <icon name="material-symbols:close-small-rounded"
               class="ms-2 cursor-pointer shrink-0 text-gray-400 hover:text-gray-500"
               @click="$emit('update:modelValue', false)" />
@@ -14,38 +14,47 @@
           <div class="my-3 overflow-y-auto h-[calc(408px-88px)] hide-scrollbar">
             <ClientOnly>
               <div class="grid col-span-1 sm:grid-cols-6 gap-x-6 space-y-2">
-                <div class="col-span-full">
+                <!-- <div class="col-span-full">
                   <dynamic-inputs :label="t('form.employee_id')" :name="t('form.employee_id')" :disabled="true"
                     readonly />
-                </div>
+                </div> -->
 
                 <div class="col-span-full">
                   <dynamic-inputs :label="t('form.first_name')" :placeholder="t('form.enter_first_name')" type="text"
-                    :name="t('form.first_name')" :rules="'required|alpha_spaces'" :required="true" />
+                    :name="t('form.first_name')" :rules="'required|alpha_spaces'" :required="true"
+                    v-model="formValues.firstName" />
                 </div>
 
                 <div class="col-span-full">
                   <dynamic-inputs :label="t('form.last_name')" :placeholder="t('form.enter_last_name')" type="text"
-                    :name="t('form.last_name')" :rules="'required|alpha_spaces'" :required="true" />
+                    :name="t('form.last_name')" :rules="'required|alpha_spaces'" :required="true"
+                    v-model="formValues.lastName" />
                 </div>
 
                 <div class="col-span-full">
                   <dynamic-inputs :label="t('form.email')" :placeholder="t('form.enter_email')" type="email"
-                    :name="t('form.email')" :rules="'required|email'" :required="true" />
+                    :name="t('form.email')" :rules="'required|email'" :required="true" v-model="formValues.email" />
                 </div>
 
                 <div class="col-span-full">
                   <dynamic-inputs :label="t('form.password')" :placeholder="t('form.enter_password')" type="password"
-                    :name="t('form.password')" :rules="'required|minLength:7'" :required="true" />
+                    :name="t('form.password')" :rules="'required|minLength:7'" :required="true"
+                    v-model="formValues.password" />
+                </div>
+
+                <div class="col-span-full">
+                  <dynamic-inputs :label="t('form.position')" :placeholder="t('form.enter_position')" type="text"
+                    :name="t('form.position')" v-model="formValues.position" />
                 </div>
 
                 <div class="col-span-full">
                   <label class="block text-sm font-medium text-gray-700 mb-1">{{ t('form.teams') }}</label>
-                  <select
+                  <select v-model="selectedTeam"
                     class="w-full px-3 py-2 transition duration-300 border rounded-md shadow-sm placeholder:text-slate-400 text-slate-700 focus:outline-none focus:border-slate-400 hover:border-slate-300 focus:shadow">
                     <option value="" disabled>{{ t('form.select_team') }}</option>
-                    <option value="team 1">team 1</option>
-                    <option value="team 2">team 2</option>
+                    <option v-for="team in teamsStore.teams" :key="team.id" :value="team.id">
+                      {{ team.name }}
+                    </option>
                   </select>
                 </div>
               </div>
@@ -54,7 +63,7 @@
 
           <div class="border-t border-gray-300 pt-3 flex justify-end gap-4">
             <!-- base-button component -->
-            <base-button :default-icon="false" type="submit" @click="$emit('save')">
+            <base-button :default-icon="false" type="submit" @click="handleSubmit">
               {{ t('btn.add') }}
             </base-button>
           </div>
@@ -66,12 +75,58 @@
 
 <script lang="ts" setup>
 const { t } = useI18n()
-defineProps({
+
+const props = defineProps({
   modelValue: {
     type: Boolean,
     required: true
   }
 });
 
-defineEmits(['update:modelValue', 'save']);
+const emit = defineEmits(['update:modelValue', 'save']);
+
+const teamsStore = useTeamStore()
+const employeesStore = useEmployeesStore();
+const selectedTeam = ref('')
+
+watch(() => props.modelValue, async (newVal) => {
+  if (newVal && teamsStore.teams.length === 0) {
+    await teamsStore.fetchAll()
+  }
+})
+
+const formValues = reactive({
+  firstName: '',
+  lastName: '',
+  email: '',
+  password: '',
+  position: '',
+});
+
+const handleSubmit = async () => {
+  try {
+    // Save the current user from sessionStorage before creating a new employee
+    const currentUser = sessionStorage.getItem('user');
+    
+    await employeesStore.createEmployee({
+      firstName: formValues.firstName,
+      lastName: formValues.lastName,
+      email: formValues.email,
+      password: formValues.password,
+      position: formValues.position,
+      teamId: selectedTeam.value,
+    });
+    
+    // Restore the original user in sessionStorage to prevent the new employee from becoming the active user
+    if (currentUser) {
+      sessionStorage.setItem('user', currentUser);
+    }
+    
+    emit('update:modelValue', false);
+    emit('save');
+  } catch (error) {
+    console.error("Error creating employee:", error);
+    // Handle error
+  }
+};
 </script>

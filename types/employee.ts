@@ -4,6 +4,8 @@ export interface Employee {
   firstName?: string;
   lastName?: string;
   employeeId?: string;
+  departmentId?: string;
+  position: string;
   role?: string;
   permissions: Record<string, Record<string, boolean>>;
   roledId: string | null;
