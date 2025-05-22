@@ -63,8 +63,9 @@
 
           <div class="border-t border-gray-300 pt-3 flex justify-end gap-4">
             <!-- base-button component -->
-            <base-button :default-icon="false" type="submit" @click="handleSubmit">
-              {{ t('btn.add') }}
+            <base-button :default-icon="false" type="submit" :disabled="loading" @click="handleSubmit">
+              <icon name="svg-spinners:90-ring-with-bg" v-if="loading" />
+              <span v-else>{{ t('btn.add') }}</span>
             </base-button>
           </div>
         </div>
@@ -75,6 +76,8 @@
 
 <script lang="ts" setup>
 const { t } = useI18n()
+const { triggerToast } = useToast()
+const loading = ref(false)
 
 const props = defineProps({
   modelValue: {
@@ -105,9 +108,9 @@ const formValues = reactive({
 
 const handleSubmit = async () => {
   try {
+    loading.value = true
     // Save the current user from sessionStorage before creating a new employee
     const currentUser = sessionStorage.getItem('user');
-    
     await employeesStore.createEmployee({
       firstName: formValues.firstName,
       lastName: formValues.lastName,
@@ -116,17 +119,25 @@ const handleSubmit = async () => {
       position: formValues.position,
       teamId: selectedTeam.value,
     });
-    
     // Restore the original user in sessionStorage to prevent the new employee from becoming the active user
     if (currentUser) {
       sessionStorage.setItem('user', currentUser);
     }
-    
     emit('update:modelValue', false);
     emit('save');
+    triggerToast({
+      message: t('toast.employee_added_successfully'),
+      type: 'success',
+      icon: 'mdi-check-circle',
+    })
   } catch (error) {
-    console.error("Error creating employee:", error);
-    // Handle error
+    triggerToast({
+      message: t('toast.failed_to_add_employee'),
+      type: 'error',
+      icon: 'material-symbols:error-outline-rounded',
+    })
+  } finally {
+    loading.value = false
   }
 };
 </script>

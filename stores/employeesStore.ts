@@ -72,25 +72,20 @@ export const useEmployeesStore = defineStore("employees", {
         ReturnType<typeof createUserWithEmailAndPassword>
       > | null = null;
       try {
-        // console.log("Starting employee creation process");
         userCredential = await createUserWithEmailAndPassword(
           auth,
           employeeData.email,
           employeeData.password
         );
-        // console.log("Auth user created successfully", userCredential.user.uid);
         const rolesStore = useRolesStore();
         await rolesStore.fetchRoles();
         const employeeRole = rolesStore.roles.find(
           (r) => r.name === "employee"
         );
         if (!employeeRole) {
-          // console.error("Employee role not found");
           throw new Error("Employee role not configured");
         }
-        // console.log("Found employee role", employeeRole.id);
         const employeeId = `ems-${Math.floor(1000 + Math.random() * 9000)}`;
-        // console.log("Generated employee ID", employeeId);
         const userData = {
           uid: userCredential.user.uid,
           employeeId: employeeId,
@@ -105,15 +100,9 @@ export const useEmployeesStore = defineStore("employees", {
           loginType: "email",
           createdAt: serverTimestamp(),
         };
-        // console.log(
-        //   "Attempting to create user document",
-        //   userCredential.user.uid
-        // );
         await setDoc(doc(db, "ems-users", userCredential.user.uid), userData);
-        // console.log("User document created successfully");
         if (employeeData.teamId) {
           try {
-            // console.log("Attempting to add user to team", employeeData.teamId);
             const teamRef = doc(db, "ems-teams", employeeData.teamId);
             const teamDoc = await getDoc(teamRef);
             if (teamDoc.exists()) {
@@ -121,7 +110,6 @@ export const useEmployeesStore = defineStore("employees", {
               await updateDoc(teamRef, {
                 memberIds: [...memberIds, userCredential.user.uid],
               });
-              // console.log("User added to team successfully");
             } else {
               console.warn("Team not found, skipping team assignment");
             }
