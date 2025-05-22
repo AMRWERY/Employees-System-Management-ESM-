@@ -2,15 +2,16 @@ import {
   collection,
   doc,
   getDoc,
+  getDocs,
   addDoc,
   updateDoc,
   onSnapshot,
   query,
   where,
   serverTimestamp,
-  runTransaction
+  runTransaction,
 } from "firebase/firestore";
-import { db, auth } from "@/firebase";
+import { db } from "@/firebase";
 import type { Teams, TeamState, Member } from "@/types/teams";
 
 const generateIdFromName = (name: string) => {
@@ -65,31 +66,159 @@ export const useTeamStore = defineStore("teams", {
 
     async fetchUsersByDepartment(departmentId: string) {
       this.loading = true;
+      // console.log("fetchUsersByDepartment called with ID:", departmentId);
       try {
+        if (departmentId.startsWith("dept-")) {
+          // console.log("This is a department ID");
+          // console.log("Fetching teams for department:", departmentId);
+          const teamsQuery = query(
+            collection(db, "ems-teams"),
+            where("departmentId", "==", departmentId)
+          );
+          const teamsSnapshot = await getDocs(teamsQuery);
+          // console.log("Teams in department:", teamsSnapshot.docs.length);
+          if (teamsSnapshot.empty) {
+            // console.log("No teams found in this department");
+            this.members = [];
+            this.loading = false;
+            return;
+          }
+          // Get all member IDs from all teams in this department
+          let allMemberIds: string[] = [];
+          teamsSnapshot.forEach((teamDoc) => {
+            const teamData = teamDoc.data();
+            // console.log("Team:", teamDoc.id, "data:", teamData);
+            const memberIds = teamData.memberIds || [];
+            // console.log("Team members:", memberIds);
+            allMemberIds = [...allMemberIds, ...memberIds];
+          });
+          // Remove duplicates (in case an employee is in multiple teams)
+          allMemberIds = [...new Set(allMemberIds)];
+          // console.log("All unique member IDs:", allMemberIds);
+          if (allMemberIds.length === 0) {
+            // console.log("No members in any teams in this department");
+            this.members = [];
+            this.loading = false;
+            return;
+          }
+          // Fetch all users who are members of teams in this department
+          const memberPromises = allMemberIds.map((id: string) => {
+            // console.log("Fetching member with ID:", id);
+            return getDoc(doc(db, "ems-users", id));
+          });
+          const memberDocs = await Promise.all(memberPromises);
+          // console.log("Retrieved member documents:", memberDocs.length);
+          const existingDocs = memberDocs.filter((doc) => doc.exists());
+          // console.log("Existing member documents:", existingDocs.length);
+          this.members = existingDocs.map((doc) => {
+            const data = doc.data();
+            // console.log("Member data for ID", doc.id, ":", data);
+            return {
+              id: doc.id,
+              firstName: data.firstName,
+              lastName: data.lastName,
+              email: data.email,
+              position: data.position,
+              employeeId: data.employeeId,
+              departmentId: data.departmentId,
+              teamId: data.teamId,
+              isBlocked: data.isBlocked,
+              role: data.role,
+              createdAt: data.createdAt?.toDate(),
+            } as Member;
+          });
+          // console.log("Final members array:", this.members);
+          this.loading = false;
+          return;
+        } else {
+          // This might be a direct team ID
+          // console.log("Checking if this is a team ID...");
+          const teamRef = doc(db, "ems-teams", departmentId);
+          const teamDoc = await getDoc(teamRef);
+          if (teamDoc.exists()) {
+            // console.log("Found team document:", teamDoc.id);
+            const teamData = teamDoc.data();
+            // console.log("Team data:", teamData);
+            // Get memberIds from team document
+            const memberIds = teamData.memberIds || [];
+            // console.log("Team memberIds:", memberIds);
+            if (memberIds.length === 0) {
+              // console.log("No members in this team");
+              this.members = [];
+              this.loading = false;
+              return;
+            }
+            // Fetch members using the memberIds
+            // console.log("Fetching member documents for IDs:", memberIds);
+            const memberPromises = memberIds.map((id: string) => {
+              // console.log("Fetching member with ID:", id);
+              return getDoc(doc(db, "ems-users", id));
+            });
+            const memberDocs = await Promise.all(memberPromises);
+            // console.log("Retrieved member documents:", memberDocs.length);
+            const existingDocs = memberDocs.filter((doc) => doc.exists());
+            // console.log("Existing member documents:", existingDocs.length);
+            this.members = existingDocs.map((doc) => {
+              const data = doc.data();
+              // console.log("Member data for ID", doc.id, ":", data);
+              return {
+                id: doc.id,
+                firstName: data.firstName,
+                lastName: data.lastName,
+                email: data.email,
+                position: data.position,
+                employeeId: data.employeeId,
+                departmentId: data.departmentId,
+                teamId: departmentId,
+                isBlocked: data.isBlocked,
+                role: data.role,
+                createdAt: data.createdAt?.toDate(),
+              } as Member;
+            });
+            // console.log("Final members array:", this.members);
+            this.loading = false;
+            return;
+          } else {
+            console.log("No team found with ID:", departmentId);
+          }
+        }
+        // Fallback to querying by departmentId directly
+        // console.log("Proceeding with direct department query for ID:", departmentId);
         const q = query(
           collection(db, "ems-users"),
           where("departmentId", "==", departmentId)
         );
+
         const unsubscribe = onSnapshot(q, (snap) => {
-          this.members = snap.docs.map(
-            (d) =>
-              ({
-                id: d.id,
-                firstName: d.data().firstName,
-                lastName: d.data().lastName,
-                email: d.data().email,
-                position: d.data().position,
-                employeeId: d.data().employeeId,
-                departmentId: d.data().departmentId,
-                isBlocked: d.data().isBlocked,
-                role: d.data().role,
-                createdAt: d.data().createdAt?.toDate(),
-              } as Member)
+          console.log("Department query returned documents:", snap.docs.length);
+
+          this.members = snap.docs.map((d) => {
+            const data = d.data();
+            console.log("User data for ID", d.id, ":", data);
+            return {
+              id: d.id,
+              firstName: data.firstName,
+              lastName: data.lastName,
+              email: data.email,
+              position: data.position,
+              employeeId: data.employeeId,
+              departmentId: data.departmentId,
+              isBlocked: data.isBlocked,
+              role: data.role,
+              createdAt: data.createdAt?.toDate(),
+            } as Member;
+          });
+
+          console.log(
+            "Final members array from department query:",
+            this.members
           );
           this.loading = false;
         });
+
         this.unsubscribeListeners.push(unsubscribe);
       } catch (err) {
+        console.error("Error fetching users by department/team:", err);
         this.error = (err as Error).message;
         this.loading = false;
       }
@@ -179,29 +308,29 @@ export const useTeamStore = defineStore("teams", {
     //   }
     // },
     async addMember(teamId: string, employeeUID: string) {
-  const teamRef = doc(db, "ems-teams", teamId);
-  try {
-    // Using transaction for atomic update
-    await runTransaction(db, async (transaction) => {
-      const teamDoc = await transaction.get(teamRef);
-      if (!teamDoc.exists()) throw new Error("Team not found");
-      const currentMembers = teamDoc.data()?.memberIds || [];
-      if (!currentMembers.includes(employeeUID)) {
-        transaction.update(teamRef, {
-          memberIds: [...currentMembers, employeeUID]
+      const teamRef = doc(db, "ems-teams", teamId);
+      try {
+        // Using transaction for atomic update
+        await runTransaction(db, async (transaction) => {
+          const teamDoc = await transaction.get(teamRef);
+          if (!teamDoc.exists()) throw new Error("Team not found");
+          const currentMembers = teamDoc.data()?.memberIds || [];
+          if (!currentMembers.includes(employeeUID)) {
+            transaction.update(teamRef, {
+              memberIds: [...currentMembers, employeeUID],
+            });
+          }
         });
+        // Update employee's team reference
+        await updateDoc(doc(db, "ems-users", employeeUID), {
+          teamId: teamId,
+        });
+      } catch (error) {
+        console.error("Error adding team member:", error);
+        throw error;
       }
-    });
-    // Update employee's team reference
-    await updateDoc(doc(db, "ems-users", employeeUID), {
-      teamId: teamId
-    });
-  } catch (error) {
-    console.error("Error adding team member:", error);
-    throw error;
-  }
-},
-    
+    },
+
     // async addMember(teamId: string, userId: string) {
     //   const teamRef = doc(db, "ems-teams", teamId);
     //   await updateDoc(teamRef, {
