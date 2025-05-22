@@ -200,7 +200,10 @@
     "failed_to_delete_employee": "فشل في حذف الموظف",
     "failed_to_load_teams": "فشل تحميل الأقسام",
     "team_added_successfully": "تمت إضافة القسم بنجاح",
-    "failed_to_add_team": "فشل في إضافة القسم"
+    "failed_to_add_team": "فشل في إضافة القسم",
+    "please_fill_all_required_fields": "يرجى ملء جميع الحقول المطلوبة",
+    "employee_added_successfully": "تمت إضافة الموظف بنجاح",
+    "failed_to_add_employee": "فشل في إضافة الموظف"
   },
   "status": {
     "all": "الكل",

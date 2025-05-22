@@ -163,7 +163,6 @@ const submitForm = async () => {
   const userData = sessionStorage.getItem('user')
   const parsedUserData = userData ? JSON.parse(userData) : null
   // console.log('User data from session:', parsedUserData)
-
   if (!parsedUserData?.uid) return
   else if (!form.startDate || !form.endDate) return;
   if (!form.employeeName || !form.leaveType || !form.employeeId) {

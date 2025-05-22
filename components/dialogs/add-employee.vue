@@ -14,11 +14,6 @@
           <div class="my-3 overflow-y-auto h-[calc(408px-88px)] hide-scrollbar">
             <ClientOnly>
               <div class="grid col-span-1 sm:grid-cols-6 gap-x-6 space-y-2">
-                <!-- <div class="col-span-full">
-                  <dynamic-inputs :label="t('form.employee_id')" :name="t('form.employee_id')" :disabled="true"
-                    readonly />
-                </div> -->
-
                 <div class="col-span-full">
                   <dynamic-inputs :label="t('form.first_name')" :placeholder="t('form.enter_first_name')" type="text"
                     :name="t('form.first_name')" :rules="'required|alpha_spaces'" :required="true"
@@ -63,8 +58,9 @@
 
           <div class="border-t border-gray-300 pt-3 flex justify-end gap-4">
             <!-- base-button component -->
-            <base-button :default-icon="false" type="submit" @click="handleSubmit">
-              {{ t('btn.add') }}
+            <base-button :default-icon="false" type="submit" :disabled="loading" @click="handleSubmit">
+              <icon name="svg-spinners:90-ring-with-bg" v-if="loading" />
+              <span v-else>{{ t('btn.add') }}</span>
             </base-button>
           </div>
         </div>
@@ -75,6 +71,8 @@
 
 <script lang="ts" setup>
 const { t } = useI18n()
+const { triggerToast } = useToast()
+const loading = ref(false)
 
 const props = defineProps({
   modelValue: {
@@ -105,28 +103,31 @@ const formValues = reactive({
 
 const handleSubmit = async () => {
   try {
-    // Save the current user from sessionStorage before creating a new employee
-    const currentUser = sessionStorage.getItem('user');
-    
+    loading.value = true
+    console.log('Selected Team:', selectedTeam.value); // Debug line to log the selected team value
     await employeesStore.createEmployee({
       firstName: formValues.firstName,
       lastName: formValues.lastName,
       email: formValues.email,
       password: formValues.password,
       position: formValues.position,
-      teamId: selectedTeam.value,
+      teamId: selectedTeam.value, // Access the actual string value inside the ref
     });
-    
-    // Restore the original user in sessionStorage to prevent the new employee from becoming the active user
-    if (currentUser) {
-      sessionStorage.setItem('user', currentUser);
-    }
-    
     emit('update:modelValue', false);
     emit('save');
+    triggerToast({
+      message: t('toast.employee_added_successfully'),
+      type: 'success',
+      icon: 'mdi-check-circle',
+    })
   } catch (error) {
-    console.error("Error creating employee:", error);
-    // Handle error
+    triggerToast({
+      message: t('toast.failed_to_add_employee'),
+      type: 'error',
+      icon: 'material-symbols:error-outline-rounded',
+    })
+  } finally {
+    loading.value = false
   }
 };
 </script>

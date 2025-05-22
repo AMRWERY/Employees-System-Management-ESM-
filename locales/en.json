@@ -200,7 +200,10 @@
     "failed_to_delete_employee": "Failed to delete employee",
     "failed_to_load_teams": "Failed to load derpartments",
     "team_added_successfully": "Department added successfully",
-    "failed_to_add_team": "Failed to add department"
+    "failed_to_add_team": "Failed to add department",
+    "please_fill_all_required_fields": "Please fill all required fields",
+    "employee_added_successfully": "Employee added successfully",
+    "failed_to_add_employee": "Failed to add employee"
   },
   "status": {
     "all": "All",

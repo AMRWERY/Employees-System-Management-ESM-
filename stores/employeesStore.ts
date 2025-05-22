@@ -68,29 +68,28 @@ export const useEmployeesStore = defineStore("employees", {
       teamId?: string;
       position?: string;
     }) {
+      // Save original user before creating the new employee
+      const originalUser = auth.currentUser;
+      const originalUserJSON = sessionStorage.getItem("user");
       let userCredential: Awaited<
         ReturnType<typeof createUserWithEmailAndPassword>
       > | null = null;
       try {
-        // console.log("Starting employee creation process");
+        // Firebase will automatically sign in as the new user after this call
         userCredential = await createUserWithEmailAndPassword(
           auth,
           employeeData.email,
           employeeData.password
         );
-        // console.log("Auth user created successfully", userCredential.user.uid);
         const rolesStore = useRolesStore();
         await rolesStore.fetchRoles();
         const employeeRole = rolesStore.roles.find(
           (r) => r.name === "employee"
         );
         if (!employeeRole) {
-          // console.error("Employee role not found");
           throw new Error("Employee role not configured");
         }
-        // console.log("Found employee role", employeeRole.id);
         const employeeId = `ems-${Math.floor(1000 + Math.random() * 9000)}`;
-        // console.log("Generated employee ID", employeeId);
         const userData = {
           uid: userCredential.user.uid,
           employeeId: employeeId,
@@ -104,24 +103,35 @@ export const useEmployeesStore = defineStore("employees", {
           isBlocked: false,
           loginType: "email",
           createdAt: serverTimestamp(),
+          teamId: employeeData.teamId || null,
         };
-        // console.log(
-        //   "Attempting to create user document",
-        //   userCredential.user.uid
-        // );
         await setDoc(doc(db, "ems-users", userCredential.user.uid), userData);
-        // console.log("User document created successfully");
         if (employeeData.teamId) {
           try {
-            // console.log("Attempting to add user to team", employeeData.teamId);
+            // console.log("Assigning employee to team:", employeeData.teamId);
             const teamRef = doc(db, "ems-teams", employeeData.teamId);
             const teamDoc = await getDoc(teamRef);
             if (teamDoc.exists()) {
+              // console.log("Team found, current data:", teamDoc.data());
               const memberIds = teamDoc.data().memberIds || [];
+              // console.log("Current memberIds:", memberIds);
+              // console.log("Adding employee UID to team:", userCredential.user.uid);
+              // Create a new array with the employee ID to ensure it's added correctly
+              const newMemberIds = [...memberIds, userCredential.user.uid];
+              // console.log("New memberIds array:", newMemberIds);
               await updateDoc(teamRef, {
-                memberIds: [...memberIds, userCredential.user.uid],
+                memberIds: newMemberIds,
               });
-              // console.log("User added to team successfully");
+              // Verify the update was successful
+              const updatedTeamDoc = await getDoc(teamRef);
+              const updatedData = updatedTeamDoc.data();
+              if (updatedData) {
+                // console.log("Updated team memberIds:", updatedData.memberIds);
+              } else {
+                console.warn(
+                  "Updated team document exists but data is undefined"
+                );
+              }
             } else {
               console.warn("Team not found, skipping team assignment");
             }
@@ -131,7 +141,12 @@ export const useEmployeesStore = defineStore("employees", {
           }
         }
         await this.fetchEmployees();
-        // console.log("Employee creation completed successfully");
+        if (originalUserJSON) {
+          sessionStorage.setItem("user", originalUserJSON);
+        }
+        if (originalUser) {
+          await auth.updateCurrentUser(originalUser);
+        }
         return userCredential.user.uid;
       } catch (error) {
         console.error("Employee creation failed:", error);

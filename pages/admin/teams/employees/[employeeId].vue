@@ -111,7 +111,7 @@ onMounted(async () => {
       employee.value = null;
     }
   } catch (error) {
-    console.error('Error:', error);
+    // console.error('Error:', error);
     employee.value = null;
   } finally {
     loading.value = false;
