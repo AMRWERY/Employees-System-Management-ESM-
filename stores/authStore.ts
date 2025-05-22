@@ -19,6 +19,7 @@ import {
   query,
   where,
   getDocs,
+  serverTimestamp,
 } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
@@ -115,7 +116,6 @@ export const useAuthStore = defineStore("auth", {
         : errorMessage;
       this.loading = false;
       this.isOverlayVisible = false;
-      // console.error(`Auth error (${errorCode}):`, errorMessage);
       return this.error;
     },
 
@@ -123,12 +123,25 @@ export const useAuthStore = defineStore("auth", {
       try {
         this.loading = true;
         await setPersistence(auth, browserSessionPersistence);
-        // Use auth state observer instead of currentUser
-        return new Promise<void>((resolve) => {
+        return new Promise<void>(async (resolve) => {
           const unsubscribe = auth.onAuthStateChanged(async (user) => {
             unsubscribe();
             if (user) {
-              await this.fetchUserData(user.uid);
+              // Retry mechanism for document read
+              let retries = 3;
+              while (retries > 0) {
+                try {
+                  await this.fetchUserData(user.uid);
+                  break;
+                } catch (error) {
+                  retries--;
+                  if (retries === 0) {
+                    await this.createBasicUserDocument(user);
+                  }
+                  await new Promise((r) => setTimeout(r, 1000));
+                }
+              }
+              // Session storage update
               sessionStorage.setItem(
                 "user",
                 JSON.stringify({
@@ -147,11 +160,54 @@ export const useAuthStore = defineStore("auth", {
           });
         });
       } catch (error) {
-        this.handleError(error, "Failed to initialize authentication");
+        this.handleError(error, "Initialization failed");
       } finally {
         this.loading = false;
       }
     },
+
+    async createBasicUserDocument(user: UserData) {
+      await setDoc(doc(db, "ems-users", user.uid), {
+        uid: user.uid,
+        email: user.email,
+        role: "employee",
+        createdAt: serverTimestamp(),
+      });
+    },
+    
+    // async init() {
+    //   try {
+    //     this.loading = true;
+    //     await setPersistence(auth, browserSessionPersistence);
+    //     // Use auth state observer instead of currentUser
+    //     return new Promise<void>((resolve) => {
+    //       const unsubscribe = auth.onAuthStateChanged(async (user) => {
+    //         unsubscribe();
+    //         if (user) {
+    //           await this.fetchUserData(user.uid);
+    //           sessionStorage.setItem(
+    //             "user",
+    //             JSON.stringify({
+    //               uid: user.uid,
+    //               email: user.email,
+    //               firstName: this.user?.firstName,
+    //               lastName: this.user?.lastName,
+    //               role: this.role,
+    //               roledId: this.user?.roledId,
+    //               permissions: this.user?.permissions,
+    //               employeeId: this.user?.employeeId,
+    //             })
+    //           );
+    //         }
+    //         resolve();
+    //       });
+    //     });
+    //   } catch (error) {
+    //     this.handleError(error, "Failed to initialize authentication");
+    //   } finally {
+    //     this.loading = false;
+    //   }
+    // },
 
     async fetchUserData(uid: string) {
       try {

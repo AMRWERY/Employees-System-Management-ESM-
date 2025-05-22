@@ -128,5 +128,9 @@ export const useRolesStore = defineStore("roles", {
         value: role.id,
         label: role.name,
       })),
+
+      getRoleByName: (state) => (name: string) => {
+    return state.roles.find(role => role.name.toLowerCase() === name.toLowerCase());
+  }
   },
 });

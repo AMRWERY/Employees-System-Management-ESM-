@@ -150,7 +150,9 @@
     "department_name": "اسم القسم",
     "enter_department_name": "أدخل اسم القسم",
     "description": "الوصف",
-    "enter_description": "أدخل وصفًا مختصرًا للقسم هنا"
+    "enter_description": "أدخل وصفًا مختصرًا للقسم هنا",
+    "position": "المسمي الوظيفي",
+    "enter_position": "ادخل المسمي الوظيفي"
   },
   "head": {
     "sign_in": "تسجيل الدخول",

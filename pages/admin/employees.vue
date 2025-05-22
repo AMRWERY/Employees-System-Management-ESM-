@@ -85,8 +85,8 @@ const selectedEmployee = ref<Employee | null>(null)
 const employeesStore = useEmployeesStore()
 const {
   paginatedEmployees,
-  currentPage,
-  totalPages
+  // currentPage,
+  // totalPages
 } = storeToRefs(employeesStore)
 
 const tableColumns = computed(() => {
