@@ -20,66 +20,63 @@
         <div class="space-y-6 mt-7 border-t pt-4">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <p class="text-sm text-gray-500">Employee ID</p>
+              <p class="text-sm text-gray-500">{{ t('dashboard.employee_id') }}</p>
               <p class="text-gray-900 font-medium">{{ employee.employeeId }}</p>
             </div>
 
             <div>
-              <p class="text-sm text-gray-500">Department</p>
-              <p class="text-gray-900 font-medium">{{ departmentName }}</p>
+              <p class="text-sm text-gray-500">{{ t('dashboard.department') }}</p>
+              <p class="text-gray-900 font-medium"
+                :class="{ 'text-orange-600': departmentName === 'Unknown Department' || departmentName === 'Not Assigned' }">
+                {{ departmentName }}</p>
             </div>
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <p class="text-sm text-gray-500">Email</p>
+              <p class="text-sm text-gray-500">{{ t('dashboard.email') }}</p>
               <p class="text-gray-900 font-medium">{{ employee.email }}</p>
             </div>
 
             <div>
-              <p class="text-sm text-gray-500">Role</p>
+              <p class="text-sm text-gray-500">{{ t('dashboard.role') }}</p>
               <p class="text-gray-900 font-medium capitalize">{{ employee.role }}</p>
             </div>
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <p class="text-sm text-gray-500">Manager</p>
+              <p class="text-sm text-gray-500">{{ t('dashboard.manager') }}</p>
               <p class="text-gray-900 font-medium">manager name will display here :D</p>
             </div>
 
             <div>
-              <p class="text-sm text-gray-500">Average Performance</p>
+              <p class="text-sm text-gray-500">{{ t('dashboard.average_performance') }}</p>
               <p class="text-gray-900 font-medium">average performance will display here :D</p>
             </div>
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <p class="text-sm text-gray-500">left leave days</p>
+              <p class="text-sm text-gray-500">{{ t('dashboard.left_leave_days') }}</p>
               <p class="text-gray-900 font-medium">left leave days will display here :D</p>
             </div>
-
-            <!-- <div>
-              <p class="text-sm text-gray-500">Average Performance</p>
-              <p class="text-gray-900 font-medium">average performance will display here :D</p>
-            </div> -->
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <p class="text-sm text-gray-500">Start Date</p>
+              <p class="text-sm text-gray-500">{{ t('dashboard.start_date') }}</p>
               <p class="text-gray-900 font-medium">
                 {{ formatDate(employee.createdAt) }}
               </p>
             </div>
 
             <div class="flex items-center gap-2">
-              <p class="text-sm text-gray-500">Status</p>
-              <span :class="employee.isBlocked
+              <p class="text-sm text-gray-500">{{ t('dashboard.status') }}</p>
+              <span :class="employee.status === 'blocked'
                 ? 'bg-red-100 text-red-800'
                 : 'bg-green-100 text-green-800'" class="px-3 py-1 rounded-full text-sm font-medium">
-                {{ employee.isBlocked ? 'Blocked' : 'Active' }}
+                {{ employee.status === 'blocked' ? t('status.blocked') : t('status.active') }}
               </span>
             </div>
           </div>
@@ -93,6 +90,7 @@
 import type { Member } from '@/types/teams'
 
 const route = useRoute();
+const { t } = useI18n()
 const teamsStore = useTeamStore();
 const { formatDate } = useDateFormat();
 const employee = ref<Member | null>(null);
@@ -111,7 +109,6 @@ onMounted(async () => {
       employee.value = null;
     }
   } catch (error) {
-    // console.error('Error:', error);
     employee.value = null;
   } finally {
     loading.value = false;
@@ -120,6 +117,6 @@ onMounted(async () => {
 
 const departmentName = computed(() => {
   if (!employee.value) return '';
-  return teamsStore.getDepartmentName(employee.value.departmentId);
+  return teamsStore.getDepartmentName(employee.value.departmentId, employee.value.teamId);
 });
 </script>

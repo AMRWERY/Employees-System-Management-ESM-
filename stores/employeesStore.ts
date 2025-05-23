@@ -45,8 +45,9 @@ export const useEmployeesStore = defineStore("employees", {
               role: data.role,
               permissions: data.permissions || {},
               roledId: data.roledId || null,
-              isBlocked: data.isBlocked,
+              // isBlocked: data.isBlocked,
               position: data.position,
+              status: data.status || "active",
               ...data,
             } satisfies Employee;
           }
@@ -100,7 +101,8 @@ export const useEmployeesStore = defineStore("employees", {
           role: "employee",
           roledId: employeeRole.id,
           permissions: employeeRole.permissions || {},
-          isBlocked: false,
+          status: "active",
+          // isBlocked: false,
           loginType: "email",
           createdAt: serverTimestamp(),
           teamId: employeeData.teamId || null,
@@ -211,43 +213,34 @@ export const useEmployeesStore = defineStore("employees", {
         });
     },
 
-    blockEmployees(userId: string): Promise<void> {
+    async blockEmployees(userId: string): Promise<void> {
       const userRef = doc(db, "ems-users", userId);
-      return updateDoc(userRef, { isBlocked: true })
-        .then(() => {
-          const userIndex = this.employees.findIndex(
-            (user) => user.id === userId
-          );
-          if (userIndex > -1) {
-            this.employees[userIndex].isBlocked = true;
-          } else {
-            console.warn(
-              "User not found in local store while blocking:",
-              userId
-            );
-          }
-        })
-        .catch((error) => {
-          console.error("Failed to block user:", error);
-        });
+      try {
+        await updateDoc(userRef, { status: "blocked" });
+        // Update local state
+        const userIndex = this.employees.findIndex((u) => u.id === userId);
+        if (userIndex > -1) {
+          this.employees[userIndex].status = "blocked";
+          this.updatePagination();
+        }
+      } catch (error) {
+        console.error("Blocking failed:", error);
+        throw error;
+      }
     },
 
-    toggleBlockEmployee(userId: string): Promise<void> {
-      const userIndex = this.employees.findIndex((user) => user.id === userId);
-      if (userIndex > -1) {
-        const user = this.employees[userIndex];
-        const newStatus = !user.isBlocked;
+    async toggleBlockEmployee(userId: string): Promise<void> {
+      try {
+        const user = this.employees.find((u) => u.id === userId);
+        if (!user) throw new Error("User not found");
+        const newStatus = user.status === "active" ? "blocked" : "active";
         const userRef = doc(db, "ems-users", userId);
-        return updateDoc(userRef, { isBlocked: newStatus })
-          .then(() => {
-            this.employees[userIndex].isBlocked = newStatus;
-          })
-          .catch((error) => {
-            console.error("Failed to toggle block status for user:", error);
-          });
-      } else {
-        console.warn("User not found in local store:", userId);
-        return Promise.resolve();
+        await updateDoc(userRef, { status: newStatus });
+        user.status = newStatus;
+        this.updatePagination();
+      } catch (error) {
+        console.error("Toggle block failed:", error);
+        throw error;
       }
     },
 

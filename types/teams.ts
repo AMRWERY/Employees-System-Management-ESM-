@@ -19,7 +19,8 @@ export interface Member {
   departmentId: string;
   isBlocked: boolean;
   createdAt?: Date;
-  role: string
+  role: string;
+  status?: 'blocked' | 'active';
 }
 
 export interface TeamState {

@@ -17,10 +17,6 @@
         <icon name="heroicons-solid:magnifying-glass" class="w-5 h-5 text-gray-400" />
       </div>
     </div>
-    <!-- <div class="relative w-[300px] mb-4">
-      <input type="text" v-model="searchTerm" :placeholder="t('form.search_by_email')"
-        class="px-4 py-2 pe-10 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full" />
-    </div> -->
 
     <div v-if="loading" key="skeleton">
       <!-- table-skeleton-loader component -->
@@ -29,7 +25,8 @@
 
     <div v-else>
       <!-- dynamic-table component -->
-      <dynamic-table v-if="employees.length > 0" :items="filteredEmployees" :columns="tableColumns" :has-view="true" @view="viewEmployeeDetails" />
+      <dynamic-table v-if="employees.length > 0" :items="filteredEmployees" :columns="tableColumns" :has-view="true"
+        @view="viewEmployeeDetails" />
 
       <div v-else class="text-center">
         <!-- no-data-message component -->
@@ -61,7 +58,7 @@ import type { Column } from '@/components/shared/dynamic-table.vue'
 // }
 
 const { t } = useI18n()
-const { triggerToast } = useToast()
+// const { triggerToast } = useToast()
 const teamsStore = useTeamStore();
 const searchTerm = ref('');
 
@@ -77,7 +74,9 @@ const loading = computed(() => teamsStore.loading);
 
 // Filtered employees based on search
 const filteredEmployees = computed(() => {
+  // Simply filter by search term if provided, without modifying the data
   if (!searchTerm.value) return employees.value;
+
   const term = searchTerm.value.toLowerCase();
   return employees.value.filter(e =>
     e.email?.toLowerCase().includes(term) ||
@@ -133,7 +132,11 @@ const tableColumns = computed(() => {
     {
       key: 'status',
       label: t('form.status'),
-      format: (employee: Member) => employee.isBlocked ? t('status.blocked') : t('status.active')
+      format: (employee: Member) => {
+        const status = employee.status === 'blocked';
+        employee.status = status ? 'blocked' : 'active';
+        return status ? t('status.blocked') : t('status.active');
+      }
     }
   ];
   return columns;

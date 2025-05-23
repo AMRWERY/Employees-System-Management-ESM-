@@ -52,7 +52,12 @@
     "name": "Name",
     "department_id": "Department ID",
     "lead_id": "Lead ID",
-    "position": "Position"
+    "position": "Position",
+    "department": "Department / Team",
+    "role": "Role",
+    "average_performance": "Average Performance",
+    "left_leave_days": "Left leave days",
+    "start_date": "Start Date"
   },
   "btn": {
     "go_back_home": "Go back Home",

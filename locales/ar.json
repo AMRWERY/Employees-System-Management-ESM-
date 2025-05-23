@@ -52,7 +52,12 @@
     "name": "الأسم",
     "department_id": "معرف القسم",
     "lead_id": "معرف المدير",
-    "position": "المسمي الوظيفي"
+    "position": "المسمي الوظيفي",
+    "department": "القسم / الفريق",
+    "role": "الدور",
+    "average_performance": "متوسط الأداء",
+    "left_leave_days": "أيام الإجازة المتبقية",
+    "start_date": "تاريخ البدء"
   },
   "btn": {
     "go_back_home": "العودة إلى الصفحه الرئيسيه",

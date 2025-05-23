@@ -174,7 +174,7 @@ export const useAuthStore = defineStore("auth", {
         createdAt: serverTimestamp(),
       });
     },
-    
+
     // async init() {
     //   try {
     //     this.loading = true;
@@ -308,18 +308,26 @@ export const useAuthStore = defineStore("auth", {
           password
         );
         const user = userCredential.user;
-        this.user = user;
+        // Check if user is blocked in Firestore
         const userDocRef = doc(db, "ems-users", user.uid);
         const userDoc = await getDoc(userDocRef);
         if (userDoc.exists()) {
           const userData = userDoc.data();
+          if (userData.status === "blocked") {
+            await signOut(auth);
+            throw new Error(
+              "Your account has been blocked. Please contact an administrator."
+            );
+          }
           this.role = userData?.role || "employee";
+          this.user = user;
           const saveUserData = {
             uid: userData.uid,
             email: userData.email,
             firstName: userData.firstName,
             lastName: userData.lastName,
             role: userData.role,
+            status: userData.status,
             loginType: userData.loginType,
             roledId: userData.roledId,
             permissions: userData.permissions,
@@ -328,6 +336,7 @@ export const useAuthStore = defineStore("auth", {
           sessionStorage.setItem("user", JSON.stringify(saveUserData));
         } else {
           this.role = "employee";
+          this.user = user;
         }
         await this.fetchUserData(user.uid);
         this.error = null;

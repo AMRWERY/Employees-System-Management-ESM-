@@ -66,53 +66,39 @@ export const useTeamStore = defineStore("teams", {
 
     async fetchUsersByDepartment(departmentId: string) {
       this.loading = true;
-      // console.log("fetchUsersByDepartment called with ID:", departmentId);
       try {
         if (departmentId.startsWith("dept-")) {
-          // console.log("This is a department ID");
-          // console.log("Fetching teams for department:", departmentId);
           const teamsQuery = query(
             collection(db, "ems-teams"),
             where("departmentId", "==", departmentId)
           );
           const teamsSnapshot = await getDocs(teamsQuery);
-          // console.log("Teams in department:", teamsSnapshot.docs.length);
           if (teamsSnapshot.empty) {
-            // console.log("No teams found in this department");
             this.members = [];
             this.loading = false;
             return;
           }
-          // Get all member IDs from all teams in this department
           let allMemberIds: string[] = [];
           teamsSnapshot.forEach((teamDoc) => {
             const teamData = teamDoc.data();
-            // console.log("Team:", teamDoc.id, "data:", teamData);
             const memberIds = teamData.memberIds || [];
-            // console.log("Team members:", memberIds);
             allMemberIds = [...allMemberIds, ...memberIds];
           });
           // Remove duplicates (in case an employee is in multiple teams)
           allMemberIds = [...new Set(allMemberIds)];
-          // console.log("All unique member IDs:", allMemberIds);
           if (allMemberIds.length === 0) {
-            // console.log("No members in any teams in this department");
             this.members = [];
             this.loading = false;
             return;
           }
           // Fetch all users who are members of teams in this department
           const memberPromises = allMemberIds.map((id: string) => {
-            // console.log("Fetching member with ID:", id);
             return getDoc(doc(db, "ems-users", id));
           });
           const memberDocs = await Promise.all(memberPromises);
-          // console.log("Retrieved member documents:", memberDocs.length);
           const existingDocs = memberDocs.filter((doc) => doc.exists());
-          // console.log("Existing member documents:", existingDocs.length);
           this.members = existingDocs.map((doc) => {
             const data = doc.data();
-            // console.log("Member data for ID", doc.id, ":", data);
             return {
               id: doc.id,
               firstName: data.firstName,
@@ -123,44 +109,33 @@ export const useTeamStore = defineStore("teams", {
               departmentId: data.departmentId,
               teamId: data.teamId,
               isBlocked: data.isBlocked,
+              status: data.status,
               role: data.role,
               createdAt: data.createdAt?.toDate(),
             } as Member;
           });
-          // console.log("Final members array:", this.members);
           this.loading = false;
           return;
         } else {
-          // This might be a direct team ID
-          // console.log("Checking if this is a team ID...");
           const teamRef = doc(db, "ems-teams", departmentId);
           const teamDoc = await getDoc(teamRef);
           if (teamDoc.exists()) {
-            // console.log("Found team document:", teamDoc.id);
             const teamData = teamDoc.data();
-            // console.log("Team data:", teamData);
             // Get memberIds from team document
             const memberIds = teamData.memberIds || [];
-            // console.log("Team memberIds:", memberIds);
             if (memberIds.length === 0) {
-              // console.log("No members in this team");
               this.members = [];
               this.loading = false;
               return;
             }
             // Fetch members using the memberIds
-            // console.log("Fetching member documents for IDs:", memberIds);
             const memberPromises = memberIds.map((id: string) => {
-              // console.log("Fetching member with ID:", id);
               return getDoc(doc(db, "ems-users", id));
             });
             const memberDocs = await Promise.all(memberPromises);
-            // console.log("Retrieved member documents:", memberDocs.length);
             const existingDocs = memberDocs.filter((doc) => doc.exists());
-            // console.log("Existing member documents:", existingDocs.length);
             this.members = existingDocs.map((doc) => {
               const data = doc.data();
-              // console.log("Member data for ID", doc.id, ":", data);
               return {
                 id: doc.id,
                 firstName: data.firstName,
@@ -171,11 +146,11 @@ export const useTeamStore = defineStore("teams", {
                 departmentId: data.departmentId,
                 teamId: departmentId,
                 isBlocked: data.isBlocked,
+                status: data.status,
                 role: data.role,
                 createdAt: data.createdAt?.toDate(),
               } as Member;
             });
-            // console.log("Final members array:", this.members);
             this.loading = false;
             return;
           } else {
@@ -183,15 +158,11 @@ export const useTeamStore = defineStore("teams", {
           }
         }
         // Fallback to querying by departmentId directly
-        // console.log("Proceeding with direct department query for ID:", departmentId);
         const q = query(
           collection(db, "ems-users"),
           where("departmentId", "==", departmentId)
         );
-
         const unsubscribe = onSnapshot(q, (snap) => {
-          console.log("Department query returned documents:", snap.docs.length);
-
           this.members = snap.docs.map((d) => {
             const data = d.data();
             console.log("User data for ID", d.id, ":", data);
@@ -204,21 +175,15 @@ export const useTeamStore = defineStore("teams", {
               employeeId: data.employeeId,
               departmentId: data.departmentId,
               isBlocked: data.isBlocked,
+              status: data.status,
               role: data.role,
               createdAt: data.createdAt?.toDate(),
             } as Member;
           });
-
-          console.log(
-            "Final members array from department query:",
-            this.members
-          );
           this.loading = false;
         });
-
         this.unsubscribeListeners.push(unsubscribe);
       } catch (err) {
-        console.error("Error fetching users by department/team:", err);
         this.error = (err as Error).message;
         this.loading = false;
       }
@@ -227,26 +192,42 @@ export const useTeamStore = defineStore("teams", {
     async fetchEmployeeById(employeeId: string): Promise<Member | null> {
       this.loading = true;
       try {
-        // Check existing members first
-        const existing = this.members.find((m) => m.id === employeeId);
-        if (existing) return existing;
-        // Fetch from Firestore
-        const docRef = doc(db, "ems-users", employeeId);
-        const docSnap = await getDoc(docRef);
-        if (!docSnap.exists()) return null;
-        const data = docSnap.data();
+        const employeeDoc = await getDoc(doc(db, "ems-users", employeeId));
+        if (!employeeDoc.exists()) return null;
+        const data = employeeDoc.data();
         const employee = {
-          id: docSnap.id,
+          id: employeeDoc.id,
           firstName: data.firstName,
           lastName: data.lastName,
           email: data.email,
           position: data.position,
           employeeId: data.employeeId,
           departmentId: data.departmentId,
+          teamId: data.teamId,
           isBlocked: data.isBlocked,
+          status: data.status,
+          manager: data.manager,
           createdAt: data.createdAt?.toDate(),
           role: data.role,
         } as Member;
+        // Ensure we have department data loaded
+        if (data.departmentId && this.teams.length === 0) {
+          // If teams aren't loaded yet, fetch them
+          const teamsQuery = query(collection(db, "ems-teams"));
+          const teamsSnapshot = await getDocs(teamsQuery);
+          this.teams = teamsSnapshot.docs.map((d) => {
+            const teamData = d.data();
+            return {
+              id: d.id,
+              name: teamData.name,
+              description: teamData.description,
+              departmentId: teamData.departmentId,
+              leadId: teamData.leadId,
+              memberIds: teamData.memberIds,
+              createdAt: teamData.createdAt?.toDate(),
+            } as Teams;
+          });
+        }
         // Add to members array
         this.members.push(employee);
         return employee;
@@ -283,30 +264,6 @@ export const useTeamStore = defineStore("teams", {
       // If you also update users’ teamId fields, do so here or via Cloud Function
     },
 
-    // async addMember(teamId: string, employeeId: string) {
-    //   try {
-    //     const teamRef = doc(db, "ems-teams", teamId);
-    //     const teamSnap = await getDoc(teamRef);
-    //     if (!teamSnap.exists()) {
-    //       throw new Error("Team not found");
-    //     }
-    //     const teamData = teamSnap.data();
-    //     const currentMembers = teamData?.memberIds || [];
-    //     // Prevent duplicates
-    //     if (!currentMembers.includes(employeeId)) {
-    //       await updateDoc(teamRef, {
-    //         memberIds: [...currentMembers, employeeId],
-    //       });
-    //     }
-    //     // Update employee document
-    //     await updateDoc(doc(db, "ems-users", employeeId), {
-    //       teamId: teamId,
-    //     });
-    //   } catch (error) {
-    //     console.error("Error adding team member:", error);
-    //     throw error;
-    //   }
-    // },
     async addMember(teamId: string, employeeUID: string) {
       const teamRef = doc(db, "ems-teams", teamId);
       try {
@@ -330,15 +287,6 @@ export const useTeamStore = defineStore("teams", {
         throw error;
       }
     },
-
-    // async addMember(teamId: string, userId: string) {
-    //   const teamRef = doc(db, "ems-teams", teamId);
-    //   await updateDoc(teamRef, {
-    //     memberIds: [...this.currentTeam.memberIds, userId],
-    //   });
-    //   // optional: update user doc
-    //   await updateDoc(doc(db, "ems-users", userId), { teamId });
-    // },
 
     async removeMember(teamId: string, userId: string) {
       const teamRef = doc(db, "ems-teams", teamId);
@@ -390,10 +338,22 @@ export const useTeamStore = defineStore("teams", {
       });
     },
 
-    getDepartmentName: (state) => (departmentId: string) => {
-      const department = state.teams.find(
+    getDepartmentName: (state) => (departmentId: string, teamId?: string) => {
+      if (!departmentId && !teamId) return "Not Assigned";
+      // First try to find by departmentId
+      let department = state.teams.find(
         (team) => team.departmentId === departmentId
       );
+      // If we can't find the department by departmentId and teamId is provided,
+      // try to find by team.id matching employee.teamId
+      if (!department && teamId && state.teams.length > 0) {
+        // console.log(`Trying to find department by teamId: ${teamId}`);
+        department = state.teams.find(team => team.id === teamId);
+      }
+      if (!department && state.teams.length > 0) {
+        // Log for debugging
+        console.log(`Department not found. DepartmentId: ${departmentId}, TeamId: ${teamId}, Teams available: ${state.teams.length}`);
+      }
       return department?.name || "Unknown Department";
     },
   },

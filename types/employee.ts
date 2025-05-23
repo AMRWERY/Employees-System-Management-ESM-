@@ -9,8 +9,9 @@ export interface Employee {
   role?: string;
   permissions: Record<string, Record<string, boolean>>;
   roledId: string | null;
-  isBlocked?: boolean;
-  [key: string]: any; // For other possible fields
+  // isBlocked?: boolean;
+  status: 'blocked' | 'active';
+  [key: string]: any;
 }
 
 export interface EmployeeState {
