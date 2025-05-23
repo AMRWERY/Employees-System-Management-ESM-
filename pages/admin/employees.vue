@@ -107,7 +107,10 @@ const tableColumns = computed(() => {
     {
       key: 'status',
       label: t('form.status'),
-      format: (employee: Employee) => employee.isBlocked ? t('status.blocked') : t('status.active')
+      format: (employee: Employee) =>
+        employee.status === 'blocked'
+          ? t('status.blocked')
+          : t('status.active')
     }
   ];
   return columns;

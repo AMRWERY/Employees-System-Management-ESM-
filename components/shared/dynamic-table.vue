@@ -51,7 +51,7 @@
                 </button>
                 <button v-if="hasBlock" class="cursor-pointer" title="Block" @click="$emit('block', item)">
                   <icon name="material-symbols:block" class="w-6 h-6"
-                    :class="[item.isBlocked ? 'text-green-500 hover:text-green-700' : 'text-red-500 hover:text-red-700']" />
+                    :class="[item.status === 'blocked' ? 'text-green-500 hover:text-green-700' : 'text-red-500 hover:text-red-700']" />
                 </button>
                 <button v-if="hasDelete" class="cursor-pointer" title="Delete" @click="$emit('delete', item)">
                   <icon name="material-symbols:delete-sharp" class="w-6 h-6 text-red-500 hover:text-red-700" />
@@ -78,7 +78,7 @@ interface TableItem {
   isBlocked?: boolean;
 }
 
-type StatusType = 'pending' | 'approved' | 'rejected' | 'cancelled';
+type StatusType = 'pending' | 'approved' | 'rejected' | 'cancelled' | 'blocked' | 'active';
 
 const props = defineProps<{
   items: readonly any[];
@@ -98,10 +98,13 @@ const statusClasses: Record<StatusType, string> = {
   pending: 'text-yellow-600 bg-yellow-100 hover:bg-yellow-200',
   approved: 'text-green-600 bg-green-100 hover:bg-green-200',
   rejected: 'text-red-600 bg-red-100 hover:bg-red-200',
-  cancelled: 'text-gray-600 bg-gray-100 hover:bg-gray-200'
+  cancelled: 'text-gray-600 bg-gray-100 hover:bg-gray-200',
+  blocked: 'bg-red-100 text-red-800',
+  active: 'bg-green-100 text-green-800'
 }
 
 const getStatusClass = (status: string | undefined): string => {
+  // console.log('status', status)
   if (!status) return '';
   return status in statusClasses ? statusClasses[status as StatusType] : '';
 }
