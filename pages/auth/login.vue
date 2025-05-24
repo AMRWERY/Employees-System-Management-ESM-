@@ -29,9 +29,8 @@
                 </div>
 
                 <div class="col-span-full">
-                  <dynamic-inputs :label="t('form.password')" :placeholder="t('form.enter_your_password')"
-                    type="password" name="password" :rules="'required|minLength:7'" :required="true"
-                    v-model="password" />
+                  <dynamic-inputs :label="t('form.password')" placeholder="••••••••" type="password" name="password"
+                    :rules="'required|minLength:7'" :required="true" v-model="password" />
                 </div>
               </div>
             </ClientOnly>
@@ -53,14 +52,11 @@
           </div>
 
           <div class="!mt-7">
-            <button type="submit" :disabled="loading" @click="handleLogin"
-              class="w-full shadow-xl py-2.5 px-4 text-sm font-semibold rounded text-white bg-blue-600 hover:bg-blue-700 focus:outline-none">
-              <div class="flex items-center justify-center" v-if="loading">
-                <span class="text-center me-2">{{ t('btn.logging') }}...</span>
-                <icon name="svg-spinners:270-ring-with-bg" />
-              </div>
+            <!-- base-button component -->
+            <base-button :default-icon="false" :block="true" type="submit" :disabled="loading" @click="handleLogin">
+              <icon name="svg-spinners:270-ring-with-bg" v-if="loading" />
               <span v-else>{{ t('btn.log_in') }}</span>
-            </button>
+            </base-button>
           </div>
         </div>
       </div>

@@ -39,12 +39,12 @@
             <!-- User menu -->
             <div class="flex items-center ms-3">
               <div>
-                <button type="button" class="flex text-sm bg-gray-800 rounded-full focus:ring-4 focus:ring-gray-700"
-                  id="user-menu-button" aria-expanded="false">
+                <nuxt-link-locale to="/profile" type="button"
+                  class="flex text-sm bg-gray-800 rounded-full focus:ring-4 focus:ring-gray-700" id="user-menu-button"
+                  aria-expanded="false">
                   <span class="sr-only">Open user menu</span>
-                  <img class="w-8 h-8 rounded-full" src="https://justfields.com/storage/projects/7M5rV059/images.jpg"
-                    alt="user-photo">
-                </button>
+                  <img class="w-8 h-8 rounded-full" :src="profileImage" alt="user-photo">
+                </nuxt-link-locale>
               </div>
             </div>
           </div>
@@ -79,7 +79,7 @@
         <div class="px-3 py-4 bg-gray-900 border-t border-gray-800">
           <nuxt-link to="" role="button" @click.prevent="handleLogout"
             class="flex items-center justify-center p-2 text-gray-800 rounded-lg border-2 border-gray-700 hover:border-white bg-white hover:bg-gray-100 transition-colors group">
-            <span class="ms-3 whitespace-nowrap">{{ $t('btn.logout') }}</span>
+            <span class="ms-3 whitespace-nowrap">{{ t('btn.logout') }}</span>
           </nuxt-link>
         </div>
       </aside>
@@ -97,9 +97,10 @@
 </template>
 
 <script lang="ts" setup>
-const { setLocale, setLocaleMessage } = useI18n();
+const { setLocale, setLocaleMessage, t } = useI18n();
 const localeStore = useLocaleStore();
 const authStore = useAuthStore();
+const profileStore = useProfileStore();
 const isSidebarOpen = ref(false);
 
 const toggleSidebar = () => {
@@ -137,6 +138,29 @@ const switchLocale = async (value: SupportedLocale) => {
 // Initialize direction on component mount
 onMounted(() => {
   document.documentElement.dir = localeStore.isRTL ? 'rtl' : 'ltr';
+});
+
+// Get user data from session storage
+const userData = sessionStorage.getItem('user')
+const parsedUserData = ref(userData ? JSON.parse(userData) : null)
+
+onMounted(() => {
+  profileStore.initializeProfileImage();
+});
+
+const defaultProfileImg = 'https://justfields.com/storage/projects/7M5rV059/images.jpg'
+
+const profileImage = computed(() => {
+  if (profileStore.imagePreviewUrl) {
+    return profileStore.imagePreviewUrl;
+  }
+  if (authStore.user?.profileImg) {
+    return authStore.user.profileImg;
+  }
+  if (parsedUserData.value?.profileImg) {
+    return parsedUserData.value.profileImg;
+  }
+  return defaultProfileImg;
 });
 </script>
 

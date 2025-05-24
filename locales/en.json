@@ -57,7 +57,8 @@
     "role": "Role",
     "average_performance": "Average Performance",
     "left_leave_days": "Left leave days",
-    "start_date": "Start Date"
+    "start_date": "Start Date",
+    "update_your_img": "Update your image"
   },
   "btn": {
     "go_back_home": "Go back Home",
@@ -79,7 +80,8 @@
     "withdraw_request": "Withdraw request",
     "add_employee": "Add employee",
     "add": "Add",
-    "add_team": "Add team"
+    "add_team": "Add team",
+    "update_password": "Update password"
   },
   "form": {
     "sign_in": "Sign in",
@@ -157,7 +159,11 @@
     "description": "Description",
     "enter_description": "Enter department short description here",
     "position": "Position",
-    "enter_position": "Enter position"
+    "enter_position": "Enter position",
+    "personal_info": "Personal info",
+    "change_password": "Change password",
+    "new_password": "New password",
+    "confirm_password": "Confirm password"
   },
   "head": {
     "sign_in": "Sign in",
@@ -167,7 +173,8 @@
     "my_leave_requests": "My Leave Requests",
     "leave_management": "Leave Management",
     "employees": "Employees",
-    "teams": "Teams / Derpartments"
+    "teams": "Teams / Derpartments",
+    "profile": "Profile"
   },
   "error_page": {
     "you_are_all_alone_here": "You are all alone here 😁"
@@ -208,7 +215,14 @@
     "failed_to_add_team": "Failed to add department",
     "please_fill_all_required_fields": "Please fill all required fields",
     "employee_added_successfully": "Employee added successfully",
-    "failed_to_add_employee": "Failed to add employee"
+    "failed_to_add_employee": "Failed to add employee",
+    "successfully_upload_img": "Successfully upload image",
+    "failed_upload_img": "Failed upload image",
+    "successfully_remove_img": "Successfully remove image",
+    "failed_remove_img": "Failed remove image",
+    "password_updated": "Password updated",
+    "password_update_failed": "Password update failed",
+    "requires_recent_login": "Requires recent login"
   },
   "status": {
     "all": "All",
@@ -228,7 +242,8 @@
     "home": "Home",
     "admin_leave_request": "Leave Management",
     "admin_employees": "Employees",
-    "admin_teams": "Teams / Derpartments"
+    "admin_teams": "Teams / Derpartments",
+    "profile": "Profile"
   },
   "days": {
     "mon": "Mon",

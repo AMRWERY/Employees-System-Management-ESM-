@@ -6,14 +6,14 @@
         <div
           class="hidden md:flex md:w-4/12 bg-gradient-to-l from-gray-900 to-gray-600 text-white p-10 flex-col justify-center">
           <div class="max-w-md mx-auto">
-            <h1 class="text-3xl font-bold mb-4">{{ $t('form.create_your_account') }}</h1>
+            <h1 class="text-3xl font-bold mb-4">{{ t('form.create_your_account') }}</h1>
             <p class="text-gray-300 mb-10">
-              {{ $t('form.welcome_message') }}
+              {{ t('form.welcome_message') }}
             </p>
 
-            <h2 class="text-2xl font-bold mb-4">{{ $t('form.simple_secure') }}</h2>
+            <h2 class="text-2xl font-bold mb-4">{{ t('form.simple_secure') }}</h2>
             <p class="text-gray-300">
-              {{ $t('form.security_message') }}
+              {{ t('form.security_message') }}
             </p>
           </div>
         </div>
@@ -21,7 +21,7 @@
         <!-- Right Side - Form -->
         <div class="w-full md:w-8/12 p-4 flex items-center justify-center bg-white">
           <div class="w-full max-w-lg">
-            <h2 class="text-2xl font-semibold text-gray-800 mb-8">{{ $t('form.create_account') }}</h2>
+            <h2 class="text-2xl font-semibold text-gray-800 mb-8">{{ t('form.create_account') }}</h2>
 
             <div class="space-y-4">
               <ClientOnly>
@@ -45,9 +45,8 @@
                 </div>
 
                 <div class="col-span-full">
-                  <dynamic-inputs :label="t('form.password')" :placeholder="t('form.enter_your_password')"
-                    type="password" name="password" :rules="'required|minLength:7'" :required="true"
-                    v-model="password" />
+                  <dynamic-inputs :label="t('form.password')" placeholder="••••••••" type="password" name="password"
+                    :rules="'required|minLength:7'" :required="true" v-model="password" />
                 </div>
 
                 <div class="mb-6 flex items-start">
@@ -58,9 +57,9 @@
                   </div>
                   <div class="ms-3 flex flex-col">
                     <label for="terms" class="block text-sm text-slate-500">
-                      {{ $t('form.accept_terms') }}
+                      {{ t('form.accept_terms') }}
                       <nuxt-link to="" class="text-blue-600 hover:underline">
-                        {{ $t('form.terms_and_conditions') }}
+                        {{ t('form.terms_and_conditions') }}
                       </nuxt-link>
                     </label>
                     <span v-if="termsError" class="font-medium text-red-600 block">{{ termsError
@@ -70,21 +69,20 @@
               </ClientOnly>
             </div>
 
-            <button type="submit" :disabled="loading" @click="handleSignup"
-              class="w-full shadow-xl py-2.5 px-4 text-sm font-semibold rounded text-white bg-blue-600 hover:bg-blue-700 focus:outline-none mt-7">
-              <div class="flex items-center justify-center" v-if="loading">
-                <span class="text-center me-2">{{ $t('btn.signing_up') }}...</span>
-                <icon name="svg-spinners:270-ring-with-bg" />
-              </div>
-              <span v-else>{{ $t('btn.create_account_button') }}</span>
-            </button>
+            <!-- base-button component -->
+            <div class="mt-7">
+              <base-button :default-icon="false" :block="true" type="submit" :disabled="loading" @click="handleSignup">
+                <icon name="svg-spinners:270-ring-with-bg" v-if="loading" />
+                <span v-else>{{ t('btn.create_account_button') }}</span>
+              </base-button>
+            </div>
 
             <!-- Login Link -->
             <div class="mt-6 text-center">
               <p class="text-sm text-slate-500">
-                {{ $t('form.already_have_account') }}
+                {{ t('form.already_have_account') }}
                 <nuxt-link-locale to="/auth/login" class="text-blue-600 font-medium hover:underline ms-1">
-                  {{ $t('form.login_here') }}
+                  {{ t('form.login_here') }}
                 </nuxt-link-locale>
               </p>
             </div>

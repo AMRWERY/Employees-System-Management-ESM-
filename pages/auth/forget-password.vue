@@ -5,26 +5,23 @@
         <div class="mt-7 bg-white rounded-xl shadow-lg border-2 border-indigo-300">
           <div class="p-4 sm:p-7">
             <div class="text-center">
-              <h1 class="block text-2xl font-bold text-gray-800">{{ $t('form.forgot_password') }}</h1>
+              <h1 class="block text-2xl font-bold text-gray-800">{{ t('form.forgot_password') }}</h1>
             </div>
 
             <div class="mt-5">
-              <form>
-                <div class="grid gap-y-4">
-                  <div>
-                    <label for="email" class="text-sm text-slate-800 font-medium mb-2 block">{{ $t('form.email')
-                      }}</label>
-                    <div class="relative">
-                      <input type="email" id="email" name="email"
-                        class="bg-slate-100 w-full text-sm text-slate-800 px-4 py-3 rounded-md outline-none border focus:border-blue-600 focus:bg-transparent"
-                        :placeholder="t('form.enter_your_email')">
-                    </div>
-                  </div>
-                  <button type="submit"
-                    class="w-full shadow-xl py-2.5 px-4 text-sm font-semibold rounded text-white bg-blue-600 hover:bg-blue-700 focus:outline-none">{{
-                      $t('btn.reset_password') }}</button>
+              <div class="grid gap-y-4">
+                <div>
+                  <dynamic-inputs :label="t('form.email')" :placeholder="t('form.enter_your_email')" type="email"
+                    name="email" :rules="'required|email'" :required="true" v-model="email" />
                 </div>
-              </form>
+
+                <!-- base-button component -->
+                <base-button :default-icon="false" :block="true" type="submit" :disabled="loading"
+                  @click="handleResetPassword">
+                  <icon name="svg-spinners:270-ring-with-bg" v-if="loading" />
+                  <span v-else>{{ t('btn.reset_password') }}</span>
+                </base-button>
+              </div>
             </div>
           </div>
         </div>
@@ -35,6 +32,12 @@
 
 <script lang="ts" setup>
 const { t } = useI18n()
+const email = ref('');
+const loading = ref(false);
+
+const handleResetPassword = () => {
+  console.log('reset password')
+}
 
 definePageMeta({
   layout: 'auth'
