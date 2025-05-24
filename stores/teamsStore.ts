@@ -340,19 +340,17 @@ export const useTeamStore = defineStore("teams", {
 
     getDepartmentName: (state) => (departmentId: string, teamId?: string) => {
       if (!departmentId && !teamId) return "Not Assigned";
-      // First try to find by departmentId
       let department = state.teams.find(
         (team) => team.departmentId === departmentId
       );
-      // If we can't find the department by departmentId and teamId is provided,
-      // try to find by team.id matching employee.teamId
       if (!department && teamId && state.teams.length > 0) {
-        // console.log(`Trying to find department by teamId: ${teamId}`);
-        department = state.teams.find(team => team.id === teamId);
+        department = state.teams.find((team) => team.id === teamId);
       }
       if (!department && state.teams.length > 0) {
         // Log for debugging
-        console.log(`Department not found. DepartmentId: ${departmentId}, TeamId: ${teamId}, Teams available: ${state.teams.length}`);
+        console.log(
+          `Department not found. DepartmentId: ${departmentId}, TeamId: ${teamId}, Teams available: ${state.teams.length}`
+        );
       }
       return department?.name || "Unknown Department";
     },

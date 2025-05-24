@@ -163,7 +163,10 @@
     "personal_info": "Personal info",
     "change_password": "Change password",
     "new_password": "New password",
-    "confirm_password": "Confirm password"
+    "confirm_password": "Confirm password",
+    "created_at": "Created at",
+    "department": "Department / Team",
+    "manager": "Manager"
   },
   "head": {
     "sign_in": "Sign in",
@@ -222,7 +225,8 @@
     "failed_remove_img": "Failed remove image",
     "password_updated": "Password updated",
     "password_update_failed": "Password update failed",
-    "requires_recent_login": "Requires recent login"
+    "requires_recent_login": "Requires recent login",
+    "failed_fetch_profile": "Failed get profile data"
   },
   "status": {
     "all": "All",
@@ -267,5 +271,12 @@
     "october": "October",
     "november": "November",
     "december": "December"
+  },
+  "teams": {
+    "accounting": "Accounting",
+    "human_resources": "Human Resources (HR)",
+    "information_technology": "Information Technology (IT)",
+    "engineering": "Engineering",
+    "managers": "Managers"
   }
 }

@@ -20,7 +20,7 @@ export interface Member {
   isBlocked: boolean;
   createdAt?: Date;
   role: string;
-  status?: 'blocked' | 'active';
+  status?: "blocked" | "active";
 }
 
 export interface TeamState {

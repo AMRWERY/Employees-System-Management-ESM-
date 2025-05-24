@@ -163,7 +163,10 @@
     "personal_info": "المعلومات الشخصية",
     "change_password": "تغيير كلمة المرور",
     "new_password": "كلمة المرور الجديدة",
-    "confirm_password": "تأكيد كلمة المرور"
+    "confirm_password": "تأكيد كلمة المرور",
+    "created_at": "تم إنشاءه في",
+    "department": "القسم / الفريق",
+    "manager": "المدير"
   },
   "head": {
     "sign_in": "تسجيل الدخول",
@@ -222,7 +225,8 @@
     "failed_remove_img": "فشل إزالة الصورة",
     "password_updated": "تم تحديث كلمة المرور",
     "password_update_failed": "فشل تحديث كلمة المرور",
-    "requires_recent_login": "يتطلب تسجيل الدخول الأخير"
+    "requires_recent_login": "يتطلب تسجيل الدخول الأخير",
+    "failed_fetch_profile": "فشل الحصول على بيانات الملف الشخصي"
   },
   "status": {
     "all": "الكل",
@@ -267,5 +271,12 @@
     "october": "أكتوبر",
     "november": "نوفمبر",
     "december": "ديسمبر"
+  },
+  "teams": {
+    "accounting": "المحاسبة",
+    "human_resources": "الموارد البشرية",
+    "information_technology": "تكنولوجيا المعلومات",
+    "engineering": "الهندسة",
+    "managers": "الإدارة"
   }
 }

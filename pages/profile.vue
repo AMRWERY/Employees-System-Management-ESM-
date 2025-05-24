@@ -26,7 +26,7 @@
                 <icon name="material-symbols:photo" class="text-indigo-600 w-12 h-12"></icon>
                 <p class="font-medium text-center text-gray-600">{{
                   t('dashboard.update_your_img')
-                }}</p>
+                  }}</p>
               </label>
             </div>
             <input id="profile-img" type="file" class="hidden" accept="image/*" @change="handleSingleImageUpload" />
@@ -35,9 +35,10 @@
 
         <div
           class="xl:w-[80%] lg:w-[90%] md:w-[94%] sm:w-[96%] w-[92%] mx-auto flex flex-col gap-4 justify-center items-center relative xl:-top-[6rem] lg:-top-[6rem] md:-top-[4rem] sm:-top-[3rem] -top-[2.2rem]">
-          <h1 class="text-center text-gray-800 text-2xl capitalize">{{ parsedUserData.firstName }} {{
-            parsedUserData.lastName }}</h1>
-          <h1 class="text-center text-gray-800 text-lg capitalize">{{ parsedUserData.role }}</h1>
+          <h1 class="text-center text-gray-800 text-2xl capitalize">{{ form.firstName }} {{
+            form.lastName }}</h1>
+          <p class="text-center text-gray-800 text-lg capitalize -mt-2 bg-gray-100 p-1.5 shadow-md rounded-lg">{{
+            form.position || form.role }}</p>
           <!-- Profile Form -->
           <ClientOnly>
             <div class="w-full max-w-3xl mx-auto space-y-6 bg-white rounded-lg shadow-md p-6">
@@ -54,9 +55,40 @@
                       v-model="form.lastName" />
                   </div>
 
-                  <div class="sm:col-span-full">
+                  <div class="sm:col-span-3">
                     <dynamic-inputs :label="t('form.email')" :name="t('form.email')" :disabled="true" readonly
                       v-model="form.email" />
+                  </div>
+
+                  <div class="sm:col-span-3">
+                    <dynamic-inputs :label="t('form.employee_id')" :name="t('form.employee_id')" :disabled="true"
+                      readonly v-model="form.employeeId" />
+                  </div>
+
+                  <div class="sm:col-span-3" v-if="form.role === 'employee'">
+                    <dynamic-inputs :label="t('form.position')" :name="t('form.position')" :disabled="true" readonly
+                      v-model="form.role" />
+                  </div>
+
+                  <div class="sm:col-span-3">
+                    <dynamic-inputs :label="t('form.created_at')" :name="t('form.created_at')" :disabled="true" readonly
+                      v-model="form.createdAt" />
+                  </div>
+
+                  <div class="sm:col-span-3" v-if="form.role === 'employee'">
+                    <dynamic-inputs :label="t('form.department')" :name="t('form.department')" :disabled="true" readonly
+                      :model-value="teamName" />
+                  </div>
+
+                  <!-- manager name will display here -->
+                  <!-- <div class="sm:col-span-3" v-if="form.role === 'employee'">
+                    <dynamic-inputs :label="t('form.manager')" :name="t('form.manager')" :disabled="true" readonly
+                      v-model="form.teamId" />
+                  </div> -->
+
+                  <div class="sm:col-span-3">
+                    <dynamic-inputs :label="t('form.status')" :name="t('form.status')" :disabled="true" readonly
+                      :model-value="translatedStatus" />
                   </div>
                 </div>
               </div>
@@ -100,15 +132,20 @@
 const { t } = useI18n()
 const profileStore = useProfileStore()
 const authStore = useAuthStore()
+const teamsStore = useTeamStore()
 const { triggerToast } = useToast();
-
-const userData = sessionStorage.getItem('user')
-const parsedUserData = userData ? JSON.parse(userData) : null
+const { formatDate } = useDateFormat();
 
 const form = reactive({
-  firstName: parsedUserData?.firstName || '',
-  lastName: parsedUserData?.lastName || '',
-  email: parsedUserData?.email || '',
+  firstName: '',
+  lastName: '',
+  email: '',
+  employeeId: '',
+  position: '',
+  createdAt: '',
+  role: '',
+  teamId: '' as string,
+  status: '' as 'active' | 'blocked',
   newPassword: '',
   confirmPassword: ''
 })
@@ -198,8 +235,58 @@ const removeImagePreview = async () => {
   }
 }
 
-onMounted(() => {
+const teamName = computed(() => {
+  // console.log('team id:', form.teamId)
+  const rawName = teamsStore.getDepartmentName('', form.teamId);
+  const translationKey = rawName
+    .toLowerCase()
+    .replace(/\(.*?\)/g, '')    // Remove text in parentheses including the parentheses
+    .replace(/[^a-z0-9]+/g, '_') // Replace special chars with underscores
+    .replace(/_+/g, '_')         // Remove consecutive underscores
+    .replace(/(^_|_$)/g, '')     // Trim leading/trailing underscores
+    .replace(/_it$/, '');    // Remove leading/trailing underscores
+  // console.log(translationKey)
+  return t(`teams.${translationKey}`, rawName);
+})
+
+onMounted(async () => {
   profileStore.initializeProfileImage()
+
+  if (teamsStore.teams.length === 0) {
+    teamsStore.fetchAll()
+  }
+
+  const loadEmployeeData = async () => {
+    try {
+      const userId = authStore.user?.uid
+      // console.log(userId)
+      if (!userId) return
+      const employee = await teamsStore.fetchEmployeeById(userId)
+      if (!employee) return
+      // Update all form fields from employee data
+      form.firstName = employee.firstName
+      form.lastName = employee.lastName
+      form.email = employee.email
+      form.employeeId = employee.employeeId
+      form.position = employee.position
+      form.createdAt = employee.createdAt ? formatDate(employee.createdAt) : ''
+      form.role = employee.role
+      form.teamId = employee.teamId || ''
+      form.status = employee.status || 'active'
+    } catch (error) {
+      triggerToast({
+        message: t('toast.failed_fetch_profile'),
+        type: 'error',
+        icon: 'material-symbols:error-rounded'
+      })
+    }
+  }
+  await loadEmployeeData()
+})
+
+const translatedStatus = computed(() => {
+  if (!form.status) return ''
+  return t(`status.${form.status}`)
 })
 
 useHead({
