@@ -2,7 +2,7 @@
     <div>
         <transition name="bounce" mode="out-in">
             <div v-if="visible"
-                :class="`relative w-full max-w-lg p-5 rounded-lg shadow-xl sm:max-w-lg z-50 border-s-4 ${toastStyles}`"
+                :class="`relative w-full max-w-lg p-3 rounded-lg shadow-xl sm:max-w-lg z-50 border-s-4 ${toastStyles}`"
                 role="alert">
                 <!-- Progress bar container -->
                 <div class="absolute bottom-0 w-full h-1 bg-white rounded-b-lg start-0 bg-opacity-20">
@@ -10,11 +10,10 @@
                         :style="progressBarStyle" />
                 </div>
                 <icon :name="toastIcon" :class="`${iconColor}`"
-                    class="inline p-0.5 shrink-0 me-3 rounded-full items-center justify-center" width="20"
-                    height="20" />
+                    class="inline p-0.5 shrink-0 me-3 rounded-full items-center justify-center" />
                 <span class="block text-lg me-3 sm:inline" :class="textColor">{{ message }}</span>
                 <icon name="material-symbols:close-small-rounded" class="inline cursor-pointer ms-auto shrink-0"
-                    width="24" height="24" @click="closeToast" />
+                    @click="closeToast" />
             </div>
         </transition>
     </div>
@@ -47,35 +46,35 @@ const emit = defineEmits(['toastClosed']);
 const toastStyles = computed(() => {
     switch (props.toastType) {
         case 'success':
-            return 'bg-green-100 border-green-700 text-green-500 font-semibold tracking-wide flex items-center w-max max-w-sm p-4 rounded-md shadow-md shadow-green-200';
+            return 'bg-green-500 border-green-700 text-white font-semibold tracking-wide flex items-center shadow-green-200';
         case 'error':
-            return 'bg-red-100 border-red-700 text-red-500 font-semibold tracking-wide flex items-center w-max max-w-sm p-4 rounded-md shadow-md shadow-red-200';
+            return 'bg-red-500 border-red-700 text-white font-semibold tracking-wide flex items-center shadow-red-200';
         case 'warning':
-            return 'bg-yellow-100 border-yellow-700 text-yellow-500 font-semibold tracking-wide flex items-center w-max max-w-sm p-4 rounded-md shadow-md shadow-yellow-200';
+            return 'bg-yellow-500 border-yellow-700 text-white font-semibold tracking-wide flex items-center shadow-yellow-200';
         default:
-            return 'bg-blue-100 border-blue-700 text-blue-500 font-semibold tracking-wide flex items-center w-max max-w-sm p-4 rounded-md shadow-md shadow-blue-200';
+            return 'bg-blue-500 border-blue-700 text-white font-semibold tracking-wide flex items-center shadow-blue-200';
     }
 });
 
 const iconColor = computed(() => {
     switch (props.toastType) {
         case 'success':
-            return 'bg-green-400 text-green-500';
+            return 'bg-white text-white';
         case 'error':
-            return 'bg-red-400 text-red-500';
+            return 'bg-white text-white';
         case 'warning':
-            return 'bg-yellow-400 text-yellow-500';
+            return 'bg-white text-white';
         default:
-            return 'bg-blue-400 text-blue-500';
+            return 'bg-white text-white';
     }
 });
 
 const textColor = computed(() => {
     switch (props.toastType) {
-        case 'success': return 'text-green-500';
-        case 'error': return 'text-red-500';
-        case 'warning': return 'text-yellow-500';
-        default: return 'text-blue-500';
+        case 'success': return 'text-white';
+        case 'error': return 'text-white';
+        case 'warning': return 'text-white';
+        default: return 'text-white';
     }
 });
 
@@ -119,7 +118,6 @@ onMounted(() => {
 .bounce-enter-active,
 .bounce-leave-active {
     transition: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-    position: absolute;
 }
 
 @keyframes bounce-in {
