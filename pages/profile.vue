@@ -1,8 +1,5 @@
 <template>
   <div>
-    <!-- breadcrumb component -->
-    <breadcrumb />
-
     <section class="w-full overflow-hidden mt-8">
       <div class="w-full mx-auto">
         <!-- User Cover IMAGE -->

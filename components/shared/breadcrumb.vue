@@ -6,7 +6,7 @@
           <li class="inline-flex items-center">
             <nuxt-link-locale to="/" class="inline-flex items-center text-sm font-medium text-gray-700 ">
               <icon name="material-symbols:home-outline-rounded" class="w-5 h-5 me-2.5" />
-              {{ $t('breadcrumb.home') }}
+              {{ t('breadcrumb.home') }}
             </nuxt-link-locale>
           </li>
           <li v-if="breadcrumbLabel">

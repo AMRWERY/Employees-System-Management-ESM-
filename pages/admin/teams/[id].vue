@@ -58,6 +58,8 @@ import type { Column } from '@/components/shared/dynamic-table.vue'
 // }
 
 const { t } = useI18n()
+const route = useRoute()
+const router = useRouter();
 // const { triggerToast } = useToast()
 const teamsStore = useTeamStore();
 const searchTerm = ref('');
@@ -152,9 +154,6 @@ const skeletonHeaders = ref<TableHeader[]>([
   { type: 'action', loaderWidth: 'w-32' }, // Actions
 ])
 
-const route = useRoute()
-const router = useRouter();
-
 const viewEmployeeDetails = (member: Member) => {
   router.push(`/admin/teams/employees/${member.id}`);
 };
@@ -239,6 +238,6 @@ const handleSave = async () => {
 };
 
 useHead({
-  titleTemplate: () => t('head.employees'),
+  titleTemplate: () => t('head.admin_teams_id'),
 })
 </script>

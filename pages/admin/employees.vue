@@ -1,8 +1,5 @@
 <template>
   <div>
-    <!-- breadcrumb component -->
-    <breadcrumb />
-
     <div class="flex items-center justify-between my-6 flex-nowrap">
       <p class="text-2xl font-semibold text-gray-700">{{ t('dashboard.employees') }}</p>
       <div class="flex items-center justify-center gap-4 ms-auto">

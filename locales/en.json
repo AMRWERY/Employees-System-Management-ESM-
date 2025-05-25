@@ -177,7 +177,10 @@
     "leave_management": "Leave Management",
     "employees": "Employees",
     "teams": "Teams / Derpartments",
-    "profile": "Profile"
+    "profile": "Profile",
+    "settings": "Settings",
+    "admin_teams_id": "Team Members",
+    "admin_teams_employees_employeeid": "Employee Details"
   },
   "error_page": {
     "you_are_all_alone_here": "You are all alone here 😁"
@@ -247,7 +250,10 @@
     "admin_leave_request": "Leave Management",
     "admin_employees": "Employees",
     "admin_teams": "Teams / Derpartments",
-    "profile": "Profile"
+    "profile": "Profile",
+    "admin_teams_id": "Team Members",
+    "admin_teams_employees_employeeid": "Employee Details",
+    "settings": "Settings"
   },
   "days": {
     "mon": "Mon",

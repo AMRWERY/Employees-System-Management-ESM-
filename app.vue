@@ -2,6 +2,12 @@
   <div>
     <ClientOnly>
       <NuxtLayout>
+        <!-- progress-bar component -->
+        <progress-bar />
+
+        <!-- breadcrumb component -->
+        <breadcrumb v-if="!isHome" />
+
         <NuxtPage />
       </NuxtLayout>
     </ClientOnly>
@@ -19,6 +25,10 @@
 </template>
 
 <script setup lang="ts">
+const route = useRoute();
+
+const isHome = computed(() => route.meta.layout === 'auth' || route.meta.layout === 'dashnoard');
+
 const { showToast, toastMessage, toastType, toastIcon, toastDuration } = useToast()
 </script>
 

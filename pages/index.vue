@@ -27,4 +27,8 @@ onMounted(() => {
     authStore.clearWelcomeType();
   }
 })
+
+definePageMeta({
+  layout: 'dashnoard'
+});
 </script>

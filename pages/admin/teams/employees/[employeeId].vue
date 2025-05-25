@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="max-w-3xl mx-auto p-4 border border-gray-200 rounded-lg shadow">
+    <div class="max-w-3xl mx-auto p-4 border border-gray-200 rounded-lg shadow mt-7">
       <div class="flex justify-center">
         <div class="relative w-36 h-36">
           <span class="sr-only">user photo</span>
@@ -119,4 +119,8 @@ const departmentName = computed(() => {
   if (!employee.value) return '';
   return teamsStore.getDepartmentName(employee.value.departmentId, employee.value.teamId);
 });
+
+useHead({
+  titleTemplate: () => t('head.admin_teams_employees_employeeid'),
+})
 </script>
