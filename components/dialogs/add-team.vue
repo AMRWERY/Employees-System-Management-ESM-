@@ -11,7 +11,7 @@
               @click="$emit('update:modelValue', false)" />
           </div>
 
-          <div class="my-3 overflow-y-auto h-[calc(408px-88px)] hide-scrollbar">
+          <div class="my-3 overflow-y-auto h-[calc(320px-88px)]">
             <ClientOnly>
               <div class="grid col-span-1 sm:grid-cols-6 gap-x-6 space-y-2">
                 <div class="col-span-full">

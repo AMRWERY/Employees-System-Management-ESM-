@@ -5,7 +5,7 @@
         <!-- Input field -->
         <div class="relative">
           <input type="text" :value="formattedDate" readonly @click="toggleCalendar"
-            :placeholder="$t('form.select_date')"
+            :placeholder="t('form.select_date')"
             class="w-full px-3 py-2 transition duration-300 border rounded-md shadow-sm placeholder:text-slate-400 text-slate-700 focus:outline-none focus:border-slate-400 hover:border-slate-300 focus:shadow" />
           <div class="absolute inset-y-0 flex items-center pointer-events-none end-0 pe-3">
             <icon name="material-symbols:calendar-month" class="w-5 h-5 text-gray-400" />
@@ -51,6 +51,8 @@
 </template>
 
 <script lang="ts" setup>
+const { t } = useI18n()
+
 const props = defineProps({
   modelValue: {
     type: [Date, String] as PropType<Date | string | null>,
@@ -79,12 +81,15 @@ const formattedDate = computed(() => {
   const date = typeof dateValue.value === 'string' ?
     new Date(dateValue.value) :
     dateValue.value;
-  return useDateFormat(date, 'YYYY-MM-DD').value;
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
 });
 
 // Handle date selection
 const selectDate = (date: Date) => {
-  dateValue.value = date;
+  emit('update:modelValue', new Date(date));
   showCalendar.value = false;
 };
 
