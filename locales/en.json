@@ -180,7 +180,8 @@
     "profile": "Profile",
     "settings": "Settings",
     "admin_teams_id": "Team Members",
-    "admin_teams_employees_employeeid": "Employee Details"
+    "admin_teams_employees_employeeid": "Employee Details",
+    "admin_leave_request_id": "Leave request details"
   },
   "error_page": {
     "you_are_all_alone_here": "You are all alone here 😁"
@@ -253,7 +254,10 @@
     "profile": "Profile",
     "admin_teams_id": "Team Members",
     "admin_teams_employees_employeeid": "Employee Details",
-    "settings": "Settings"
+    "settings": "Settings",
+    "employee_my_attendance": "My attendance",
+    "employee_leave_request": "My leave requests",
+    "admin_leave_request_id": "Leave request details"
   },
   "days": {
     "mon": "Mon",

@@ -231,6 +231,6 @@ const handleReject = async () => {
 };
 
 useHead({
-  titleTemplate: () => t('head.leave_management'),
+  titleTemplate: () => t('head.admin_leave_request_id'),
 });
 </script>

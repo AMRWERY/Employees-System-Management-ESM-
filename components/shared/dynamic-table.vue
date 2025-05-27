@@ -66,17 +66,7 @@
 </template>
 
 <script lang="ts" setup>
-export interface Column<T = any> {
-  key: keyof T | string;
-  label: string;
-  format?: (row: T, index?: number) => string;
-}
-
-interface TableItem {
-  [key: string]: any;
-  status?: string;
-  isBlocked?: boolean;
-}
+import type { Column, TableItem } from '@/types/tables'
 
 type StatusType = 'pending' | 'approved' | 'rejected' | 'cancelled' | 'blocked' | 'active';
 

@@ -1,7 +1,4 @@
-interface User {
-  permissions?: Record<string, Record<string, boolean>>;
-  // Add other user properties if needed
-}
+import type { User } from "@/types/user";
 
 export function usePermissions() {
   const hasPermission = (section: string, action: string): boolean => {

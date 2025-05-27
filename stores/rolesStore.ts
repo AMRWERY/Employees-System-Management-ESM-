@@ -11,36 +11,11 @@ import {
   writeBatch,
   WriteBatch,
 } from "firebase/firestore";
-
-// Permission types
-type PermissionAction = "view" | "add" | "edit" | "delete" | "cancel";
-type PermissionSection = Record<PermissionAction, boolean>;
-type Permissions = Record<string, PermissionSection>;
-
-// Role interface
-interface Role {
-  id: string;
-  name: string;
-  permissions: Permissions;
-}
-
-interface RoleUpdate {
-  name?: string;
-  permissions?: Permissions;
-}
-
-// Default permissions structure
-// interface DefaultPermissions {
-//   dashboard: { view: boolean };
-//   employees: { view: boolean; add: boolean; edit: boolean; delete: boolean, block: boolean, unblock: boolean };
-//   orders: { view: boolean; cancel: boolean };
-//   users: { view: boolean; edit: boolean };
-// }
+import type { Role, RoleUpdate, Permissions } from "@/types/roles";
 
 export const useRolesStore = defineStore("roles", {
   state: () => ({
     roles: [] as Role[],
-    // defaultPermissions: {} as DefaultPermissions,
   }),
 
   actions: {
@@ -129,8 +104,10 @@ export const useRolesStore = defineStore("roles", {
         label: role.name,
       })),
 
-      getRoleByName: (state) => (name: string) => {
-    return state.roles.find(role => role.name.toLowerCase() === name.toLowerCase());
-  }
+    getRoleByName: (state) => (name: string) => {
+      return state.roles.find(
+        (role) => role.name.toLowerCase() === name.toLowerCase()
+      );
+    },
   },
 });

@@ -6,7 +6,7 @@
         <progress-bar />
 
         <!-- breadcrumb component -->
-        <breadcrumb v-if="!isHome" />
+        <breadcrumb v-if="!isHome" class="mb-7" />
 
         <NuxtPage />
       </NuxtLayout>

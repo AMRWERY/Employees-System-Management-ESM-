@@ -41,8 +41,9 @@
 
 <script lang="ts" setup>
 import type { LeaveRequest } from '@/types/leaveRequest'
-import type { TableHeader } from '@/components/shared/table-skeleton-loader.vue'
-import type { Column } from '@/components/shared/dynamic-table.vue'
+import type { TableHeader } from '@/types/table-header'
+import type { Column } from '@/types/tables'
+import type { Tab } from '@/types/tabs'
 
 const { t } = useI18n()
 const leaveStore = useLeaveRequestsStore()
@@ -80,10 +81,7 @@ const tableColumns = computed(() => {
   return columns;
 })
 
-interface Tab {
-  id: LeaveRequest['status'] | 'all'
-  label: string
-}
+
 
 const tabs = ref<Tab[]>([
   { id: 'all', label: t('status.all') },

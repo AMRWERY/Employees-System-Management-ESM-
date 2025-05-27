@@ -180,7 +180,8 @@
     "profile": "الملف الشخصي",
     "settings": "الإعدادات",
     "admin_teams_id": "أعضاء الفريق",
-    "admin_teams_employees_employeeid": "تفاصيل الموظف"
+    "admin_teams_employees_employeeid": "تفاصيل الموظف",
+    "admin_leave_request_id": "تفاصيل طلب الأجازه"
   },
   "error_page": {
     "you_are_all_alone_here": "أنت وحدك هنا 😁"
@@ -253,7 +254,10 @@
     "profile": "الملف الشخصي",
     "admin_teams_id": "أعضاء الفريق",
     "admin_teams_employees_employeeid": "تفاصيل الموظف",
-    "settings": "الإعدادات"
+    "settings": "الإعدادات",
+    "employee_my_attendance": "حضوري",
+    "employee_leave_request": "طلبات إجازتي",
+    "admin_leave_request_id": "تفاصيل طلب الأجازه"
   },
   "days": {
     "sun": "الأحد",

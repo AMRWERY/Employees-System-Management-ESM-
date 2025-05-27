@@ -33,29 +33,13 @@
         <no-data-message :message="t('no_data.no_employees_found')" icon="clarity:employee-group-solid" />
       </div>
     </div>
-
-    <!-- delete-dialog component -->
-    <!-- <delete-dialog :show="dialogProps.show" :title="dialogProps.title" :message="dialogProps.message"
-      :confirm-text="dialogProps.confirmText" :cancel-text="dialogProps.cancelText" :loading="dialogProps.loading"
-      @close="dialogProps.onClose" @confirm="dialogProps.onConfirm" /> -->
   </div>
 </template>
 
 <script lang="ts" setup>
-import { type TableHeader } from '@/components/shared/table-skeleton-loader.vue'
+import type { TableHeader } from '@/types/table-header'
 import type { Member } from '@/types/teams'
-import type { Column } from '@/components/shared/dynamic-table.vue'
-
-// interface DeleteDialogProps {
-//   show: boolean
-//   title?: string
-//   message?: string
-//   cancelText?: string
-//   confirmText?: string
-//   loading?: boolean
-//   onClose?: () => void
-//   onConfirm?: () => void
-// }
+import type { Column } from '@/types/tables'
 
 const { t } = useI18n()
 const route = useRoute()

@@ -30,8 +30,8 @@
 
 <script lang="ts" setup>
 import type { Teams } from '@/types/teams'
-import type { TableHeader } from '@/components/shared/table-skeleton-loader.vue'
-import type { Column } from '@/components/shared/dynamic-table.vue'
+import type { TableHeader } from '@/types/table-header'
+import type { Column } from '@/types/tables'
 
 const { t } = useI18n()
 const { triggerToast } = useToast()

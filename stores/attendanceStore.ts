@@ -12,45 +12,11 @@ import {
   increment,
   getDoc,
 } from "firebase/firestore";
-
-interface DailyAttendance {
-  id: string;
-  date: string;
-  clockIns: Timestamp[];
-  clockOuts: Timestamp[];
-  totalSeconds: number;
-  uid: string;
-  role: string;
-}
-
-interface WeekRecord {
-  id: string;
-  date: string;
-  clockIns: Timestamp[];
-  clockOuts: Timestamp[];
-  totalSeconds: number;
-  uid: string;
-  role: string;
-}
-
-interface WeekSummaryRecord {
-  date: string;
-  day: string;
-  totalSeconds: number;
-}
-
-interface MonthlyRecord {
-  date: string;
-  totalSeconds: number;
-}
-
-interface AttendanceState {
-  todayRecord: DailyAttendance | null;
-  weeklySummary: WeekSummaryRecord[];
-  monthlySummary: MonthlyRecord[];
-  loading: boolean;
-  error: string | null;
-}
+import type {
+  DailyAttendance,
+  MonthlyRecord,
+  AttendanceState,
+} from "@/types/attendance";
 
 const calculateDurationInSeconds = (
   start: Timestamp,

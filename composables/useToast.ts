@@ -1,9 +1,4 @@
-export interface ToastOptions {
-  message: string;
-  type: "success" | "error" | "warning" | "info";
-  icon?: string;
-  duration?: number;
-}
+import type { ToastOptions } from "@/types/toast-options";
 
 export function useToast() {
   const toastState = useState("globalToast", () => ({

@@ -47,20 +47,10 @@
 </template>
 
 <script lang="ts" setup>
-import { type TableHeader } from '@/components/shared/table-skeleton-loader.vue'
+import type { TableHeader } from '@/types/table-header'
 import type { Employee } from '@/types/employee'
-import type { Column } from '@/components/shared/dynamic-table.vue'
-
-interface DeleteDialogProps {
-  show: boolean
-  title?: string
-  message?: string
-  cancelText?: string
-  confirmText?: string
-  loading?: boolean
-  onClose?: () => void
-  onConfirm?: () => void
-}
+import type { Column } from '@/types/tables'
+import type { DeleteDialogProps } from '@/types/delete-dialog'
 
 const { t } = useI18n()
 const { triggerToast } = useToast()
@@ -152,9 +142,9 @@ const toggleBlockEmployee = async (employee: Employee) => {
   try {
     await employeesStore.toggleBlockEmployee(employee.id)
     triggerToast({
-      message: employee.isBlocked
-        ? t('toast.employee_unblocked')
-        : t('toast.employee_blocked'),
+      message: employee.status === 'blocked'
+        ? t('toast.employee_blocked')
+        : t('toast.employee_unblocked'),
       type: 'success',
       icon: 'mdi-check-circle',
     })

@@ -146,18 +146,12 @@
 </template>
 
 <script setup lang="ts">
-interface CalendarDay {
-  date: string;
-  dayOfMonth: number;
-  isCurrentMonth: boolean;
-  isToday: boolean;
-  hasAttendance: boolean;
-  totalSeconds: number;
-}
+import type { CalendarDay } from '@/types/calendarDay'
 
 const { t } = useI18n();
 const attendanceStore = useAttendanceStore();
 const { triggerToast } = useToast();
+const { formatFullDate, formatTime, formatDuration } = useAttendanceDateFormat();
 
 onMounted(async () => {
   await attendanceStore.fetchTodayRecord();
@@ -167,18 +161,7 @@ onMounted(async () => {
 });
 
 const dayLocale = localStorage.getItem('locale') || 'en-US';
-const formattedDate = useDateFormat(useNow(), 'YYYY-MM-DD (dddd)', { locales: dayLocale });
-
-const formatTime = (date: Date | undefined) => {
-  if (!date) return '';
-  return useDateFormat(date, 'HH:mm a').value;
-};
-
-const formatDuration = (totalSeconds: number) => {
-  const hours = Math.floor(totalSeconds / 3600);
-  const minutes = Math.floor((totalSeconds % 3600) / 60);
-  return `${String(hours).padStart(2, '0')}h ${String(minutes).padStart(2, '0')}m`;
-};
+const formattedDate = formatFullDate(dayLocale);
 
 const isProcessing = ref(false);
 
@@ -226,8 +209,6 @@ const toggleClock = async () => {
     });
   }
 };
-
-const currentDate = ref(new Date());
 
 const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day =>
   t(`days.${day.toLowerCase()}`)
@@ -322,18 +303,6 @@ function isSameDate(date1: Date, date2: Date): boolean {
   const d2 = new Date(date2.getFullYear(), date2.getMonth(), date2.getDate());
   return d1.getTime() === d2.getTime();
 }
-
-// async function fetchMonthData() {
-//   await attendanceStore.fetchMonthlySummary(
-//     currentDate.value.getFullYear(),
-//     currentDate.value.getMonth() + 1
-//   );
-// }
-
-// const formatShortDate = (dateStr: string): string => {
-//   const date = new Date(dateStr);
-//   return date.getDate().toString().padStart(2, '0');
-// };
 
 const formatDateForTooltip = (dateStr: string): string => {
   const date = new Date(dateStr);

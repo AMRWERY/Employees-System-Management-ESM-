@@ -31,11 +31,7 @@
 </template>
 
 <script lang="ts" setup>
-export interface TableHeader {
-    type?: 'image' | 'action' | 'text';
-    loaderWidth?: string;
-    [key: string]: any;
-}
+import type { TableHeader } from '@/types/table-header'
 
 defineProps({
     headers: {

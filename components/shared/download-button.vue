@@ -23,10 +23,7 @@
 </template>
 
 <script lang="ts" setup>
-interface DropdownItem {
-  title: string;
-  icon: string;
-}
+import type { DropdownItem } from '@/types/dropdown-items'
 
 const { t } = useI18n()
 const isOpen = ref(false)

@@ -22,39 +22,7 @@ import {
   serverTimestamp,
 } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
-
-interface FirestoreTimestamp {
-  toDate(): Date;
-}
-
-type UserData = {
-  [key: string]: any;
-  uid: string;
-  email: string | null;
-  firstName?: string;
-  lastName?: string;
-  role?: string;
-  profileImg?: string | null;
-  phone?: string | null;
-  birthDate?: string | FirestoreTimestamp | null;
-  address?: string;
-  apartment?: string;
-  selectedCity?: string;
-  loginType?: string;
-  createdAt?: Date | FirestoreTimestamp;
-  roledId?: string;
-  permissions?: Record<string, any>;
-  employeeId?: string; // Add the employeeId field
-};
-
-interface AuthState {
-  user: UserData | null;
-  error: string | null;
-  role: string | null;
-  isOverlayVisible: boolean;
-  loading: boolean;
-  welcomeType: "signup" | "login" | null;
-}
+import type { UserData } from "@/types/auth";
 
 export const useAuthStore = defineStore("auth", {
   state: () => ({

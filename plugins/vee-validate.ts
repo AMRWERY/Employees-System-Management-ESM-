@@ -14,16 +14,11 @@ import en from "@vee-validate/i18n/dist/locale/en.json";
 import ar from "@vee-validate/i18n/dist/locale/ar.json";
 import inputsEn from "~/locales/en.json";
 import inputsAr from "~/locales/ar.json";
-
-// Define a type for i18n instance
-interface I18n {
-  t: (key: string, params?: Record<string, any>) => string;
-  setLocale: (locale: string) => void;
-}
+import type { I18nTypes } from "@/types/i18n-types";
 
 export default defineNuxtPlugin((nuxtApp) => {
   // Type assertion for i18n
-  const i18n = nuxtApp.$i18n as I18n;
+  const i18n = nuxtApp.$i18n as I18nTypes;
 
   defineRule("required", required);
   defineRule("email", (value: any): string | boolean => {
