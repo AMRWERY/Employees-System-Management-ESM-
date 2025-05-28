@@ -305,9 +305,19 @@ export const useEmployeesStore = defineStore("employees", {
 
     filteredEmployees: (state: EmployeeState): Employee[] => {
       if (!state.searchEmployeesByEmail) return state.employees;
+      const term = state.searchEmployeesByEmail.toLowerCase();
       return state.employees.filter((employee) => {
         const email = employee.email?.toLowerCase() || "";
-        return email.includes(state.searchEmployeesByEmail);
+        const firstName = employee.firstName?.toLowerCase() || "";
+        const lastName = employee.lastName?.toLowerCase() || "";
+        const employeeId = employee.employeeId?.toLowerCase() || "";
+        return (
+          email.includes(term) ||
+          firstName.includes(term) ||
+          lastName.includes(term) ||
+          employeeId.includes(term) ||
+          `${firstName} ${lastName}`.includes(term)
+        );
       });
     },
 
