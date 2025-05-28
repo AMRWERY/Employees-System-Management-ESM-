@@ -212,6 +212,7 @@ export const useTeamStore = defineStore("teams", {
           isBlocked: data.isBlocked,
           status: data.status,
           manager: data.manager,
+          profileImg: data.profileImg,
           createdAt: data.createdAt?.toDate(),
           role: data.role,
         } as Member;

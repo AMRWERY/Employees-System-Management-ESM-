@@ -148,7 +148,7 @@ onMounted(() => {
   profileStore.initializeProfileImage();
 });
 
-const defaultProfileImg = 'https://justfields.com/storage/projects/7M5rV059/images.jpg'
+const defaultProfileImg = '/dummy-profile-img.jpg'
 
 const profileImage = computed(() => {
   if (profileStore.imagePreviewUrl) {

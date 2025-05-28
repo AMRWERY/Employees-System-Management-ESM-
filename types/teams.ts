@@ -20,6 +20,7 @@ export interface Member {
   isBlocked: boolean;
   createdAt?: Date;
   role: string;
+  profileImg: string;
   status?: "blocked" | "active";
 }
 
