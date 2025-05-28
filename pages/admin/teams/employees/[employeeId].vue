@@ -4,8 +4,8 @@
       <div class="flex justify-center">
         <div class="relative w-36 h-36">
           <span class="sr-only">user photo</span>
-          <img class="w-full h-full rounded-full object-cover border-4 border-gray-100 shadow p-2"
-            src="https://justfields.com/storage/projects/7M5rV059/images.jpg" alt="user-photo">
+          <img class="w-full h-full rounded-full object-cover border-2 border-gray-100 shadow p-1" :src="profileImage"
+            alt="user-photo">
         </div>
       </div>
 
@@ -119,6 +119,12 @@ const departmentName = computed(() => {
   if (!employee.value) return '';
   return teamsStore.getDepartmentName(employee.value.departmentId, employee.value.teamId);
 });
+
+const profileImage = computed(() =>
+  employee.value?.profileImg
+    ? employee.value.profileImg
+    : '/dummy-profile-img.jpg'
+);
 
 useHead({
   titleTemplate: () => t('head.admin_teams_employees_employeeid'),
