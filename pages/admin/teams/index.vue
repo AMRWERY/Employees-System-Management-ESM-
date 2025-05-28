@@ -13,17 +13,32 @@
       </div>
     </div>
 
+    <div class="relative w-[300px] mb-4">
+      <input type="text" v-model="searchTerm" :placeholder="t('form.search_by_email')"
+        class="px-4 py-2 pe-10 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full" />
+      <div class="absolute inset-y-0 end-0 flex items-center pe-3 pointer-events-none">
+        <icon name="heroicons-solid:magnifying-glass" class="w-5 h-5 text-gray-400" />
+      </div>
+    </div>
+
     <div v-if="loading" key="skeleton">
       <table-skeleton-loader :headers="skeletonHeaders" :rows="5" />
     </div>
 
     <div class="mt-8" v-else>
-      <div v-if="paginatedTeams.length === 0" class="text-center">
+      <div v-if="teamsStore.paginatedTeams.length === 0" class="text-center">
         <!-- no-data-message component -->
         <no-data-message :message="t('no_data.no_teams_found')" icon="fluent:people-team-20-filled" />
       </div>
 
-      <dynamic-table v-else :items="paginatedTeams" :columns="tableColumns" :has-view="true" @view="viewTeam" />
+      <!-- dynamic-table component -->
+      <div v-else>
+        <dynamic-table :items="teamsStore.paginatedTeams" :columns="tableColumns" :has-view="true" @view="viewTeam" />
+      </div>
+
+      <!-- pagination component -->
+      <pagination v-if="teamsStore.totalTeamPages > 1" :current-page="teamsStore.currentPage"
+        :total-pages="teamsStore.totalTeamPages" @page-change="handlePageChange" />
     </div>
   </div>
 </template>
@@ -36,11 +51,15 @@ import type { Column } from '@/types/tables'
 const { t } = useI18n()
 const { triggerToast } = useToast()
 const teamsStore = useTeamStore()
-const {
-  paginatedTeams,
-  // currentPage,
-  // totalPages
-} = storeToRefs(teamsStore)
+const searchTerm = ref('');
+
+watch(searchTerm, (term) => {
+  teamsStore.setTeamSearchTerm(term);
+});
+
+const handlePageChange = (newPage: number) => {
+  teamsStore.setTeamCurrentPage(newPage);
+};
 
 const tableColumns = computed(() => {
   const columns: Column<Teams>[] = [
@@ -73,7 +92,7 @@ const refreshTeamList = async () => {
   try {
     loading.value = true;
     await teamsStore.fetchAll();
-    teamsStore.updatePagination();
+    teamsStore.updateTeamPagination();
   } finally {
     loading.value = false;
   }

@@ -288,5 +288,9 @@
     "information_technology": "Information Technology (IT)",
     "engineering": "Engineering",
     "managers": "Managers"
+  },
+  "pagination": {
+    "previous": "Previous",
+    "next": "Next"
   }
 }

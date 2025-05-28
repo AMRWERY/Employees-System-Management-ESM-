@@ -30,9 +30,13 @@ export const useTeamStore = defineStore("teams", {
     teamsPerPage: 8,
     currentTeam: null as any,
     members: [] as any[],
+    paginatedMembers: [] as Member[],
+    currentMemberPage: 1,
+    membersPerPage: 8,
+    searchTeamsByName: "",
+    searchMembersByTerm: "",
     loading: false,
     error: "",
-    searchTeamsByName: "",
     unsubscribeListeners: [] as (() => void)[],
   }),
 
@@ -54,7 +58,7 @@ export const useTeamStore = defineStore("teams", {
               createdAt: data.createdAt?.toDate(),
             } as Teams;
           });
-          this.updatePagination();
+          this.updateTeamPagination();
           this.loading = false;
         },
         (err) => {
@@ -115,6 +119,7 @@ export const useTeamStore = defineStore("teams", {
             } as Member;
           });
           this.loading = false;
+          this.updateMemberPagination();
           return;
         } else {
           const teamRef = doc(db, "ems-teams", departmentId);
@@ -297,28 +302,38 @@ export const useTeamStore = defineStore("teams", {
       await updateDoc(doc(db, "ems-users", userId), { teamId: null });
     },
 
-    setSearchTerm(term: string): void {
+    setTeamSearchTerm(term: string): void {
       this.searchTeamsByName = term.toLowerCase();
       this.currentPage = 1;
-      this.updatePagination();
+      this.updateTeamPagination();
     },
 
-    updatePagination(): void {
+    setMemberSearchTerm(term: string): void {
+      this.searchMembersByTerm = term.toLowerCase();
+      this.currentMemberPage = 1;
+      this.updateMemberPagination();
+    },
+
+    setTeamCurrentPage(page: number) {
+      this.currentPage = page;
+      this.updateTeamPagination();
+    },
+
+    setMemberCurrentPage(page: number) {
+      this.currentMemberPage = page;
+      this.updateMemberPagination();
+    },
+
+    updateTeamPagination(): void {
       const start = (this.currentPage - 1) * this.teamsPerPage;
-      const end = this.currentPage * this.teamsPerPage;
-      const filtered = this.filteredTeams;
-      this.paginatedTeams = filtered.slice(start, end);
-      const maxPage = Math.max(
-        1,
-        Math.ceil(filtered.length / this.teamsPerPage)
-      );
-      if (this.currentPage > maxPage) {
-        this.currentPage = maxPage;
-        this.paginatedTeams = filtered.slice(
-          (maxPage - 1) * this.teamsPerPage,
-          maxPage * this.teamsPerPage
-        );
-      }
+      const end = start + this.teamsPerPage;
+      this.paginatedTeams = this.filteredTeams.slice(start, end);
+    },
+
+    updateMemberPagination(): void {
+      const start = (this.currentMemberPage - 1) * this.membersPerPage;
+      const end = start + this.membersPerPage;
+      this.paginatedMembers = this.filteredMembers.slice(start, end);
     },
   },
 
@@ -326,16 +341,30 @@ export const useTeamStore = defineStore("teams", {
     byDepartment: (state) => (deptId: string) =>
       state.teams.filter((t) => t.departmentId === deptId),
 
-    totalPages(): number {
+    totalTeamPages(): number {
       return Math.ceil(this.filteredTeams.length / this.teamsPerPage);
     },
 
     filteredTeams: (state: TeamState): Teams[] => {
       if (!state.searchTeamsByName) return state.teams;
-      return state.teams.filter((team) => {
-        const name = team.name?.toLowerCase() || "";
-        return name.includes(state.searchTeamsByName);
-      });
+      return state.teams.filter((team) =>
+        team.name?.toLowerCase().includes(state.searchTeamsByName)
+      );
+    },
+
+    totalMemberPages(): number {
+      return Math.ceil(this.filteredMembers.length / this.membersPerPage);
+    },
+
+    filteredMembers: (state: TeamState): Member[] => {
+      if (!state.searchMembersByTerm) return state.members;
+      const term = state.searchMembersByTerm;
+      return state.members.filter(
+        (e) =>
+          e.email?.toLowerCase().includes(term) ||
+          `${e.firstName} ${e.lastName}`.toLowerCase().includes(term) ||
+          e.employeeId?.toLowerCase().includes(term)
+      );
     },
 
     getDepartmentName: (state) => (departmentId: string, teamId?: string) => {

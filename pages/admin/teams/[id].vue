@@ -24,9 +24,15 @@
     </div>
 
     <div v-else>
-      <!-- dynamic-table component -->
-      <dynamic-table v-if="employees.length > 0" :items="filteredEmployees" :columns="tableColumns" :has-view="true"
-        @view="viewEmployeeDetails" />
+      <template v-if="teamsStore.paginatedMembers.length > 0">
+        <!-- dynamic-table component -->
+        <dynamic-table :items="teamsStore.paginatedMembers" :columns="tableColumns" :has-view="true"
+          @view="viewEmployeeDetails" />
+
+        <!-- pagination component -->
+        <pagination v-if="teamsStore.totalMemberPages > 1" :current-page="teamsStore.currentMemberPage"
+          :total-pages="teamsStore.totalMemberPages" @page-change="handlePageChange" />
+      </template>
 
       <div v-else class="text-center">
         <!-- no-data-message component -->
@@ -44,37 +50,37 @@ import type { Column } from '@/types/tables'
 const { t } = useI18n()
 const route = useRoute()
 const router = useRouter();
-// const { triggerToast } = useToast()
 const teamsStore = useTeamStore();
+// const { triggerToast } = useToast()
 const searchTerm = ref('');
 
-// Get departmentId from route params
 const departmentId = computed(() =>
   Array.isArray(route.params.id)
     ? route.params.id[0]
     : route.params.id
 );
 
-const employees = computed(() => teamsStore.members);
-const loading = computed(() => teamsStore.loading);
+watch(departmentId, (newId) => {
+  if (newId) {
+    teamsStore.fetchUsersByDepartment(newId);
+  }
+}, { immediate: true });
 
-// Filtered employees based on search
-const filteredEmployees = computed(() => {
-  // Simply filter by search term if provided, without modifying the data
-  if (!searchTerm.value) return employees.value;
-
-  const term = searchTerm.value.toLowerCase();
-  return employees.value.filter(e =>
-    e.email?.toLowerCase().includes(term) ||
-    `${e.firstName} ${e.lastName}`.toLowerCase().includes(term)
-  );
+watch(searchTerm, (term) => {
+  teamsStore.setMemberSearchTerm(term);
 });
+
+const handlePageChange = (newPage: number) => {
+  teamsStore.setMemberCurrentPage(newPage);
+};
 
 onMounted(async () => {
   if (departmentId.value) {
     await teamsStore.fetchUsersByDepartment(departmentId.value);
   }
 });
+
+const loading = computed(() => teamsStore.loading);
 
 onUnmounted(() => {
   teamsStore.unsubscribeListeners.forEach(unsub => unsub());
@@ -92,12 +98,6 @@ onUnmounted(() => {
 // })
 
 // const selectedEmployee = ref<Employee | null>(null)
-
-// const {
-//   paginatedTeams,
-//   currentPage,
-//   totalPages
-// } = storeToRefs(teamsStore)
 
 const tableColumns = computed(() => {
   const columns: Column<Member>[] = [
@@ -142,14 +142,10 @@ const viewEmployeeDetails = (member: Member) => {
   router.push(`/admin/teams/employees/${member.id}`);
 };
 
-watch(searchTerm, (value: string) => {
-  teamsStore.setSearchTerm(value)
-})
-
-const viewEmployee = (employee: Member) => {
-  // Implement view functionality
-  console.log('View employee:', employee)
-}
+// const viewEmployee = (employee: Member) => {
+//   // Implement view functionality
+//   console.log('View employee:', employee)
+// }
 
 // const toggleBlockEmployee = async (employee: Employee) => {
 //   try {
@@ -209,17 +205,17 @@ const viewEmployee = (employee: Member) => {
 //   }
 // }
 
-const showAddDialog = ref(false);
+// const showAddDialog = ref(false);
 
-const handleSave = async () => {
-  try {
-    // Your save logic
-    showAddDialog.value = false;
-    // triggerToast({...});
-  } catch (error) {
-    // Error handling
-  }
-};
+// const handleSave = async () => {
+//   try {
+//     // Your save logic
+//     showAddDialog.value = false;
+//     // triggerToast({...});
+//   } catch (error) {
+//     // Error handling
+//   }
+// };
 
 useHead({
   titleTemplate: () => t('head.admin_teams_id'),

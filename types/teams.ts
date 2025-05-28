@@ -33,4 +33,5 @@ export interface TeamState {
   loading: boolean;
   error: string;
   searchTeamsByName: string;
+  searchMembersByTerm: string;
 }

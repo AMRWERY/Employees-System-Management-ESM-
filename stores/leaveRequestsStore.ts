@@ -21,8 +21,13 @@ export const useLeaveRequestsStore = defineStore("leave-requests", {
   state: () => ({
     myRequests: [] as LeaveRequest[],
     allRequests: [] as LeaveRequest[],
+    paginatedRequests: [] as LeaveRequest[],
+    currentPage: 1,
+    requestsPerPage: 8,
     loading: false,
     error: "",
+    searchText: "",
+    activeFilter: "all",
   }),
 
   actions: {
@@ -87,6 +92,7 @@ export const useLeaveRequestsStore = defineStore("leave-requests", {
                 decisionBy: data.decisionBy,
               };
             });
+            this.updatePagination();
             this.loading = false;
           },
           (error: Error) => {
@@ -218,17 +224,18 @@ export const useLeaveRequestsStore = defineStore("leave-requests", {
       try {
         this.loading = true;
         const ref = doc(db, "ems-leave-requests", id);
-        
         // First check if the document exists
         const docSnap = await getDoc(ref);
         if (!docSnap.exists()) {
           throw new Error("Leave request not found");
         }
-
         // Then try to delete it
         await deleteDoc(ref);
       } catch (error) {
-        this.error = error instanceof Error ? error.message : "Failed to delete leave request";
+        this.error =
+          error instanceof Error
+            ? error.message
+            : "Failed to delete leave request";
         throw error;
       } finally {
         this.loading = false;
@@ -239,24 +246,19 @@ export const useLeaveRequestsStore = defineStore("leave-requests", {
       try {
         this.loading = true;
         const ref = doc(db, "ems-leave-requests", id);
-        
         // First check if the document exists and get its data
         const docSnap = await getDoc(ref);
         if (!docSnap.exists()) {
           throw new Error("Leave request not found");
         }
-
         const data = docSnap.data();
-        
         // Check if the request can be withdrawn
-        if (data.status !== 'pending') {
+        if (data.status !== "pending") {
           throw new Error("Only pending requests can be withdrawn");
         }
-        
         if (data.userId !== auth.currentUser?.uid) {
           throw new Error("You can only withdraw your own requests");
         }
-
         // Update the request status to withdrawn
         await updateDoc(ref, {
           status: "cancelled",
@@ -264,10 +266,46 @@ export const useLeaveRequestsStore = defineStore("leave-requests", {
           decisionBy: auth.currentUser?.uid,
         });
       } catch (error) {
-        this.error = error instanceof Error ? error.message : "Failed to withdraw leave request";
+        this.error =
+          error instanceof Error
+            ? error.message
+            : "Failed to withdraw leave request";
         throw error;
       } finally {
         this.loading = false;
+      }
+    },
+
+    setFilter(filter: string) {
+      this.activeFilter = filter;
+      this.currentPage = 1; // Reset to first page when filter changes
+      this.updatePagination();
+    },
+
+    setCurrentPage(page: number) {
+      this.currentPage = page;
+      this.updatePagination();
+    },
+
+    updatePagination(): void {
+      const start = (this.currentPage - 1) * this.requestsPerPage;
+      const end = this.currentPage * this.requestsPerPage;
+      // Use the store's filteredRequests getter
+      const filtered = this.filteredRequests;
+      this.paginatedRequests = filtered.slice(start, end);
+
+      const maxPage = Math.max(
+        1,
+        Math.ceil(filtered.length / this.requestsPerPage)
+      );
+      if (this.currentPage > maxPage) {
+        this.currentPage = maxPage;
+        // Recalculate if page number was out of bounds
+        const newStart = (this.currentPage - 1) * this.requestsPerPage;
+        this.paginatedRequests = filtered.slice(
+          newStart,
+          this.currentPage * this.requestsPerPage
+        );
       }
     },
   },
@@ -289,5 +327,20 @@ export const useLeaveRequestsStore = defineStore("leave-requests", {
 
     allRejected: (state) =>
       state.allRequests.filter((r) => r.status === "rejected"),
+
+    totalPages(): number {
+      return Math.ceil(this.filteredRequests.length / this.requestsPerPage);
+    },
+
+    filteredRequests: (state) => {
+      let requests = state.allRequests;
+      // Filter by active tab
+      if (state.activeFilter !== "all") {
+        requests = requests.filter(
+          (request) => request.status === state.activeFilter
+        );
+      }
+      return requests;
+    },
   },
 });

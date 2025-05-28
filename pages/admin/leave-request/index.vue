@@ -32,8 +32,12 @@
         </div>
 
         <!-- dynamic-table component -->
-        <dynamic-table v-else :items="filteredRequests" :columns="tableColumns" :has-view="true"
+        <dynamic-table v-else :items="paginatedRequests" :columns="tableColumns" :has-view="true"
           @view="(item: LeaveRequest) => openDetailsModal(item)" />
+
+        <!-- pagination component -->
+        <pagination v-if="totalPages > 1" :current-page="currentPage" :total-pages="totalPages"
+          @page-change="handlePageChange" />
       </div>
     </transition>
   </div>
@@ -48,8 +52,23 @@ import type { Tab } from '@/types/tabs'
 const { t } = useI18n()
 const leaveStore = useLeaveRequestsStore()
 const { triggerToast } = useToast()
-
 const { formatDate } = useDateFormat();
+const {
+  paginatedRequests,
+  currentPage,
+  totalPages
+} = storeToRefs(leaveStore)
+
+const handlePageChange = (newPage: number) => {
+  leaveStore.setCurrentPage(newPage);
+};
+
+const activeTab = ref<Tab['id']>('all')
+const loading = ref(true)
+
+watch(activeTab, (newTab) => {
+  leaveStore.setFilter(newTab);
+});
 
 const tableColumns = computed(() => {
   const columns: Column<LeaveRequest>[] = [
@@ -81,21 +100,18 @@ const tableColumns = computed(() => {
   return columns;
 })
 
-
-
 const tabs = ref<Tab[]>([
   { id: 'all', label: t('status.all') },
   { id: 'pending', label: t('status.pending') },
   { id: 'approved', label: t('status.approved') },
   { id: 'rejected', label: t('status.rejected') },
+  { id: 'cancelled', label: t('status.cancelled') },
 ])
-
-const activeTab = ref<Tab['id']>('all')
-const loading = ref(true)
 
 onMounted(async () => {
   try {
     await leaveStore.fetchAllRequests()
+    leaveStore.updatePagination();
   } catch (error) {
     triggerToast({
       message: t('toast.failed_to_load_leave_requests'),

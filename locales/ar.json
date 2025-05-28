@@ -288,5 +288,9 @@
     "information_technology": "تكنولوجيا المعلومات",
     "engineering": "الهندسة",
     "managers": "الإدارة"
+  },
+  "pagination": {
+    "previous": "السابق",
+    "next": "التالي"
   }
 }

@@ -37,6 +37,10 @@
           :has-delete="true" @view="(item: Employee) => viewEmployee(item)"
           @block="(item: Employee) => toggleBlockEmployee(item)" @delete="(item: Employee) => deleteEmployee(item)" />
       </div>
+
+      <!-- pagination component -->
+      <pagination v-if="totalPages > 1" :current-page="currentPage" :total-pages="totalPages"
+        @page-change="handlePageChange" />
     </div>
 
     <!-- delete-dialog component -->
@@ -72,9 +76,13 @@ const selectedEmployee = ref<Employee | null>(null)
 const employeesStore = useEmployeesStore()
 const {
   paginatedEmployees,
-  // currentPage,
-  // totalPages
+  currentPage,
+  totalPages
 } = storeToRefs(employeesStore)
+
+const handlePageChange = (newPage: number) => {
+  employeesStore.setCurrentPage(newPage);
+};
 
 const tableColumns = computed(() => {
   const columns: Column<Employee>[] = [

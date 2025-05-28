@@ -183,6 +183,11 @@ export const useEmployeesStore = defineStore("employees", {
       }
     },
 
+    setCurrentPage(page: number) {
+      this.currentPage = page;
+      this.updatePagination();
+    },
+
     updatePagination(): void {
       const start = (this.currentPage - 1) * this.employeesPerPage;
       const end = this.currentPage * this.employeesPerPage;
