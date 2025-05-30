@@ -5,7 +5,7 @@
         class="fixed inset-0 p-4 flex flex-wrap justify-end items-end w-full h-full z-[1000] before:fixed before:inset-0 before:w-full before:h-full before:bg-[rgba(0,0,0,0.5)] overflow-auto">
         <div class="w-full max-w-lg bg-white shadow-lg rounded-lg p-6 relative">
           <div class="flex items-center pb-3 border-b border-gray-300">
-            <h3 class="text-slate-900 text-xl font-semibold flex-1 capitalize">{{ t('dashboard.add_employee') }}</h3>
+            <h3 class="text-slate-900 text-xl font-semibold flex-1 capitalize">{{ t('dashboard.add_manager') }}</h3>
             <icon name="material-symbols:close-small-rounded"
               class="ms-2 cursor-pointer shrink-0 text-gray-400 hover:text-gray-500"
               @click="$emit('update:modelValue', false)" />
@@ -37,10 +37,10 @@
                     v-model="formValues.password" />
                 </div>
 
-                <div class="col-span-full">
+                <!-- <div class="col-span-full">
                   <dynamic-inputs :label="t('form.position')" :placeholder="t('form.enter_position')" type="text"
                     :name="t('form.position')" v-model="formValues.position" />
-                </div>
+                </div> -->
 
                 <div class="col-span-full">
                   <label class="block text-sm font-medium text-gray-700 mb-1">{{ t('form.teams') }}</label>
@@ -83,8 +83,8 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue', 'save']);
 
+const managerStore = useManagerStore()
 const teamsStore = useTeamStore()
-const employeesStore = useEmployeesStore();
 const selectedTeam = ref('')
 
 watch(() => props.modelValue, async (newVal) => {
@@ -104,8 +104,7 @@ const formValues = reactive({
 const handleSubmit = async () => {
   try {
     loading.value = true
-    // console.log('Selected Team:', selectedTeam.value);
-    await employeesStore.createEmployee({
+    await managerStore.createManager({
       firstName: formValues.firstName,
       lastName: formValues.lastName,
       email: formValues.email,
@@ -116,13 +115,13 @@ const handleSubmit = async () => {
     emit('update:modelValue', false);
     emit('save');
     triggerToast({
-      message: t('toast.employee_added_successfully'),
+      message: t('toast.manager_added_successfully'),
       type: 'success',
       icon: 'mdi-check-circle',
     })
   } catch (error) {
     triggerToast({
-      message: t('toast.failed_to_add_employee'),
+      message: t('toast.failed_to_add_manager'),
       type: 'error',
       icon: 'material-symbols:error-outline-rounded',
     })

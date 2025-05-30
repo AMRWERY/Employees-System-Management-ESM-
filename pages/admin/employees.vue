@@ -22,6 +22,7 @@
     </div>
 
     <div v-if="loading" key="skeleton">
+      <!-- table-skeleton-loader component -->
       <table-skeleton-loader :headers="skeletonHeaders" :rows="5" />
     </div>
 

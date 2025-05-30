@@ -248,11 +248,9 @@ const teamName = computed(() => {
 
 onMounted(async () => {
   profileStore.initializeProfileImage()
-
   if (teamsStore.teams.length === 0) {
     teamsStore.fetchAll()
   }
-
   const loadEmployeeData = async () => {
     try {
       const userId = authStore.user?.uid

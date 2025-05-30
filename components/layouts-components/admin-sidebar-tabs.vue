@@ -5,7 +5,7 @@
         <nuxt-link-locale to="/" class="flex items-center p-2 text-white rounded-lg group"
           exact-active-class="bg-gray-400 text-white hover:bg-gray-500">
           <icon name="material-symbols:dashboard" class="w-5 h-5 transition duration-75 group-hover:text-white"
-            :class="{ 'text-gray-400': $route.path === '/', 'text-white': $route.path !== '/' }" aria-hidden="true" />
+            :class="{ 'text-gray-400': route.path === '/', 'text-white': route.path !== '/' }" aria-hidden="true" />
           <span class="flex-1 ms-3 whitespace-nowrap">{{ t('layouts.dashboard') }}</span>
         </nuxt-link-locale>
       </li>
@@ -21,6 +21,12 @@
             :class="{ 'rotate-180': openDropdowns.management }" aria-hidden="true" />
         </button>
         <ul v-if="openDropdowns.management" class="py-2 space-y-2">
+          <li>
+            <nuxt-link-locale to="/admin/managers" class="flex items-center p-2 text-white rounded-lg group ps-7"
+              exact-active-class="bg-gray-400 text-white hover:bg-gray-500">
+              {{ t('layouts.managers') }}
+            </nuxt-link-locale>
+          </li>
           <li>
             <nuxt-link-locale to="/admin/employees" class="flex items-center p-2 text-white rounded-lg group ps-7"
               exact-active-class="bg-gray-400 text-white hover:bg-gray-500">
@@ -86,7 +92,7 @@
           exact-active-class="bg-gray-400 text-white hover:bg-gray-500">
           <icon name="material-symbols-light:settings-rounded"
             class="w-5 h-5 transition duration-75 group-hover:text-white"
-            :class="{ 'text-gray-400': $route.path === '/settings', 'text-white': $route.path !== '/settings' }" />
+            :class="{ 'text-gray-400': route.path === '/settings', 'text-white': route.path !== '/settings' }" />
           <span class="flex-1 ms-3 whitespace-nowrap">{{ t('layouts.settings') }}</span>
         </nuxt-link-locale>
       </li>
@@ -96,6 +102,7 @@
 
 <script lang="ts" setup>
 const { t } = useI18n()
+const route = useRoute();
 
 type DropdownNames = 'management' | 'processes'
 

@@ -58,6 +58,7 @@ export const useTeamStore = defineStore("teams", {
               createdAt: data.createdAt?.toDate(),
             } as Teams;
           });
+          // console.log(this.teams)
           this.updateTeamPagination();
           this.loading = false;
         },
