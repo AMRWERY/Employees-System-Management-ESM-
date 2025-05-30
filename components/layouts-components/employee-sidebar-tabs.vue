@@ -5,7 +5,7 @@
         <nuxt-link-locale to="/" class="flex items-center p-2 text-white rounded-lg group"
           exact-active-class="bg-gray-400 text-white hover:bg-gray-500">
           <icon name="material-symbols:dashboard" class="w-5 h-5 transition duration-75 group-hover:text-white"
-            :class="{ 'text-gray-400': $route.path === '/', 'text-white': $route.path !== '/' }" aria-hidden="true" />
+            :class="{ 'text-gray-400': route.path === '/', 'text-white': route.path !== '/' }" aria-hidden="true" />
           <span class="flex-1 ms-3 whitespace-nowrap">{{ t('layouts.dashboard') }}</span>
         </nuxt-link-locale>
       </li>
@@ -48,7 +48,7 @@
         <nuxt-link to="" class="flex items-center p-2 text-white rounded-lg group"
           exact-active-class="bg-gray-400 text-white hover:bg-gray-500">
           <icon name="solar:hand-money-linear" class="w-5 h-5 transition duration-75 group-hover:text-white"
-            :class="{ 'text-gray-400': $route.path === '', 'text-white': $route.path !== '' }" aria-hidden="true" />
+            :class="{ 'text-gray-400': route.path === '', 'text-white': route.path !== '' }" aria-hidden="true" />
           <span class="flex-1 ms-3 whitespace-nowrap">{{ t('layouts.my_payslips_payroll') }}</span>
         </nuxt-link>
       </li>
@@ -57,6 +57,9 @@
 </template>
 
 <script lang="ts" setup>
+const { t } = useI18n()
+const route = useRoute();
+
 type DropdownNames = 'personal'
 
 // Track which dropdowns are open
@@ -69,6 +72,4 @@ const toggleDropdown = (name: DropdownNames) => {
 }
 
 const { hasAnyRole } = useUserRoles()
-
-const { t } = useI18n()
 </script>

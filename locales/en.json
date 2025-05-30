@@ -19,7 +19,8 @@
     "my_attendance": "My Attendance",
     "my_leave_requests": "My Leave Requests",
     "my_performance_reviews": "My Performance Reviews",
-    "my_payslips_payroll": "My Payslips/Payroll"
+    "my_payslips_payroll": "My Payslips/Payroll",
+    "managers": "Managers"
   },
   "dashboard": {
     "you_re_currently": "You're currently",
@@ -58,7 +59,10 @@
     "average_performance": "Average Performance",
     "left_leave_days": "Left leave days",
     "start_date": "Start Date",
-    "update_your_img": "Update your image"
+    "update_your_img": "Update your image",
+    "managers": "Managers",
+    "add_manager": "Add Manager",
+    "not_assigned": "Not Assigned"
   },
   "btn": {
     "go_back_home": "Go back Home",
@@ -81,7 +85,8 @@
     "add_employee": "Add employee",
     "add": "Add",
     "add_team": "Add team",
-    "update_password": "Update password"
+    "update_password": "Update password",
+    "add_manager": "Add Manager"
   },
   "form": {
     "sign_in": "Sign in",
@@ -180,8 +185,9 @@
     "profile": "Profile",
     "settings": "Settings",
     "admin_teams_id": "Team Members",
-    "admin_teams_employees_employeeid": "Employee Details",
-    "admin_leave_request_id": "Leave request details"
+    "admin_managers_managerid": "Employee Details",
+    "admin_leave_request_id": "Leave request details",
+    "managers": "Managers"
   },
   "error_page": {
     "you_are_all_alone_here": "You are all alone here 😁"
@@ -230,7 +236,10 @@
     "password_updated": "Password updated",
     "password_update_failed": "Password update failed",
     "requires_recent_login": "Requires recent login",
-    "failed_fetch_profile": "Failed get profile data"
+    "failed_fetch_profile": "Failed get profile data",
+    "manager_added_successfully": "Manager added successfully",
+    "failed_to_add_manager": "Failed to add manager",
+    "failed_to_load_managers": "Failed to load managers"
   },
   "status": {
     "all": "All",
@@ -244,7 +253,8 @@
   "no_data": {
     "no_leave_requests_found": "No leave requests found",
     "no_employees_found": "No employees found",
-    "no_teams_found": "No teams / departments found"
+    "no_teams_found": "No teams / departments found",
+    "no_managers_found": "No managers found"
   },
   "breadcrumb": {
     "home": "Home",
@@ -253,11 +263,13 @@
     "admin_teams": "Teams / Derpartments",
     "profile": "Profile",
     "admin_teams_id": "Team Members",
-    "admin_teams_employees_employeeid": "Employee Details",
+    "admin_managers_managerid": "Employee Details",
     "settings": "Settings",
     "employee_my_attendance": "My attendance",
     "employee_leave_request": "My leave requests",
-    "admin_leave_request_id": "Leave request details"
+    "admin_leave_request_id": "Leave request details",
+    "admin_managers": "Managers",
+    "admin_managers_manager": "Employee Details"
   },
   "days": {
     "mon": "Mon",

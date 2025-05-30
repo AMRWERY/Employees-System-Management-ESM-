@@ -5,8 +5,8 @@
         <nuxt-link-locale to="/" class="flex items-center p-2 text-white rounded-lg group"
           exact-active-class="bg-gray-400 text-white hover:bg-gray-500">
           <icon name="material-symbols:dashboard" class="w-5 h-5 transition duration-75 group-hover:text-white"
-            :class="{ 'text-gray-400': $route.path === '/', 'text-white': $route.path !== '/' }" aria-hidden="true" />
-          <span class="flex-1 ms-3 whitespace-nowrap">{{ $t('layouts.dashboard') }}</span>
+            :class="{ 'text-gray-400': route.path === '/', 'text-white': route.path !== '/' }" aria-hidden="true" />
+          <span class="flex-1 ms-3 whitespace-nowrap">{{ t('layouts.dashboard') }}</span>
         </nuxt-link-locale>
       </li>
 
@@ -16,7 +16,7 @@
           <icon name="game-icons:team-idea"
             class="flex-shrink-0 w-5 h-5 text-gray-400 transition duration-75 group-hover:text-white"
             aria-hidden="true" />
-          <span class="flex-1 ms-3 text-start whitespace-nowrap">{{ $t('layouts.team_management') }}</span>
+          <span class="flex-1 ms-3 text-start whitespace-nowrap">{{ t('layouts.team_management') }}</span>
           <icon name="material-symbols:keyboard-arrow-down-rounded" class="w-5 h-5"
             :class="{ 'rotate-180': openDropdowns.team }" aria-hidden="true" />
         </button>
@@ -24,25 +24,25 @@
           <li>
             <nuxt-link to="" class="flex items-center p-2 text-white rounded-lg group ps-7"
               exact-active-class="bg-gray-400 text-white hover:bg-gray-500">
-              {{ $t('layouts.team_members') }}
+              {{ t('layouts.team_members') }}
             </nuxt-link>
           </li>
           <li>
             <nuxt-link to="" class="flex items-center p-2 text-white rounded-lg group ps-7"
               exact-active-class="bg-gray-400 text-white hover:bg-gray-500">
-              {{ $t('layouts.attendance_records') }}
+              {{ t('layouts.attendance_records') }}
             </nuxt-link>
           </li>
           <li>
             <nuxt-link to="" class="flex items-center p-2 text-white rounded-lg group ps-7"
               exact-active-class="bg-gray-400 text-white hover:bg-gray-500">
-              {{ $t('layouts.leave_requests') }}
+              {{ t('layouts.leave_requests') }}
             </nuxt-link>
           </li>
           <li>
             <nuxt-link to="" class="flex items-center p-2 text-white rounded-lg group ps-7"
               exact-active-class="bg-gray-400 text-white hover:bg-gray-500">
-              {{ $t('layouts.performance_reviews') }}
+              {{ t('layouts.performance_reviews') }}
             </nuxt-link>
           </li>
         </ul>
@@ -52,6 +52,9 @@
 </template>
 
 <script lang="ts" setup>
+const { t } = useI18n()
+const route = useRoute();
+
 type DropdownNames = 'team'
 
 // Track which dropdowns are open
