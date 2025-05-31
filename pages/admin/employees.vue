@@ -85,6 +85,9 @@ const handlePageChange = (newPage: number) => {
   employeesStore.setCurrentPage(newPage);
 };
 
+// useTeamNameTranslation composable
+const { getTeamName } = useTeamName();
+
 const tableColumns = computed(() => {
   const columns: Column<Employee>[] = [
     {
@@ -100,6 +103,11 @@ const tableColumns = computed(() => {
     },
     { key: 'email', label: t('form.email') },
     { key: 'manager', label: t('dashboard.manager') },
+    {
+      key: 'teamId',
+      label: t('dashboard.department'),
+      format: (employee: Employee) => getTeamName(employee.teamId)
+    },
     {
       key: 'status',
       label: t('form.status'),

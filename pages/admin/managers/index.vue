@@ -54,6 +54,7 @@ import type { Column } from '@/types/tables'
 const { t } = useI18n()
 const router = useRouter()
 const managerStore = useManagerStore()
+const teamStore = useTeamStore()
 const { triggerToast } = useToast()
 const showAddDialog = ref(false);
 const loading = ref(true)
@@ -61,6 +62,9 @@ const loading = ref(true)
 const handlePageChange = (newPage: number) => {
   managerStore.setCurrentPage(newPage);
 };
+
+// useTeamNameTranslation composable
+const { getTeamName } = useTeamName();
 
 const tableColumns = computed(() => {
   const columns: Column<Manager>[] = [
@@ -75,7 +79,12 @@ const tableColumns = computed(() => {
       label: t('form.employee_name'),
       format: (employee: Manager) => `${employee.firstName} ${employee.lastName}`
     },
-    { key: 'email', label: t('form.email') },
+    { key: 'email', label: t('dashboard.email') },
+    {
+      key: 'teamId',
+      label: t('dashboard.department'),
+      format: (employee: Manager) => getTeamName(employee.teamId)
+    },
     {
       key: 'status',
       label: t('form.status'),
@@ -97,6 +106,7 @@ const skeletonHeaders = ref<TableHeader[]>([
   { type: 'text', loaderWidth: 'w-32' }, // Employee ID
   { type: 'text', loaderWidth: 'w-48' }, // Name
   { type: 'text', loaderWidth: 'w-48' }, // Email
+  { type: 'text', loaderWidth: 'w-48' }, // Team / Department
   { type: 'text', loaderWidth: 'w-32' }, // Status
   { type: 'action', loaderWidth: 'w-32' }, // Actions
 ])
@@ -104,7 +114,10 @@ const skeletonHeaders = ref<TableHeader[]>([
 onMounted(async () => {
   loading.value = true
   try {
-    await managerStore.fetchManagers()
+    await Promise.all([
+      managerStore.fetchManagers(),
+      teamStore.fetchAll()
+    ]);
   } catch (error) {
     console.error('Error fetching managers:', error)
     triggerToast({

@@ -36,3 +36,8 @@ export interface TeamState {
   searchTeamsByName: string;
   searchMembersByTerm: string;
 }
+
+export interface TeamMember {
+  teamId?: string | null;
+  [key: string]: any;
+}

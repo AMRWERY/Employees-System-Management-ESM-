@@ -27,8 +27,8 @@
             <div>
               <p class="text-sm text-gray-500">{{ t('dashboard.department') }}</p>
               <p class="text-gray-900 font-medium"
-                :class="{ 'text-orange-600': departmentName === 'Unknown Department' || departmentName === 'Not Assigned' }">
-                {{ departmentName }}</p>
+                :class="{ 'text-orange-600': translatedDepartmentName === 'Unknown Department' || translatedDepartmentName === 'Not Assigned' }">
+                {{ translatedDepartmentName }}</p>
             </div>
           </div>
 
@@ -115,10 +115,12 @@ onMounted(async () => {
   }
 });
 
-const departmentName = computed(() => {
-  if (!employee.value) return '';
-  return teamsStore.getDepartmentName(employee.value.departmentId, employee.value.teamId);
-});
+// useTeamName composable
+const { computedTeamName } = useTeamName();
+
+const translatedDepartmentName = computedTeamName(
+  () => employee.value?.teamId,
+);
 
 const profileImage = computed(() =>
   employee.value?.profileImg

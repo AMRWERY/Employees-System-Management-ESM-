@@ -269,7 +269,8 @@
     "employee_leave_request": "My leave requests",
     "admin_leave_request_id": "Leave request details",
     "admin_managers": "Managers",
-    "admin_managers_manager": "Employee Details"
+    "admin_managers_manager": "Employee Details",
+    "admin_teams_employees_employeeid": "Employee Details"
   },
   "days": {
     "mon": "Mon",
@@ -299,7 +300,8 @@
     "human_resources": "Human Resources (HR)",
     "information_technology": "Information Technology (IT)",
     "engineering": "Engineering",
-    "managers": "Managers"
+    "managers": "Managers",
+    "team_department_not_found": "Not Assigned"
   },
   "pagination": {
     "previous": "Previous",
