@@ -23,7 +23,7 @@
                 <icon name="material-symbols:photo" class="text-indigo-600 w-12 h-12"></icon>
                 <p class="font-medium text-center text-gray-600">{{
                   t('dashboard.update_your_img')
-                  }}</p>
+                }}</p>
               </label>
             </div>
             <input id="profile-img" type="file" class="hidden" accept="image/*" @change="handleSingleImageUpload" />
@@ -72,7 +72,7 @@
                       v-model="form.createdAt" />
                   </div>
 
-                  <div class="sm:col-span-3" v-if="form.role === 'employee'">
+                  <div class="sm:col-span-3" v-if="form.role !== 'admin'">
                     <dynamic-inputs :label="t('form.department')" :name="t('form.department')" :disabled="true" readonly
                       :model-value="teamName" />
                   </div>
@@ -232,19 +232,13 @@ const removeImagePreview = async () => {
   }
 }
 
-const teamName = computed(() => {
-  // console.log('team id:', form.teamId)
-  const rawName = teamsStore.getDepartmentName('', form.teamId);
-  const translationKey = rawName
-    .toLowerCase()
-    .replace(/\(.*?\)/g, '')    // Remove text in parentheses including the parentheses
-    .replace(/[^a-z0-9]+/g, '_') // Replace special chars with underscores
-    .replace(/_+/g, '_')         // Remove consecutive underscores
-    .replace(/(^_|_$)/g, '')     // Trim leading/trailing underscores
-    .replace(/_it$/, '');    // Remove leading/trailing underscores
-  // console.log(translationKey)
-  return t(`teams.${translationKey}`, rawName);
-})
+// useTeamNameTranslation composable
+const { computedTeamName } = useTeamName();
+
+const teamName = computedTeamName(
+  () => form.teamId,
+  // () => 'Information Technology'
+);
 
 onMounted(async () => {
   profileStore.initializeProfileImage()

@@ -27,7 +27,7 @@
             <div>
               <p class="text-sm text-gray-500">{{ t('dashboard.department') }}</p>
               <p class="text-gray-900 font-medium" :class="{ 'text-orange-600': !team }">
-                {{ departmentName }}</p>
+                {{ translatedDepartmentName }}</p>
             </div>
           </div>
 
@@ -96,6 +96,13 @@ const { formatDate } = useDateFormat();
 const manager = ref<Manager | null>(null);
 const loading = ref(true);
 
+// useTeamName composable
+const { computedTeamName } = useTeamName();
+
+const translatedDepartmentName = computedTeamName(
+  () => manager.value?.teamId,
+);
+
 const managerId = computed(() => {
   const id = route.params.managerId as string;
   return Array.isArray(id) ? id[0] : id;
@@ -125,14 +132,6 @@ const profileImage = computed(() =>
 const team = computed(() => {
   if (!manager.value || !manager.value.teamId) return null;
   return teamStore.teams.find(t => t.id === manager.value!.teamId);
-});
-
-const departmentName = computed(() => {
-  if (!manager.value) return '';
-  if (!manager.value.teamId) return t('dashboard.not_assigned');
-  return team.value
-    ? team.value.name
-    : t('dashboard.not_assigned');
 });
 
 useHead({

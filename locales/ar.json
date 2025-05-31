@@ -269,7 +269,8 @@
     "employee_leave_request": "طلبات إجازتي",
     "admin_leave_request_id": "تفاصيل طلب الأجازه",
     "admin_managers": "المديرين",
-    "admin_managers_manager": "تفاصيل الموظف"
+    "admin_managers_manager": "تفاصيل الموظف",
+    "admin_teams_employees_employeeid": "تفاصيل الموظف"
   },
   "days": {
     "sun": "الأحد",
@@ -299,7 +300,8 @@
     "human_resources": "الموارد البشرية",
     "information_technology": "تكنولوجيا المعلومات",
     "engineering": "الهندسة",
-    "managers": "الإدارة"
+    "managers": "الإدارة",
+    "team_department_not_found": "غير معين"
   },
   "pagination": {
     "previous": "السابق",
