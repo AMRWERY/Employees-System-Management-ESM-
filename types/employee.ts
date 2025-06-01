@@ -9,6 +9,8 @@ export interface Employee {
   role?: string;
   permissions: Record<string, Record<string, boolean>>;
   roledId: string | null;
+  managerId: string | null;
+  teamId: string | null;
   // isBlocked?: boolean;
   status: 'blocked' | 'active';
   [key: string]: any;
@@ -21,4 +23,6 @@ export interface EmployeeState {
   employeesPerPage: number;
   recentEmployees: Employee[];
   searchEmployeesByEmail: string;
+  managerId: string | null;
+  teamId: string | null;
 }

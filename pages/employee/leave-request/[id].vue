@@ -17,6 +17,16 @@
             <p v-if="leaveRequest.employeeId" class="mt-1 text-gray-800">{{ leaveRequest.employeeId }}</p>
             <p v-else class="mt-1 text-red-500">{{ t('dashboard.missing_employee_id') }}</p>
           </div>
+          <div>
+            <label class="text-sm font-medium text-gray-600">{{ t('form.manager') }}:</label>
+            <p v-if="managerName" class="mt-1 text-gray-800">{{ managerName }}</p>
+            <p v-else class="mt-1 text-red-500">{{ t('dashboard.missing_manager_name') }}</p>
+          </div>
+          <div>
+            <label class="text-sm font-medium text-gray-600">{{ t('form.department') }}:</label>
+            <p v-if="teamName" class="mt-1 text-gray-800">{{ teamName }}</p>
+            <p v-else class="mt-1 text-red-500">{{ t('dashboard.missing_department_name') }}</p>
+          </div>
         </div>
 
         <!-- Dates -->
@@ -90,9 +100,12 @@
 import type { LeaveRequest } from '@/types/leaveRequest'
 
 const { t } = useI18n()
-const { triggerToast } = useToast()
 const route = useRoute()
 const leaveStore = useLeaveRequestsStore()
+const managersStore = useManagerStore()
+const teamsStore = useTeamStore()
+const { getTeamName } = useTeamName()
+const { triggerToast } = useToast()
 
 const leaveRequest = ref<LeaveRequest | null>(null)
 const withdrawLoading = ref(false)
@@ -103,6 +116,12 @@ const parsedUserData = userData ? JSON.parse(userData) : null
 
 onMounted(async () => {
   try {
+    if (managersStore.managers.length === 0) {
+      await managersStore.fetchManagers();
+    }
+    if (teamsStore.teams.length === 0) {
+      await teamsStore.fetchAll();
+    }
     const request = await leaveStore.getRequestById(route.params.id as string)
     if (request) {
       leaveRequest.value = request
@@ -112,7 +131,17 @@ onMounted(async () => {
   }
 })
 
-// Compute if the request can be withdrawn
+const managerName = computed(() => {
+  if (!leaveRequest.value?.managerId) return null;
+  const manager = managersStore.managers.find(m => m.id === leaveRequest.value?.managerId);
+  return manager ? `${manager.firstName} ${manager.lastName}` : null;
+});
+
+const teamName = computed(() => {
+  if (!leaveRequest.value?.teamId) return null;
+  return getTeamName(leaveRequest.value.teamId);
+});
+
 const canWithdraw = computed(() => {
   if (!leaveRequest.value || !parsedUserData?.uid) return false
   return (

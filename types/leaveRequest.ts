@@ -12,6 +12,8 @@ export interface LeaveRequest {
   durationDays: number;
   attachments?: string[];
   manager?: string;
+  managerId?: string;
+  teamId?: string;
   decisionAt?: Date;
   decisionBy?: string;
   rejectionReason?: string;

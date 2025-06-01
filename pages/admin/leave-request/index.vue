@@ -51,6 +51,8 @@ import type { Tab } from '@/types/tabs'
 
 const { t } = useI18n()
 const leaveStore = useLeaveRequestsStore()
+const managersStore = useManagerStore();
+// const teamssStore = useTeamStore();
 const { triggerToast } = useToast()
 const { formatDate } = useDateFormat();
 const {
@@ -70,6 +72,7 @@ watch(activeTab, (newTab) => {
   leaveStore.setFilter(newTab);
 });
 
+
 const tableColumns = computed(() => {
   const columns: Column<LeaveRequest>[] = [
     {
@@ -83,8 +86,30 @@ const tableColumns = computed(() => {
       format: (request: LeaveRequest) => `${formatDate(request.startDate)} - ${formatDate(request.endDate)}`
     },
     {
-      key: 'manager',
-      label: t('dashboard.manager')
+      key: 'employeeName',
+      label: t('dashboard.employee_name'),
+    },
+    {
+      key: 'employeeId',
+      label: t('dashboard.employee_id'),
+    },
+    {
+      key: 'managerId',
+      label: t('dashboard.manager'),
+      format: (request: LeaveRequest) => {
+        if (!request.managerId) return '-';
+        const manager = managersStore.managers.find(m => m.id === request.managerId);
+        return manager ? `${manager.firstName} ${manager.lastName}` : '-';
+      }
+    },
+    {
+      key: 'teamId',
+      label: t('dashboard.department'),
+      format: (request: LeaveRequest) => {
+        if (!request.teamId) return '-';
+        const team = managersStore.managers.find(m => m.id === request.teamId);
+        return team ? `${team.firstName} ${team.lastName}` : '-';
+      }
     },
     {
       key: 'type',
@@ -110,6 +135,8 @@ const tabs = ref<Tab[]>([
 
 onMounted(async () => {
   try {
+    await managersStore.fetchManagers();
+    // await teamssStore.fetchAll();
     await leaveStore.fetchAllRequests()
     leaveStore.updatePagination();
   } catch (error) {

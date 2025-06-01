@@ -61,6 +61,9 @@ const handlePageChange = (newPage: number) => {
   teamsStore.setTeamCurrentPage(newPage);
 };
 
+// useTeamNameTranslation composable
+const { getTeamName } = useTeamName();
+
 const tableColumns = computed(() => {
   const columns: Column<Teams>[] = [
     {
@@ -71,6 +74,7 @@ const tableColumns = computed(() => {
     {
       key: 'name',
       label: t('dashboard.name'),
+      format: (team: Teams) => getTeamName(team.id)
     },
     {
       key: 'departmentId',

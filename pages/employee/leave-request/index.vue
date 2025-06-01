@@ -47,10 +47,12 @@ import type { Tab } from '@/types/tabs'
 
 const { t } = useI18n()
 const leaveStore = useLeaveRequestsStore()
+const teamssStore = useTeamStore();
+const managersStore = useManagerStore();
 const { triggerToast } = useToast()
-const loading = ref(true)
-
 const { formatDate } = useDateFormat();
+const { getTeamName } = useTeamName()
+const loading = ref(true)
 
 const tableColumns = computed(() => {
   const columns: Column<LeaveRequest>[] = [
@@ -65,7 +67,22 @@ const tableColumns = computed(() => {
       format: (request: LeaveRequest) => `${formatDate(request.startDate)} - ${formatDate(request.endDate)}`
     },
     { key: 'employeeId', label: t('dashboard.employee_id') },
-    { key: 'manager', label: t('dashboard.manager') },
+    {
+      key: 'managerId',
+      label: t('dashboard.manager'),
+      format: (request: LeaveRequest) => {
+        if (!request.managerId) return '-';
+        const manager = managersStore.managers.find(m => m.id === request.managerId);
+        return manager ? `${manager.firstName} ${manager.lastName}` : '-';
+      }
+    },
+    {
+      key: 'teamId',
+      label: t('dashboard.department'),
+      format: (request: LeaveRequest) => {
+        return getTeamName(request.teamId)
+      }
+    },
     {
       key: 'type',
       label: t('dashboard.request_type'),
@@ -93,6 +110,8 @@ const activeTab = ref<Tab['id']>('all')
 onMounted(async () => {
   loading.value = true
   try {
+    await managersStore.fetchManagers();
+    await teamssStore.fetchAll();
     await leaveStore.fetchMyRequests()
   } catch (error) {
     triggerToast({
@@ -126,6 +145,7 @@ const skeletonHeaders = ref<TableHeader[]>([
   { type: 'text', loaderWidth: 'w-64' }, // Dates
   { type: 'text', loaderWidth: 'w-48' }, // Employee ID
   { type: 'text', loaderWidth: 'w-48' }, // Manager
+  { type: 'text', loaderWidth: 'w-48' }, // Department / Team
   { type: 'text', loaderWidth: 'w-48' }, // Type
   { type: 'text', loaderWidth: 'w-32' }, // Status
   { type: 'action', loaderWidth: 'w-32' }, // Actions

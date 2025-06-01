@@ -74,6 +74,7 @@ const dialogProps = ref<DeleteDialogProps>({
 
 const selectedEmployee = ref<Employee | null>(null)
 
+const managerssStore = useManagerStore()
 const employeesStore = useEmployeesStore()
 const {
   paginatedEmployees,
@@ -102,7 +103,15 @@ const tableColumns = computed(() => {
       format: (employee: Employee) => `${employee.firstName} ${employee.lastName}`
     },
     { key: 'email', label: t('form.email') },
-    { key: 'manager', label: t('dashboard.manager') },
+    {
+      key: 'manager',
+      label: t('dashboard.manager'),
+      format: (employee: Employee) => {
+        if (!employee.managerId) return '-';
+        const manager = managerssStore.managers.find(m => m.id === employee.managerId);
+        return manager ? `${manager.firstName} ${manager.lastName}` : '-';
+      }
+    },
     {
       key: 'teamId',
       label: t('dashboard.department'),
@@ -134,6 +143,9 @@ onMounted(async () => {
   loading.value = true
   try {
     await employeesStore.fetchEmployees()
+    if (managerssStore.managers.length === 0) {
+      await managerssStore.fetchManagers()
+    }
   } catch (error) {
     console.error('Error fetching employees:', error)
     triggerToast({

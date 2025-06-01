@@ -19,7 +19,9 @@ export type UserData = {
   createdAt?: Date | FirestoreTimestamp;
   roledId?: string;
   permissions?: Record<string, any>;
-  employeeId?: string; // Add the employeeId field
+  employeeId?: string;
+  managerId? :string;
+  teamId?: string
 };
 
 export interface AuthState {

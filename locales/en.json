@@ -62,7 +62,11 @@
     "update_your_img": "Update your image",
     "managers": "Managers",
     "add_manager": "Add Manager",
-    "not_assigned": "Not Assigned"
+    "not_assigned": "Not Assigned",
+    "team_not_found": "Not Assigned",
+    "employee_name":"Employee Name",
+    "missing_manager_name": "Missing manager name",
+    "missing_department_name": "Missing department name"
   },
   "btn": {
     "go_back_home": "Go back Home",
@@ -171,7 +175,9 @@
     "confirm_password": "Confirm password",
     "created_at": "Created at",
     "department": "Department / Team",
-    "manager": "Manager"
+    "manager": "Manager",
+    "managers": "Managers",
+    "select_manager": "Select manager"
   },
   "head": {
     "sign_in": "Sign in",
@@ -270,7 +276,8 @@
     "admin_leave_request_id": "Leave request details",
     "admin_managers": "Managers",
     "admin_managers_manager": "Employee Details",
-    "admin_teams_employees_employeeid": "Employee Details"
+    "admin_teams_employees_employeeid": "Employee Details",
+    "employee_leave_request_id": "Leave request details"
   },
   "days": {
     "mon": "Mon",
@@ -301,7 +308,9 @@
     "information_technology": "Information Technology (IT)",
     "engineering": "Engineering",
     "managers": "Managers",
-    "team_department_not_found": "Not Assigned"
+    "team_department_not_found": "Not Assigned",
+    "dashboard_team_not_found": "Not Assigned",
+    "not_assigned": "Not Assigned"
   },
   "pagination": {
     "previous": "Previous",
