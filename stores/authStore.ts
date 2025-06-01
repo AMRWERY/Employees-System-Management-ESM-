@@ -121,6 +121,8 @@ export const useAuthStore = defineStore("auth", {
                   roledId: this.user?.roledId,
                   permissions: this.user?.permissions,
                   employeeId: this.user?.employeeId,
+                  managerId: this.user?.managerId,
+                  teamId: this.user?.teamId,
                 })
               );
             }

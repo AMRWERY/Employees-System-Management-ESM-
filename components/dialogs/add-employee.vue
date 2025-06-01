@@ -52,6 +52,17 @@
                     </option>
                   </select>
                 </div>
+
+                <div class="col-span-full" v-if="selectedTeam">
+                  <label class="block text-sm font-medium text-gray-700 mb-1">{{ t('form.managers') }}</label>
+                  <select v-model="selectedManager"
+                    class="w-full px-3 py-2 transition duration-300 border rounded-md shadow-sm placeholder:text-slate-400 text-slate-700 focus:outline-none focus:border-slate-400 hover:border-slate-300 focus:shadow">
+                    <option value="" disabled>{{ t('form.select_manager') }}</option>
+                    <option v-for="manager in filteredManagers" :key="manager.id" :value="manager.id">
+                      {{ manager.firstName }} {{ manager.lastName }}
+                    </option>
+                  </select>
+                </div>
               </div>
             </ClientOnly>
           </div>
@@ -71,6 +82,11 @@
 
 <script lang="ts" setup>
 const { t } = useI18n()
+const teamsStore = useTeamStore()
+const employeesStore = useEmployeesStore();
+const managerssStore = useManagerStore();
+const selectedTeam = ref('')
+const selectedManager = ref('')
 const { triggerToast } = useToast()
 const loading = ref(false)
 
@@ -83,15 +99,29 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue', 'save']);
 
-const teamsStore = useTeamStore()
-const employeesStore = useEmployeesStore();
-const selectedTeam = ref('')
-
 watch(() => props.modelValue, async (newVal) => {
-  if (newVal && teamsStore.teams.length === 0) {
-    await teamsStore.fetchAll()
+  if (newVal) {
+    if (teamsStore.teams.length === 0) {
+      await teamsStore.fetchAll();
+    }
+    managerssStore.fetchManagers();
   }
-})
+  if (!newVal) resetForm();
+});
+
+const filteredManagers = computed(() => {
+  if (!selectedTeam.value) return managerssStore.managers;
+  return managerssStore.managers.filter(manager =>
+    manager.teamId === selectedTeam.value
+  );
+});
+
+// Reset manager when team changes
+watch(selectedTeam, (newTeamId) => {
+  if (newTeamId) {
+    selectedManager.value = '';
+  }
+});
 
 const formValues = reactive({
   firstName: '',
@@ -112,6 +142,7 @@ const handleSubmit = async () => {
       password: formValues.password,
       position: formValues.position,
       teamId: selectedTeam.value,
+      managerId: selectedManager.value,
     });
     emit('update:modelValue', false);
     emit('save');
@@ -120,6 +151,7 @@ const handleSubmit = async () => {
       type: 'success',
       icon: 'mdi-check-circle',
     })
+    resetForm();
   } catch (error) {
     triggerToast({
       message: t('toast.failed_to_add_employee'),
@@ -129,5 +161,15 @@ const handleSubmit = async () => {
   } finally {
     loading.value = false
   }
+};
+
+const resetForm = () => {
+  formValues.firstName = '';
+  formValues.lastName = '';
+  formValues.email = '';
+  formValues.password = '';
+  formValues.position = '';
+  selectedTeam.value = '';
+  selectedManager.value = '';
 };
 </script>

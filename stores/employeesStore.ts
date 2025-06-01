@@ -23,6 +23,8 @@ export const useEmployeesStore = defineStore("employees", {
     employeesPerPage: 8,
     recentEmployees: [],
     searchEmployeesByEmail: "",
+    managerId: null,
+    teamId: null,
   }),
 
   actions: {
@@ -48,6 +50,8 @@ export const useEmployeesStore = defineStore("employees", {
               // isBlocked: data.isBlocked,
               position: data.position,
               status: data.status || "active",
+              managerId: data.managerId,
+              teamId: data.teamId,
               ...data,
             } satisfies Employee;
           }
@@ -68,6 +72,7 @@ export const useEmployeesStore = defineStore("employees", {
       password: string;
       teamId?: string;
       position?: string;
+      managerId?: string;
     }) {
       // Save original user before creating the new employee
       const originalUser = auth.currentUser;
@@ -106,18 +111,15 @@ export const useEmployeesStore = defineStore("employees", {
           loginType: "email",
           createdAt: serverTimestamp(),
           teamId: employeeData.teamId || null,
+          managerId: employeeData.managerId || null,
         };
         await setDoc(doc(db, "ems-users", userCredential.user.uid), userData);
         if (employeeData.teamId) {
           try {
-            // console.log("Assigning employee to team:", employeeData.teamId);
-            const teamRef = doc(db, "ems-teams", employeeData.teamId);
+            const teamRef = doc(db, "ems-teams", employeeData.teamId!);
             const teamDoc = await getDoc(teamRef);
             if (teamDoc.exists()) {
-              // console.log("Team found, current data:", teamDoc.data());
               const memberIds = teamDoc.data().memberIds || [];
-              // console.log("Current memberIds:", memberIds);
-              // console.log("Adding employee UID to team:", userCredential.user.uid);
               // Create a new array with the employee ID to ensure it's added correctly
               const newMemberIds = [...memberIds, userCredential.user.uid];
               // console.log("New memberIds array:", newMemberIds);

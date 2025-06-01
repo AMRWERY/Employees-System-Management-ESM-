@@ -15,28 +15,31 @@ export function useTeamName() {
       .replace(/_it$/, ""); // Remove trailing "_it"
   };
 
+  const ensureTeamsLoaded = async () => {
+    if (teamStore.teams.length === 0) {
+      await teamStore.fetchAll();
+    }
+  };
+
   const getTeamName = (
     teamId: MaybeRefOrGetter<string | null | undefined>,
     fallbackName: MaybeRefOrGetter<string | null | undefined> = undefined
   ) => {
+    ensureTeamsLoaded();
     const id = typeof teamId === "function" ? teamId() : unref(teamId);
     const name =
       typeof fallbackName === "function"
         ? fallbackName()
         : unref(fallbackName as MaybeRef<string | null | undefined>);
-
     // Get raw team name
     let rawName = "";
-
     if (id) {
       const team = teamStore.teams.find((t) => t.id === id);
       rawName = team?.name || name || t("dashboard.team_not_found");
     } else {
       rawName = name || t("dashboard.not_assigned");
     }
-
     const translationKey = generateTranslationKey(rawName);
-
     return t(`teams.${translationKey}`, rawName);
   };
 
@@ -44,7 +47,20 @@ export function useTeamName() {
     teamId: MaybeRefOrGetter<string | null | undefined>,
     fallbackName: MaybeRefOrGetter<string | null | undefined> = undefined
   ) => {
-    return computed(() => getTeamName(teamId, fallbackName));
+    return computed(() => {
+      ensureTeamsLoaded();
+      const id = typeof teamId === 'function' ? teamId() : unref(teamId);
+      const name = 
+        typeof fallbackName === 'function' 
+          ? fallbackName() 
+          : unref(fallbackName as MaybeRef<string | null | undefined>);
+      
+      if (id) {
+        const team = teamStore.teams.find(t => t.id === id);
+        return team?.name || name || t('dashboard.team_not_found');
+      }
+      return name || t('dashboard.not_assigned');
+    });
   };
 
   return {

@@ -178,7 +178,7 @@ const submitForm = async () => {
     loading.value = true
     const requestData: Omit<LeaveRequest, 'id'> = {
       userId: parsedUserData?.uid,
-      employeeId: form.employeeId, // Use employeeId from form data
+      employeeId: form.employeeId,
       employeeName: form.employeeName,
       startDate: form.startDate,
       endDate: form.endDate,
@@ -188,6 +188,8 @@ const submitForm = async () => {
       submittedAt: new Date(),
       durationDays: parseInt(form.duration),
       attachments: [] as string[], // To store download URLs
+      managerId: parsedUserData?.managerId || '',
+  teamId: parsedUserData?.teamId || '', 
     }
     // console.log('Submitting request with data:', requestData)
     // Upload attachments if any

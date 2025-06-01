@@ -62,7 +62,11 @@
     "update_your_img": "تحديث صورتك",
     "managers": "المديرين",
     "add_manager": "إضافة مدير",
-    "not_assigned": "غير معين"
+    "not_assigned": "غير معين",
+    "team_not_found": "غير معين",
+    "employee_name": "اسم الموظف",
+    "missing_manager_name": "اسم المدير مفقود",
+    "missing_department_name": "اسم القسم مفقود"
   },
   "btn": {
     "go_back_home": "العودة إلى الصفحه الرئيسيه",
@@ -171,7 +175,9 @@
     "confirm_password": "تأكيد كلمة المرور",
     "created_at": "تم إنشاءه في",
     "department": "القسم / الفريق",
-    "manager": "المدير"
+    "manager": "المدير",
+    "managers": "المديرين",
+    "select_manager": "اختر المدير"
   },
   "head": {
     "sign_in": "تسجيل الدخول",
@@ -270,7 +276,8 @@
     "admin_leave_request_id": "تفاصيل طلب الأجازه",
     "admin_managers": "المديرين",
     "admin_managers_manager": "تفاصيل الموظف",
-    "admin_teams_employees_employeeid": "تفاصيل الموظف"
+    "admin_teams_employees_employeeid": "تفاصيل الموظف",
+    "employee_leave_request_id": "تفاصيل طلب الإجازة"
   },
   "days": {
     "sun": "الأحد",
@@ -301,7 +308,9 @@
     "information_technology": "تكنولوجيا المعلومات",
     "engineering": "الهندسة",
     "managers": "الإدارة",
-    "team_department_not_found": "غير معين"
+    "team_department_not_found": "غير معين",
+    "dashboard_team_not_found": "غير معين",
+    "not_assigned": "غير معين"
   },
   "pagination": {
     "previous": "السابق",
