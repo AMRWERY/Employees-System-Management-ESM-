@@ -40,7 +40,7 @@ export function useTeamName() {
       rawName = name || t("dashboard.not_assigned");
     }
     const translationKey = generateTranslationKey(rawName);
-    return t(`teams.${translationKey}`, rawName);
+    return translationKey ? t(`teams.${translationKey}`, rawName) : rawName;
   };
 
   const computedTeamName = (
@@ -49,17 +49,17 @@ export function useTeamName() {
   ) => {
     return computed(() => {
       ensureTeamsLoaded();
-      const id = typeof teamId === 'function' ? teamId() : unref(teamId);
-      const name = 
-        typeof fallbackName === 'function' 
-          ? fallbackName() 
+      const id = typeof teamId === "function" ? teamId() : unref(teamId);
+      const name =
+        typeof fallbackName === "function"
+          ? fallbackName()
           : unref(fallbackName as MaybeRef<string | null | undefined>);
-      
+
       if (id) {
-        const team = teamStore.teams.find(t => t.id === id);
-        return team?.name || name || t('dashboard.team_not_found');
+        const team = teamStore.teams.find((t) => t.id === id);
+        return team?.name || name || t("dashboard.team_not_found");
       }
-      return name || t('dashboard.not_assigned');
+      return name || t("dashboard.not_assigned");
     });
   };
 

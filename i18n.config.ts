@@ -100,7 +100,4 @@ export default defineI18nConfig(() => ({
   missingWarn: false,
   fallbackWarn: false,
   warnHtmlMessage: false
-  // warnHtmlMessage: false,
-  // missingWarn: true,
-  // fallbackWarn: true,
 }));

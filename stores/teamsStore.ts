@@ -210,6 +210,7 @@ export const useTeamStore = defineStore("teams", {
           employeeId: data.employeeId,
           departmentId: data.departmentId,
           teamId: data.teamId,
+          managerId: data.managerId,
           isBlocked: data.isBlocked,
           status: data.status,
           manager: data.manager,

@@ -72,16 +72,15 @@
                       v-model="form.createdAt" />
                   </div>
 
+                  <div class="sm:col-span-3" v-if="form.role === 'employee'">
+                    <dynamic-inputs :label="t('form.manager')" :name="t('form.manager')" :disabled="true" readonly
+                      :model-value="managerName" />
+                  </div>
+
                   <div class="sm:col-span-3" v-if="form.role !== 'admin'">
                     <dynamic-inputs :label="t('form.department')" :name="t('form.department')" :disabled="true" readonly
                       :model-value="teamName" />
                   </div>
-
-                  <!-- manager name will display here -->
-                  <!-- <div class="sm:col-span-3" v-if="form.role === 'employee'">
-                    <dynamic-inputs :label="t('form.manager')" :name="t('form.manager')" :disabled="true" readonly
-                      v-model="form.teamId" />
-                  </div> -->
 
                   <div class="sm:col-span-3">
                     <dynamic-inputs :label="t('form.status')" :name="t('form.status')" :disabled="true" readonly
@@ -130,8 +129,10 @@ const { t } = useI18n()
 const profileStore = useProfileStore()
 const authStore = useAuthStore()
 const teamsStore = useTeamStore()
+const managersStore = useManagerStore()
 const { triggerToast } = useToast();
 const { formatDate } = useDateFormat();
+const { getTeamName } = useTeamName()
 
 const form = reactive({
   firstName: '',
@@ -142,6 +143,7 @@ const form = reactive({
   createdAt: '',
   role: '',
   teamId: '' as string,
+  managerId: '' as string,
   status: '' as 'active' | 'blocked',
   newPassword: '',
   confirmPassword: ''
@@ -232,23 +234,17 @@ const removeImagePreview = async () => {
   }
 }
 
-// useTeamNameTranslation composable
-const { computedTeamName } = useTeamName();
-
-const teamName = computedTeamName(
-  () => form.teamId,
-  // () => 'Information Technology'
-);
-
 onMounted(async () => {
   profileStore.initializeProfileImage()
+  if (managersStore.managers.length === 0) {
+    await managersStore.fetchManagers();
+  }
   if (teamsStore.teams.length === 0) {
-    teamsStore.fetchAll()
+    await teamsStore.fetchAll();
   }
   const loadEmployeeData = async () => {
     try {
       const userId = authStore.user?.uid
-      // console.log(userId)
       if (!userId) return
       const employee = await teamsStore.fetchEmployeeById(userId)
       if (!employee) return
@@ -261,6 +257,7 @@ onMounted(async () => {
       form.createdAt = employee.createdAt ? formatDate(employee.createdAt) : ''
       form.role = employee.role
       form.teamId = employee.teamId || ''
+      form.managerId = employee.managerId || ''
       form.status = employee.status || 'active'
     } catch (error) {
       triggerToast({
@@ -271,6 +268,14 @@ onMounted(async () => {
     }
   }
   await loadEmployeeData()
+})
+
+const teamName = computed(() => getTeamName(form.teamId))
+
+const managerName = computed(() => {
+  if (!form.managerId) return '-';
+  const manager = managersStore.managers.find(m => m.id === form.managerId);
+  return manager ? `${manager.firstName} ${manager.lastName}` : '-';
 })
 
 const translatedStatus = computed(() => {
