@@ -47,7 +47,7 @@
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <p class="text-sm text-gray-500">{{ t('dashboard.manager') }}</p>
-              <p class="text-gray-900 font-medium">manager name will display here :D</p>
+              <p class="text-gray-900 font-medium">{{ managerName }}</p>
             </div>
 
             <div>
@@ -92,7 +92,9 @@ import type { Member } from '@/types/teams'
 const route = useRoute();
 const { t } = useI18n()
 const teamsStore = useTeamStore();
+const managersStore = useManagerStore()
 const { formatDate } = useDateFormat();
+const { computedTeamName } = useTeamName();
 const employee = ref<Member | null>(null);
 const loading = ref(true);
 
@@ -100,6 +102,9 @@ onMounted(async () => {
   try {
     if (teamsStore.teams.length === 0) {
       teamsStore.fetchAll();
+    }
+    if (managersStore.managers.length === 0) {
+      await managersStore.fetchManagers();
     }
     const employeeId = route.params.employeeId as string;
     const result = await teamsStore.fetchEmployeeById(employeeId);
@@ -115,12 +120,16 @@ onMounted(async () => {
   }
 });
 
-// useTeamName composable
-const { computedTeamName } = useTeamName();
-
 const translatedDepartmentName = computedTeamName(
   () => employee.value?.teamId,
 );
+
+const managerName = computed(() => {
+  if (!employee.value?.managerId) return null;
+  const manager = managersStore.managers.find(m => m.id === employee.value?.managerId);
+  // console.log(manager)
+  return manager ? `${manager.firstName} ${manager.lastName}` : null;
+});
 
 const profileImage = computed(() =>
   employee.value?.profileImg

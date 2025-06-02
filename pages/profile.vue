@@ -273,9 +273,9 @@ onMounted(async () => {
 const teamName = computed(() => getTeamName(form.teamId))
 
 const managerName = computed(() => {
-  if (!form.managerId) return '-';
+  if (!form.managerId) return t("dashboard.not_assigned");
   const manager = managersStore.managers.find(m => m.id === form.managerId);
-  return manager ? `${manager.firstName} ${manager.lastName}` : '-';
+  return manager ? `${manager.firstName} ${manager.lastName}` : t("dashboard.not_assigned");
 })
 
 const translatedStatus = computed(() => {

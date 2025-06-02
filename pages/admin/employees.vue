@@ -107,9 +107,9 @@ const tableColumns = computed(() => {
       key: 'manager',
       label: t('dashboard.manager'),
       format: (employee: Employee) => {
-        if (!employee.managerId) return '-';
+        if (!employee.managerId) return t("dashboard.not_assigned");
         const manager = managerssStore.managers.find(m => m.id === employee.managerId);
-        return manager ? `${manager.firstName} ${manager.lastName}` : '-';
+        return manager ? `${manager.firstName} ${manager.lastName}` : t("dashboard.not_assigned");
       }
     },
     {

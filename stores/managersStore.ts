@@ -97,11 +97,11 @@ export const useManagerStore = defineStore("managers", {
           };
           return manager;
         } else {
-          console.warn(`No manager found with id: ${managerId}`);
+          // console.warn(`No manager found with id: ${managerId}`);
           return null;
         }
       } catch (error) {
-        console.error("Error fetching manager by ID:", error);
+        // console.error("Error fetching manager by ID:", error);
         this.error = "Failed to fetch manager";
         return null;
       } finally {
@@ -179,7 +179,7 @@ export const useManagerStore = defineStore("managers", {
         }
         return userCredential.user.uid;
       } catch (error) {
-        console.error("Employee creation failed:", error);
+        // console.error("Employee creation failed:", error);
         if (userCredential?.user) {
           try {
             await userCredential.user.delete();

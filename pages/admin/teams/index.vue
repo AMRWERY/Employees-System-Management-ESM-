@@ -76,14 +76,14 @@ const tableColumns = computed(() => {
       label: t('dashboard.name'),
       format: (team: Teams) => getTeamName(team.id)
     },
-    {
-      key: 'departmentId',
-      label: t('dashboard.department_id'),
-    },
-    {
-      key: 'leadId',
-      label: t('dashboard.lead_id'),
-    },
+    // {
+    //   key: 'departmentId',
+    //   label: t('dashboard.department_id'),
+    // },
+    // {
+    //   key: 'leadId',
+    //   label: t('dashboard.lead_id'),
+    // },
   ];
   return columns;
 })
@@ -126,8 +126,8 @@ const viewTeam = (team: Teams) => {
 const skeletonHeaders = ref<TableHeader[]>([
   { type: 'text', loaderWidth: 'w-8' },
   { type: 'text', loaderWidth: 'w-48' },
-  { type: 'text', loaderWidth: 'w-32' },
-  { type: 'text', loaderWidth: 'w-32' },
+  // { type: 'text', loaderWidth: 'w-32' },
+  // { type: 'text', loaderWidth: 'w-32' },
   { type: 'action', loaderWidth: 'w-48' },
 ])
 

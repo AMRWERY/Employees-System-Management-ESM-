@@ -44,18 +44,16 @@
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
+            <!-- <div>
               <p class="text-sm text-gray-500">{{ t('dashboard.manager') }}</p>
               <p class="text-gray-900 font-medium">manager name will display here :D</p>
-            </div>
+            </div> -->
 
             <div>
               <p class="text-sm text-gray-500">{{ t('dashboard.average_performance') }}</p>
               <p class="text-gray-900 font-medium">average performance will display here :D</p>
             </div>
-          </div>
 
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <p class="text-sm text-gray-500">{{ t('dashboard.left_leave_days') }}</p>
               <p class="text-gray-900 font-medium">left leave days will display here :D</p>

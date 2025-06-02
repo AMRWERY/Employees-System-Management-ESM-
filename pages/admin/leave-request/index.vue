@@ -52,9 +52,10 @@ import type { Tab } from '@/types/tabs'
 const { t } = useI18n()
 const leaveStore = useLeaveRequestsStore()
 const managersStore = useManagerStore();
-// const teamssStore = useTeamStore();
+const teamssStore = useTeamStore();
 const { triggerToast } = useToast()
 const { formatDate } = useDateFormat();
+const { getTeamName } = useTeamName();
 const {
   paginatedRequests,
   currentPage,
@@ -72,7 +73,6 @@ watch(activeTab, (newTab) => {
   leaveStore.setFilter(newTab);
 });
 
-
 const tableColumns = computed(() => {
   const columns: Column<LeaveRequest>[] = [
     {
@@ -83,7 +83,12 @@ const tableColumns = computed(() => {
     {
       key: 'dates',
       label: t('dashboard.from_to'),
-      format: (request: LeaveRequest) => `${formatDate(request.startDate)} - ${formatDate(request.endDate)}`
+      format: (request: LeaveRequest) => `
+    <div class="flex flex-col">
+      <span>${formatDate(request.startDate)}</span>
+      <span>${formatDate(request.endDate)}</span>
+    </div>
+  `,
     },
     {
       key: 'employeeName',
@@ -97,19 +102,15 @@ const tableColumns = computed(() => {
       key: 'managerId',
       label: t('dashboard.manager'),
       format: (request: LeaveRequest) => {
-        if (!request.managerId) return '-';
+        if (!request.managerId) return t("dashboard.not_assigned");
         const manager = managersStore.managers.find(m => m.id === request.managerId);
-        return manager ? `${manager.firstName} ${manager.lastName}` : '-';
+        return manager ? `${manager.firstName} ${manager.lastName}` : t("dashboard.not_assigned");
       }
     },
     {
       key: 'teamId',
       label: t('dashboard.department'),
-      format: (request: LeaveRequest) => {
-        if (!request.teamId) return '-';
-        const team = managersStore.managers.find(m => m.id === request.teamId);
-        return team ? `${team.firstName} ${team.lastName}` : '-';
-      }
+      format: (request: LeaveRequest) => getTeamName(request.teamId)
     },
     {
       key: 'type',
