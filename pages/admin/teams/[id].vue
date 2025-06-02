@@ -51,6 +51,7 @@ const { t } = useI18n()
 const route = useRoute()
 const router = useRouter();
 const teamsStore = useTeamStore();
+const managersStore = useManagerStore()
 // const { triggerToast } = useToast()
 const searchTerm = ref('');
 
@@ -74,10 +75,9 @@ const handlePageChange = (newPage: number) => {
   teamsStore.setMemberCurrentPage(newPage);
 };
 
-onMounted(async () => {
-  if (departmentId.value) {
-    await teamsStore.fetchUsersByDepartment(departmentId.value);
-  }
+onMounted(() => {
+  teamsStore.fetchUsersByDepartment(departmentId.value);
+  managersStore.fetchManagers();
 });
 
 const loading = computed(() => teamsStore.loading);
@@ -114,7 +114,15 @@ const tableColumns = computed(() => {
     },
     { key: 'email', label: t('form.email') },
     { key: 'position', label: t('dashboard.position') },
-    { key: 'manager', label: t('dashboard.manager') },
+    {
+      key: 'managerId',
+      label: t('dashboard.manager'),
+      format: (employee: Member) => {
+        if (!employee.managerId) return t("dashboard.not_assigned");
+        const manager = managersStore.managers.find(m => m.id === employee.managerId);
+        return manager ? `${manager.firstName} ${manager.lastName}` : t("dashboard.not_assigned");
+      }
+    },
     {
       key: 'status',
       label: t('form.status'),

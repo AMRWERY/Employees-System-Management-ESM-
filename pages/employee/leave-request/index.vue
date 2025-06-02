@@ -64,16 +64,21 @@ const tableColumns = computed(() => {
     {
       key: 'dates',
       label: t('dashboard.from_to'),
-      format: (request: LeaveRequest) => `${formatDate(request.startDate)} - ${formatDate(request.endDate)}`
+      format: (request: LeaveRequest) => `
+    <div class="flex flex-col">
+      <span>${formatDate(request.startDate)}</span>
+      <span>${formatDate(request.endDate)}</span>
+    </div>
+  `,
     },
     { key: 'employeeId', label: t('dashboard.employee_id') },
     {
       key: 'managerId',
       label: t('dashboard.manager'),
       format: (request: LeaveRequest) => {
-        if (!request.managerId) return '-';
+        if (!request.managerId) return t("dashboard.not_assigned");
         const manager = managersStore.managers.find(m => m.id === request.managerId);
-        return manager ? `${manager.firstName} ${manager.lastName}` : '-';
+        return manager ? `${manager.firstName} ${manager.lastName}` : t("dashboard.not_assigned");
       }
     },
     {

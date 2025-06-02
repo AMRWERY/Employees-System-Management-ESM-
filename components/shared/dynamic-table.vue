@@ -35,8 +35,11 @@
                 </template>
               </template>
 
-              <template v-else-if="column.format">
+              <template v-else-if="column.format && column.key !== 'dates'">
                 {{ column.format(item, index) }}
+              </template>
+              <template v-else-if="column.format && column.key === 'dates'">
+                <span v-html="column.format(item, index)"></span>
               </template>
 
               <template v-else>
