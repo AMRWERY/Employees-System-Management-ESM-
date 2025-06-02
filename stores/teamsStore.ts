@@ -173,7 +173,7 @@ export const useTeamStore = defineStore("teams", {
         const unsubscribe = onSnapshot(q, (snap) => {
           this.members = snap.docs.map((d) => {
             const data = d.data();
-            console.log("User data for ID", d.id, ":", data);
+            // console.log("User data for ID", d.id, ":", data);
             return {
               id: d.id,
               firstName: data.firstName,

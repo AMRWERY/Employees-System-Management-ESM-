@@ -27,7 +27,7 @@
             <div>
               <p class="text-sm text-gray-500">{{ t('dashboard.department') }}</p>
               <p class="text-gray-900 font-medium" :class="{ 'text-orange-600': !team }">
-                {{ translatedDepartmentName }}</p>
+                {{ teamName }}</p>
             </div>
           </div>
 
@@ -91,15 +91,11 @@ const { t } = useI18n()
 const managerStore = useManagerStore();
 const teamStore = useTeamStore();
 const { formatDate } = useDateFormat();
+const { getTeamName } = useTeamName();
 const manager = ref<Manager | null>(null);
 const loading = ref(true);
 
-// useTeamName composable
-const { computedTeamName } = useTeamName();
-
-const translatedDepartmentName = computedTeamName(
-  () => manager.value?.teamId,
-);
+const teamName = computed(() => getTeamName(manager.value?.teamId))
 
 const managerId = computed(() => {
   const id = route.params.managerId as string;
