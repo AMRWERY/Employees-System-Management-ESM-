@@ -191,7 +191,7 @@
     "profile": "Profile",
     "settings": "Settings",
     "admin_teams_id": "Team Members",
-    "admin_managers_managerid": "Employee Details",
+    "admin_managers_managerid": "Manager Details",
     "admin_leave_request_id": "Leave request details",
     "managers": "Managers"
   },
@@ -245,7 +245,11 @@
     "failed_fetch_profile": "Failed get profile data",
     "manager_added_successfully": "Manager added successfully",
     "failed_to_add_manager": "Failed to add manager",
-    "failed_to_load_managers": "Failed to load managers"
+    "failed_to_load_managers": "Failed to load managers",
+    "manager_deleted": "Manager deleted",
+    "failed_to_delete_manager": "Failed to delete manager",
+    "manager_blocked": "Manager blocked",
+    "manager_unblocked": "Manager unblocked"
   },
   "status": {
     "all": "All",
@@ -269,7 +273,7 @@
     "admin_teams": "Teams / Derpartments",
     "profile": "Profile",
     "admin_teams_id": "Team Members",
-    "admin_managers_managerid": "Employee Details",
+    "admin_managers_managerid": "Manager Details",
     "settings": "Settings",
     "employee_my_attendance": "My attendance",
     "employee_leave_request": "My leave requests",

@@ -14,13 +14,13 @@
     </div>
 
     <!-- Search input -->
-    <!-- <div class="relative w-[300px]">
+    <div class="relative w-[300px]">
       <input type="text" v-model="searchTerm" :placeholder="t('form.search_by_email')"
         class="px-4 py-2 pe-10 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full" />
       <div class="absolute inset-y-0 end-0 flex items-center pe-3 pointer-events-none">
         <icon name="heroicons-solid:magnifying-glass" class="w-5 h-5 text-gray-400" />
       </div>
-    </div> -->
+    </div>
 
     <div v-if="loading" key="skeleton">
       <!-- table-skeleton-loader component -->
@@ -36,13 +36,19 @@
       <div v-else>
         <!-- dynamic-table component -->
         <dynamic-table :items="managerStore.paginatedManagers" :columns="tableColumns" :has-view="true"
-          :has-block="true" :has-delete="true" @view="viewManagerDetails" />
+          :has-block="true" :has-delete="true" @view="viewManagerDetails"
+          @block="(item: Manager) => toggleBlockManager(item)" @delete="(item: Manager) => deleteManager(item)" />
       </div>
 
       <!-- pagination component -->
       <pagination v-if="managerStore.totalPages > 1" :current-page="managerStore.currentPage"
         :total-pages="managerStore.totalPages" @page-change="handlePageChange" />
     </div>
+
+    <!-- delete-dialog component -->
+    <delete-dialog :show="dialogProps.show" :title="dialogProps.title" :message="dialogProps.message"
+      :confirm-text="dialogProps.confirmText" :cancel-text="dialogProps.cancelText" :loading="dialogProps.loading"
+      @close="dialogProps.onClose" @confirm="dialogProps.onConfirm" />
   </div>
 </template>
 
@@ -50,21 +56,34 @@
 import type { TableHeader } from '@/types/table-header'
 import type { Manager } from '@/types/managers'
 import type { Column } from '@/types/tables'
+import type { DeleteDialogProps } from '@/types/delete-dialog'
 
 const { t } = useI18n()
 const router = useRouter()
 const managerStore = useManagerStore()
 const teamStore = useTeamStore()
 const { triggerToast } = useToast()
+const { getTeamName } = useTeamName();
 const showAddDialog = ref(false);
+const searchTerm = ref('')
 const loading = ref(true)
+
+const dialogProps = ref<DeleteDialogProps>({
+  show: false,
+  title: '',
+  message: '',
+  cancelText: t('btn.cancel'),
+  confirmText: t('btn.reject'),
+  loading: false
+})
 
 const handlePageChange = (newPage: number) => {
   managerStore.setCurrentPage(newPage);
 };
 
-// useTeamNameTranslation composable
-const { getTeamName } = useTeamName();
+watch(searchTerm, (value: string) => {
+  managerStore.setSearchTerm(value)
+})
 
 const tableColumns = computed(() => {
   const columns: Column<Manager>[] = [
@@ -139,6 +158,65 @@ const handleSave = async () => {
     // Error handling
   }
 };
+
+const selectedEmployee = ref<Manager | null>(null)
+
+const deleteManager = async (manager: Manager) => {
+  selectedEmployee.value = manager
+  const name = manager.firstName + ' ' + manager.lastName
+  dialogProps.value = {
+    show: true,
+    title: t('dashboard.delete_employee_title'),
+    message: t('dashboard.delete_employee_confirmation_01', { name: name }) + '' + t('dashboard.delete_employee_confirmation_02'),
+    cancelText: t('btn.cancel'),
+    confirmText: t('btn.reject'),
+    loading: false,
+    onClose: () => {
+      dialogProps.value.show = false
+      selectedEmployee.value = null
+    },
+    onConfirm: async () => {
+      dialogProps.value.loading = true
+      try {
+        await managerStore.deleteManager(manager.id)
+        dialogProps.value.show = false
+        selectedEmployee.value = null
+        triggerToast({
+          message: t('toast.manager_deleted'),
+          type: 'success',
+          icon: 'mdi-check-circle',
+        })
+      } catch (error) {
+        triggerToast({
+          message: t('toast.failed_to_delete_manager'),
+          type: 'error',
+          icon: 'material-symbols:error-outline-rounded',
+        })
+      } finally {
+        dialogProps.value.loading = false
+      }
+    }
+  }
+}
+
+const toggleBlockManager = async (manager: Manager) => {
+  try {
+    await managerStore.toggleBlockManager(manager.id)
+    triggerToast({
+      message: manager.status === 'blocked'
+        ? t('toast.manager_blocked')
+        : t('toast.manager_unblocked'),
+      type: 'success',
+      icon: 'mdi-check-circle',
+    })
+  } catch (error) {
+    triggerToast({
+      message: t('toast.failed_to_toggle_block'),
+      type: 'error',
+      icon: 'material-symbols:error-outline-rounded',
+    })
+  }
+}
 
 useHead({
   titleTemplate: () => t('head.managers'),

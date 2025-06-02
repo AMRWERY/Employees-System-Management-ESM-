@@ -58,7 +58,10 @@ import type { Column } from '@/types/tables'
 import type { DeleteDialogProps } from '@/types/delete-dialog'
 
 const { t } = useI18n()
+const managerssStore = useManagerStore()
+const employeesStore = useEmployeesStore()
 const { triggerToast } = useToast()
+const { getTeamName } = useTeamName();
 const loading = ref(true)
 const searchTerm = ref('')
 
@@ -74,8 +77,6 @@ const dialogProps = ref<DeleteDialogProps>({
 
 const selectedEmployee = ref<Employee | null>(null)
 
-const managerssStore = useManagerStore()
-const employeesStore = useEmployeesStore()
 const {
   paginatedEmployees,
   currentPage,
@@ -85,9 +86,6 @@ const {
 const handlePageChange = (newPage: number) => {
   employeesStore.setCurrentPage(newPage);
 };
-
-// useTeamNameTranslation composable
-const { getTeamName } = useTeamName();
 
 const tableColumns = computed(() => {
   const columns: Column<Employee>[] = [
@@ -178,7 +176,7 @@ const toggleBlockEmployee = async (employee: Employee) => {
       icon: 'mdi-check-circle',
     })
   } catch (error) {
-    console.error('Error blocking employee:', error)
+    // console.error('Error blocking employee:', error)
     triggerToast({
       message: t('toast.failed_to_toggle_block'),
       type: 'error',

@@ -191,7 +191,7 @@
     "profile": "الملف الشخصي",
     "settings": "الإعدادات",
     "admin_teams_id": "أعضاء الفريق",
-    "admin_managers_managerid": "تفاصيل الموظف",
+    "admin_managers_managerid": "تفاصيل المدير",
     "admin_leave_request_id": "تفاصيل طلب الأجازه",
     "managers": "المديرين"
   },
@@ -245,7 +245,11 @@
     "failed_fetch_profile": "فشل الحصول على بيانات الملف الشخصي",
     "manager_added_successfully": "تمت إضافة المدير بنجاح",
     "failed_to_add_manager": "فشل في إضافة المدير",
-    "failed_to_load_managers": "فشل تحميل المديرين"
+    "failed_to_load_managers": "فشل تحميل المديرين",
+    "manager_deleted": "تم حذف المدير",
+    "failed_to_delete_manager": "فشل في حذف المدير",
+    "manager_blocked": "تم حظر المدير",
+    "manager_unblocked": "تم إلغاء حظر المدير"
   },
   "status": {
     "all": "الكل",
@@ -269,7 +273,7 @@
     "admin_teams": "الفرق / الأقسام",
     "profile": "الملف الشخصي",
     "admin_teams_id": "أعضاء الفريق",
-    "admin_managers_managerid": "تفاصيل الموظف",
+    "admin_managers_managerid": "تفاصيل المدير",
     "settings": "الإعدادات",
     "employee_my_attendance": "حضوري",
     "employee_leave_request": "طلبات إجازتي",

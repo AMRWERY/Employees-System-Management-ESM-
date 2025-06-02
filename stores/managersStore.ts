@@ -6,6 +6,7 @@ import {
   getDoc,
   setDoc,
   updateDoc,
+  deleteDoc,
   serverTimestamp,
   query,
   where,
@@ -62,7 +63,7 @@ export const useManagerStore = defineStore("managers", {
         );
         this.updatePagination();
       } catch (error) {
-        console.error("Error fetching managers:", error);
+        // console.error("Error fetching managers:", error);
         this.error = "Failed to fetch managers";
         throw error;
       } finally {
@@ -198,8 +199,38 @@ export const useManagerStore = defineStore("managers", {
       // Implement update logic
     },
 
-    async deleteManager(managerId: string) {
-      // Implement delete logic
+    async deleteManager(managerId: string): Promise<void> {
+      try {
+        await deleteDoc(doc(db, "ems-users", managerId));
+        // Query and delete from "ems-managers" where uid === managerId
+        const managersRef = collection(db, "ems-managers");
+        const q = query(managersRef, where("uid", "==", managerId));
+        const snapshot = await getDocs(q);
+        const deletePromises = snapshot.docs.map((docSnap) =>
+          deleteDoc(doc(db, "ems-managers", docSnap.id))
+        );
+        await Promise.all(deletePromises);
+        this.managers = this.managers.filter((user) => user.id !== managerId);
+        this.updatePagination();
+      } catch (error) {
+        // console.error("Error deleting manager from both collections:", error);
+        this.error = "Failed to delete manager";
+      }
+    },
+
+    async toggleBlockManager(managerId: string): Promise<void> {
+      try {
+        const manager = this.managers.find((u) => u.id === managerId);
+        if (!manager) throw new Error("Manager not found");
+        const newStatus = manager.status === "active" ? "blocked" : "active";
+        const userRef = doc(db, "ems-users", managerId);
+        await updateDoc(userRef, { status: newStatus });
+        manager.status = newStatus;
+        this.updatePagination();
+      } catch (error) {
+        // console.error("Toggle block failed:", error);
+        throw error;
+      }
     },
 
     setCurrentPage(page: number) {
