@@ -8,7 +8,7 @@ import {
 } from "firebase/storage";
 import { doc, updateDoc } from "firebase/firestore";
 import { updatePassword } from "firebase/auth";
-import { useAuthStore } from "./authStore";
+// import { useAuthStore } from "./authStore";
 
 export const useProfileStore = defineStore("profile", {
   state: () => ({

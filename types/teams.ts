@@ -16,6 +16,7 @@ export interface Member {
   email: string;
   position: string;
   teamId: string;
+  managerId: string;
   departmentId: string;
   isBlocked: boolean;
   createdAt?: Date;
