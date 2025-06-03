@@ -48,7 +48,7 @@
                     class="w-full px-3 py-2 transition duration-300 border rounded-md shadow-sm placeholder:text-slate-400 text-slate-700 focus:outline-none focus:border-slate-400 hover:border-slate-300 focus:shadow">
                     <option value="" disabled>{{ t('form.select_team') }}</option>
                     <option v-for="team in teamsStore.teams" :key="team.id" :value="team.id">
-                      {{ team.name }}
+                      {{ getTeamName(team.id, team.name) }}
                     </option>
                   </select>
                 </div>
@@ -72,6 +72,7 @@
 <script lang="ts" setup>
 const { t } = useI18n()
 const { triggerToast } = useToast()
+const { getTeamName } = useTeamName()
 const loading = ref(false)
 
 const props = defineProps({
