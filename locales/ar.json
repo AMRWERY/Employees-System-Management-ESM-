@@ -20,7 +20,8 @@
     "my_leave_requests": "طلبات إجازتي",
     "my_performance_reviews": "مراجعات أدائي",
     "my_payslips_payroll": "كشوف المرتبات الخاصة بي",
-    "managers": "المديرين"
+    "managers": "المديرين",
+    "holiday_dates": "تواريخ العطلات"
   },
   "dashboard": {
     "you_re_currently": "أنت حاليا",
@@ -193,7 +194,8 @@
     "admin_teams_id": "أعضاء الفريق",
     "admin_managers_managerid": "تفاصيل المدير",
     "admin_leave_request_id": "تفاصيل طلب الأجازه",
-    "managers": "المديرين"
+    "managers": "المديرين",
+    "holiday_dates": "تواريخ العطلات"
   },
   "error_page": {
     "you_are_all_alone_here": "أنت وحدك هنا 😁"
@@ -249,7 +251,8 @@
     "manager_deleted": "تم حذف المدير",
     "failed_to_delete_manager": "فشل في حذف المدير",
     "manager_blocked": "تم حظر المدير",
-    "manager_unblocked": "تم إلغاء حظر المدير"
+    "manager_unblocked": "تم إلغاء حظر المدير",
+    "failed_to_load_holidays_data": "فشل تحميل بيانات العطلات."
   },
   "status": {
     "all": "الكل",
@@ -281,7 +284,8 @@
     "admin_managers": "المديرين",
     "admin_managers_manager": "تفاصيل الموظف",
     "admin_teams_employees_employeeid": "تفاصيل الموظف",
-    "employee_leave_request_id": "تفاصيل طلب الإجازة"
+    "employee_leave_request_id": "تفاصيل طلب الإجازة",
+    "holiday_dates": "تواريخ العطلات"
   },
   "days": {
     "sun": "الأحد",

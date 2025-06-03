@@ -45,6 +45,16 @@
       </li>
 
       <li v-if="hasAnyRole('employee')">
+        <nuxt-link-locale to="/holiday-dates" class="flex items-center p-2 text-white rounded-lg group"
+          exact-active-class="bg-gray-400 text-white hover:bg-gray-500">
+          <icon name="heroicons-solid:calendar-days"
+            class="w-5 h-5 transition duration-75 group-hover:text-white"
+            :class="{ 'text-gray-400': route.path === '/holiday-dates', 'text-white': route.path !== '/holiday-dates' }" />
+          <span class="flex-1 ms-3 whitespace-nowrap">{{ t('layouts.holiday_dates') }}</span>
+        </nuxt-link-locale>
+      </li>
+
+      <li v-if="hasAnyRole('employee')">
         <nuxt-link to="" class="flex items-center p-2 text-white rounded-lg group"
           exact-active-class="bg-gray-400 text-white hover:bg-gray-500">
           <icon name="solar:hand-money-linear" class="w-5 h-5 transition duration-75 group-hover:text-white"
