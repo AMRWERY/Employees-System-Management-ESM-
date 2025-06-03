@@ -20,7 +20,8 @@
     "my_leave_requests": "My Leave Requests",
     "my_performance_reviews": "My Performance Reviews",
     "my_payslips_payroll": "My Payslips/Payroll",
-    "managers": "Managers"
+    "managers": "Managers",
+    "holiday_dates": "Holiday dates"
   },
   "dashboard": {
     "you_re_currently": "You're currently",
@@ -64,7 +65,7 @@
     "add_manager": "Add Manager",
     "not_assigned": "Not Assigned",
     "team_not_found": "Not Assigned",
-    "employee_name":"Employee Name",
+    "employee_name": "Employee Name",
     "missing_manager_name": "Missing manager name",
     "missing_department_name": "Missing department name"
   },
@@ -193,7 +194,8 @@
     "admin_teams_id": "Team Members",
     "admin_managers_managerid": "Manager Details",
     "admin_leave_request_id": "Leave request details",
-    "managers": "Managers"
+    "managers": "Managers",
+    "holiday_dates": "Holiday dates"
   },
   "error_page": {
     "you_are_all_alone_here": "You are all alone here 😁"
@@ -249,7 +251,8 @@
     "manager_deleted": "Manager deleted",
     "failed_to_delete_manager": "Failed to delete manager",
     "manager_blocked": "Manager blocked",
-    "manager_unblocked": "Manager unblocked"
+    "manager_unblocked": "Manager unblocked",
+    "failed_to_load_holidays_data": "Failed to load holidays data."
   },
   "status": {
     "all": "All",
@@ -281,7 +284,8 @@
     "admin_managers": "Managers",
     "admin_managers_manager": "Employee Details",
     "admin_teams_employees_employeeid": "Employee Details",
-    "employee_leave_request_id": "Leave request details"
+    "employee_leave_request_id": "Leave request details",
+    "holiday_dates": "Holiday dates"
   },
   "days": {
     "mon": "Mon",

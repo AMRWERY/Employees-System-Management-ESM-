@@ -1,0 +1,1293 @@
+[
+  {
+    "country_code": "EG",
+    "country_name_en": "Egypt",
+    "country_name_ar": "مصر",
+    "holidays": [
+      {
+        "date": "2025-01-07",
+        "name_en": "Coptic Christmas Day",
+        "name_ar": "عيد الميلاد القبطي"
+      },
+      {
+        "date": "2025-01-25",
+        "name_en": "January 25 Revolution Day",
+        "name_ar": "عيد ثورة 25 يناير"
+      },
+      {
+        "date": "2025-03-30",
+        "name_en": "Eid al-Fitr Holiday 1 (estimated)",
+        "name_ar": "وقفة عيد الفطر (تقديري)"
+      },
+      {
+        "date": "2025-03-31",
+        "name_en": "Eid al-Fitr Day 1 (estimated)",
+        "name_ar": "عيد الفطر المبارك اليوم الأول (تقديري)"
+      },
+      {
+        "date": "2025-04-01",
+        "name_en": "Eid al-Fitr Day 2 (estimated)",
+        "name_ar": "عيد الفطر المبارك اليوم الثاني (تقديري)"
+      },
+      {
+        "date": "2025-04-02",
+        "name_en": "Eid al-Fitr Day 3 (estimated)",
+        "name_ar": "عيد الفطر المبارك اليوم الثالث (تقديري)"
+      },
+      {
+        "date": "2025-04-17",
+        "name_en": "Coptic Easter Monday (Sham Ennessim)",
+        "name_ar": "شم النسيم"
+      },
+      {
+        "date": "2025-04-25",
+        "name_en": "Sinai Liberation Day",
+        "name_ar": "عيد تحرير سيناء"
+      },
+      {
+        "date": "2025-05-01",
+        "name_en": "Labour Day",
+        "name_ar": "عيد العمال"
+      },
+      {
+        "date": "2025-06-05",
+        "name_en": "Arafat Day (estimated)",
+        "name_ar": "وقفة عرفات (تقديري)"
+      },
+      {
+        "date": "2025-06-06",
+        "name_en": "Eid al-Adha Day 1 (estimated)",
+        "name_ar": "عيد الأضحى المبارك اليوم الأول (تقديري)"
+      },
+      {
+        "date": "2025-06-07",
+        "name_en": "Eid al-Adha Day 2 (estimated)",
+        "name_ar": "عيد الأضحى المبارك اليوم الثاني (تقديري)"
+      },
+      {
+        "date": "2025-06-08",
+        "name_en": "Eid al-Adha Day 3 (estimated)",
+        "name_ar": "عيد الأضحى المبارك اليوم الثالث (تقديري)"
+      },
+      {
+        "date": "2025-06-09",
+        "name_en": "Eid al-Adha Day 4 (estimated)",
+        "name_ar": "عيد الأضحى المبارك اليوم الرابع (تقديري)"
+      },
+      {
+        "date": "2025-06-26",
+        "name_en": "Islamic New Year (estimated)",
+        "name_ar": "رأس السنة الهجرية (تقديري)"
+      },
+      {
+        "date": "2025-07-23",
+        "name_en": "July 23 Revolution Day",
+        "name_ar": "عيد ثورة 23 يوليو"
+      },
+      {
+        "date": "2025-09-04",
+        "name_en": "Prophet Muhammad's Birthday (estimated)",
+        "name_ar": "المولد النبوي الشريف (تقديري)"
+      },
+      {
+        "date": "2025-10-06",
+        "name_en": "Armed Forces Day",
+        "name_ar": "عيد القوات المسلحة (انتصارات أكتوبر)"
+      }
+    ]
+  },
+  {
+    "country_code": "SA",
+    "country_name_en": "Saudi Arabia",
+    "country_name_ar": "المملكة العربية السعودية",
+    "holidays": [
+      {
+        "date": "2025-02-22",
+        "name_en": "Founding Day",
+        "name_ar": "يوم التأسيس"
+      },
+      {
+        "date": "2025-03-30",
+        "name_en": "Eid al-Fitr Holiday 1 (estimated)",
+        "name_ar": "إجازة عيد الفطر (تقديري)"
+      },
+      {
+        "date": "2025-03-31",
+        "name_en": "Eid al-Fitr Day 1 (estimated)",
+        "name_ar": "عيد الفطر المبارك اليوم الأول (تقديري)"
+      },
+      {
+        "date": "2025-04-01",
+        "name_en": "Eid al-Fitr Day 2 (estimated)",
+        "name_ar": "عيد الفطر المبارك اليوم الثاني (تقديري)"
+      },
+      {
+        "date": "2025-04-02",
+        "name_en": "Eid al-Fitr Day 3 (estimated)",
+        "name_ar": "عيد الفطر المبارك اليوم الثالث (تقديري)"
+      },
+      {
+        "date": "2025-06-05",
+        "name_en": "Arafat Day (estimated)",
+        "name_ar": "وقفة عرفات (تقديري)"
+      },
+      {
+        "date": "2025-06-06",
+        "name_en": "Eid al-Adha Day 1 (estimated)",
+        "name_ar": "عيد الأضحى المبارك اليوم الأول (تقديري)"
+      },
+      {
+        "date": "2025-06-07",
+        "name_en": "Eid al-Adha Day 2 (estimated)",
+        "name_ar": "عيد الأضحى المبارك اليوم الثاني (تقديري)"
+      },
+      {
+        "date": "2025-06-08",
+        "name_en": "Eid al-Adha Day 3 (estimated)",
+        "name_ar": "عيد الأضحى المبارك اليوم الثالث (تقديري)"
+      },
+      {
+        "date": "2025-09-23",
+        "name_en": "Saudi National Day",
+        "name_ar": "اليوم الوطني السعودي"
+      }
+    ]
+  },
+  {
+    "country_code": "AE",
+    "country_name_en": "United Arab Emirates",
+    "country_name_ar": "الإمارات العربية المتحدة",
+    "holidays": [
+      {
+        "date": "2025-01-01",
+        "name_en": "New Year's Day",
+        "name_ar": "رأس السنة الميلادية"
+      },
+      {
+        "date": "2025-03-29",
+        "name_en": "Eid al-Fitr Holiday (estimated)",
+        "name_ar": "إجازة عيد الفطر (تقديري)"
+      },
+      {
+        "date": "2025-03-30",
+        "name_en": "Eid al-Fitr Day 1 (estimated)",
+        "name_ar": "عيد الفطر المبارك اليوم الأول (تقديري)"
+      },
+      {
+        "date": "2025-03-31",
+        "name_en": "Eid al-Fitr Day 2 (estimated)",
+        "name_ar": "عيد الفطر المبارك اليوم الثاني (تقديري)"
+      },
+      {
+        "date": "2025-04-01",
+        "name_en": "Eid al-Fitr Day 3 (estimated)",
+        "name_ar": "عيد الفطر المبارك اليوم الثالث (تقديري)"
+      },
+      {
+        "date": "2025-06-05",
+        "name_en": "Arafat Day (estimated)",
+        "name_ar": "وقفة عرفات (تقديري)"
+      },
+      {
+        "date": "2025-06-06",
+        "name_en": "Eid al-Adha Day 1 (estimated)",
+        "name_ar": "عيد الأضحى المبارك اليوم الأول (تقديري)"
+      },
+      {
+        "date": "2025-06-07",
+        "name_en": "Eid al-Adha Day 2 (estimated)",
+        "name_ar": "عيد الأضحى المبارك اليوم الثاني (تقديري)"
+      },
+      {
+        "date": "2025-06-08",
+        "name_en": "Eid al-Adha Day 3 (estimated)",
+        "name_ar": "عيد الأضحى المبارك اليوم الثالث (تقديري)"
+      },
+      {
+        "date": "2025-06-26",
+        "name_en": "Islamic New Year (Hijri New Year) (estimated)",
+        "name_ar": "رأس السنة الهجرية (تقديري)"
+      },
+      {
+        "date": "2025-09-04",
+        "name_en": "Prophet Muhammad's Birthday (estimated)",
+        "name_ar": "المولد النبوي الشريف (تقديري)"
+      },
+      {
+        "date": "2025-12-02",
+        "name_en": "UAE National Day",
+        "name_ar": "اليوم الوطني الإماراتي"
+      },
+      {
+        "date": "2025-12-03",
+        "name_en": "UAE National Day Holiday",
+        "name_ar": "إجازة اليوم الوطني الإماراتي"
+      }
+    ]
+  },
+  {
+    "country_code": "DZ",
+    "country_name_en": "Algeria",
+    "country_name_ar": "الجزائر",
+    "holidays": [
+      {
+        "date": "2025-01-01",
+        "name_en": "New Year's Day",
+        "name_ar": "رأس السنة الميلادية"
+      },
+      {
+        "date": "2025-03-30",
+        "name_en": "Eid al-Fitr Holiday (estimated)",
+        "name_ar": "إجازة عيد الفطر (تقديري)"
+      },
+      {
+        "date": "2025-03-31",
+        "name_en": "Eid al-Fitr Day 1 (estimated)",
+        "name_ar": "عيد الفطر المبارك اليوم الأول (تقديري)"
+      },
+      {
+        "date": "2025-04-01",
+        "name_en": "Eid al-Fitr Day 2 (estimated)",
+        "name_ar": "عيد الفطر المبارك اليوم الثاني (تقديري)"
+      },
+      {
+        "date": "2025-05-01",
+        "name_en": "Labour Day",
+        "name_ar": "عيد العمال"
+      },
+      {
+        "date": "2025-06-05",
+        "name_en": "Arafat Day (estimated)",
+        "name_ar": "وقفة عرفات (تقديري)"
+      },
+      {
+        "date": "2025-06-06",
+        "name_en": "Eid al-Adha Day 1 (estimated)",
+        "name_ar": "عيد الأضحى المبارك اليوم الأول (تقديري)"
+      },
+      {
+        "date": "2025-06-07",
+        "name_en": "Eid al-Adha Day 2 (estimated)",
+        "name_ar": "عيد الأضحى المبارك اليوم الثاني (تقديري)"
+      },
+      {
+        "date": "2025-06-26",
+        "name_en": "Islamic New Year (estimated)",
+        "name_ar": "رأس السنة الهجرية (تقديري)"
+      },
+      {
+        "date": "2025-07-05",
+        "name_en": "Independence Day",
+        "name_ar": "عيد الاستقلال"
+      },
+      {
+        "date": "2025-09-04",
+        "name_en": "Prophet Muhammad's Birthday (estimated)",
+        "name_ar": "المولد النبوي الشريف (تقديري)"
+      },
+      {
+        "date": "2025-11-01",
+        "name_en": "Revolution Day",
+        "name_ar": "عيد الثورة"
+      }
+    ]
+  },
+  {
+    "country_code": "BH",
+    "country_name_en": "Bahrain",
+    "country_name_ar": "البحرين",
+    "holidays": [
+      {
+        "date": "2025-01-01",
+        "name_en": "New Year's Day",
+        "name_ar": "رأس السنة الميلادية"
+      },
+      {
+        "date": "2025-03-30",
+        "name_en": "Eid al-Fitr Holiday (estimated)",
+        "name_ar": "إجازة عيد الفطر (تقديري)"
+      },
+      {
+        "date": "2025-03-31",
+        "name_en": "Eid al-Fitr Day 1 (estimated)",
+        "name_ar": "عيد الفطر المبارك اليوم الأول (تقديري)"
+      },
+      {
+        "date": "2025-04-01",
+        "name_en": "Eid al-Fitr Day 2 (estimated)",
+        "name_ar": "عيد الفطر المبارك اليوم الثاني (تقديري)"
+      },
+      {
+        "date": "2025-05-01",
+        "name_en": "Labour Day",
+        "name_ar": "عيد العمال"
+      },
+      {
+        "date": "2025-06-05",
+        "name_en": "Arafat Day (estimated)",
+        "name_ar": "وقفة عرفات (تقديري)"
+      },
+      {
+        "date": "2025-06-06",
+        "name_en": "Eid al-Adha Day 1 (estimated)",
+        "name_ar": "عيد الأضحى المبارك اليوم الأول (تقديري)"
+      },
+      {
+        "date": "2025-06-07",
+        "name_en": "Eid al-Adha Day 2 (estimated)",
+        "name_ar": "عيد الأضحى المبارك اليوم الثاني (تقديري)"
+      },
+      {
+        "date": "2025-06-26",
+        "name_en": "Islamic New Year (estimated)",
+        "name_ar": "رأس السنة الهجرية (تقديري)"
+      },
+      {
+        "date": "2025-09-04",
+        "name_en": "Prophet Muhammad's Birthday (estimated)",
+        "name_ar": "المولد النبوي الشريف (تقديري)"
+      },
+      {
+        "date": "2025-12-16",
+        "name_en": "National Day",
+        "name_ar": "اليوم الوطني"
+      },
+      {
+        "date": "2025-12-17",
+        "name_en": "National Day Holiday",
+        "name_ar": "إجازة اليوم الوطني"
+      }
+    ]
+  },
+  {
+    "country_code": "KM",
+    "country_name_en": "Comoros",
+    "country_name_ar": "جزر القمر",
+    "holidays": [
+      {
+        "date": "2025-01-01",
+        "name_en": "New Year's Day",
+        "name_ar": "رأس السنة الميلادية"
+      },
+      {
+        "date": "2025-03-30",
+        "name_en": "Eid al-Fitr Holiday (estimated)",
+        "name_ar": "إجازة عيد الفطر (تقديري)"
+      },
+      {
+        "date": "2025-03-31",
+        "name_en": "Eid al-Fitr Day 1 (estimated)",
+        "name_ar": "عيد الفطر المبارك اليوم الأول (تقديري)"
+      },
+      {
+        "date": "2025-06-05",
+        "name_en": "Arafat Day (estimated)",
+        "name_ar": "وقفة عرفات (تقديري)"
+      },
+      {
+        "date": "2025-06-06",
+        "name_en": "Eid al-Adha Day 1 (estimated)",
+        "name_ar": "عيد الأضحى المبارك اليوم الأول (تقديري)"
+      },
+      {
+        "date": "2025-06-26",
+        "name_en": "Islamic New Year (estimated)",
+        "name_ar": "رأس السنة الهجرية (تقديري)"
+      },
+      {
+        "date": "2025-07-06",
+        "name_en": "Independence Day",
+        "name_ar": "عيد الاستقلال"
+      },
+      {
+        "date": "2025-09-04",
+        "name_en": "Prophet Muhammad's Birthday (estimated)",
+        "name_ar": "المولد النبوي الشريف (تقديري)"
+      }
+    ]
+  },
+  {
+    "country_code": "DJ",
+    "country_name_en": "Djibouti",
+    "country_name_ar": "جيبوتي",
+    "holidays": [
+      {
+        "date": "2025-01-01",
+        "name_en": "New Year's Day",
+        "name_ar": "رأس السنة الميلادية"
+      },
+      {
+        "date": "2025-03-30",
+        "name_en": "Eid al-Fitr Holiday (estimated)",
+        "name_ar": "إجازة عيد الفطر (تقديري)"
+      },
+      {
+        "date": "2025-03-31",
+        "name_en": "Eid al-Fitr Day 1 (estimated)",
+        "name_ar": "عيد الفطر المبارك اليوم الأول (تقديري)"
+      },
+      {
+        "date": "2025-05-01",
+        "name_en": "Labour Day",
+        "name_ar": "عيد العمال"
+      },
+      {
+        "date": "2025-06-05",
+        "name_en": "Arafat Day (estimated)",
+        "name_ar": "وقفة عرفات (تقديري)"
+      },
+      {
+        "date": "2025-06-06",
+        "name_en": "Eid al-Adha Day 1 (estimated)",
+        "name_ar": "عيد الأضحى المبارك اليوم الأول (تقديري)"
+      },
+      {
+        "date": "2025-06-27",
+        "name_en": "Independence Day",
+        "name_ar": "عيد الاستقلال"
+      },
+      {
+        "date": "2025-06-26",
+        "name_en": "Islamic New Year (estimated)",
+        "name_ar": "رأس السنة الهجرية (تقديري)"
+      },
+      {
+        "date": "2025-09-04",
+        "name_en": "Prophet Muhammad's Birthday (estimated)",
+        "name_ar": "المولد النبوي الشريف (تقديري)"
+      }
+    ]
+  },
+  {
+    "country_code": "IQ",
+    "country_name_en": "Iraq",
+    "country_name_ar": "العراق",
+    "holidays": [
+      {
+        "date": "2025-01-01",
+        "name_en": "New Year's Day",
+        "name_ar": "رأس السنة الميلادية"
+      },
+      { "date": "2025-03-21", "name_en": "Nowruz", "name_ar": "نوروز" },
+      {
+        "date": "2025-03-30",
+        "name_en": "Eid al-Fitr Holiday (estimated)",
+        "name_ar": "إجازة عيد الفطر (تقديري)"
+      },
+      {
+        "date": "2025-03-31",
+        "name_en": "Eid al-Fitr Day 1 (estimated)",
+        "name_ar": "عيد الفطر المبارك اليوم الأول (تقديري)"
+      },
+      {
+        "date": "2025-04-01",
+        "name_en": "Eid al-Fitr Day 2 (estimated)",
+        "name_ar": "عيد الفطر المبارك اليوم الثاني (تقديري)"
+      },
+      {
+        "date": "2025-05-01",
+        "name_en": "Labour Day",
+        "name_ar": "عيد العمال"
+      },
+      {
+        "date": "2025-06-05",
+        "name_en": "Arafat Day (estimated)",
+        "name_ar": "وقفة عرفات (تقديري)"
+      },
+      {
+        "date": "2025-06-06",
+        "name_en": "Eid al-Adha Day 1 (estimated)",
+        "name_ar": "عيد الأضحى المبارك اليوم الأول (تقديري)"
+      },
+      {
+        "date": "2025-06-07",
+        "name_en": "Eid al-Adha Day 2 (estimated)",
+        "name_ar": "عيد الأضحى المبارك اليوم الثاني (تقديري)"
+      },
+      {
+        "date": "2025-06-26",
+        "name_en": "Islamic New Year (estimated)",
+        "name_ar": "رأس السنة الهجرية (تقديري)"
+      },
+      {
+        "date": "2025-09-04",
+        "name_en": "Prophet Muhammad's Birthday (estimated)",
+        "name_ar": "المولد النبوي الشريف (تقديري)"
+      }
+    ]
+  },
+  {
+    "country_code": "JO",
+    "country_name_en": "Jordan",
+    "country_name_ar": "الأردن",
+    "holidays": [
+      {
+        "date": "2025-01-01",
+        "name_en": "New Year's Day",
+        "name_ar": "رأس السنة الميلادية"
+      },
+      {
+        "date": "2025-03-30",
+        "name_en": "Eid al-Fitr Holiday (estimated)",
+        "name_ar": "إجازة عيد الفطر (تقديري)"
+      },
+      {
+        "date": "2025-03-31",
+        "name_en": "Eid al-Fitr Day 1 (estimated)",
+        "name_ar": "عيد الفطر المبارك اليوم الأول (تقديري)"
+      },
+      {
+        "date": "2025-04-01",
+        "name_en": "Eid al-Fitr Day 2 (estimated)",
+        "name_ar": "عيد الفطر المبارك اليوم الثاني (تقديري)"
+      },
+      {
+        "date": "2025-05-01",
+        "name_en": "Labour Day",
+        "name_ar": "عيد العمال"
+      },
+      {
+        "date": "2025-05-25",
+        "name_en": "Independence Day",
+        "name_ar": "عيد الاستقلال"
+      },
+      {
+        "date": "2025-06-05",
+        "name_en": "Arafat Day (estimated)",
+        "name_ar": "وقفة عرفات (تقديري)"
+      },
+      {
+        "date": "2025-06-06",
+        "name_en": "Eid al-Adha Day 1 (estimated)",
+        "name_ar": "عيد الأضحى المبارك اليوم الأول (تقديري)"
+      },
+      {
+        "date": "2025-06-07",
+        "name_en": "Eid al-Adha Day 2 (estimated)",
+        "name_ar": "عيد الأضحى المبارك اليوم الثاني (تقديري)"
+      },
+      {
+        "date": "2025-06-26",
+        "name_en": "Islamic New Year (estimated)",
+        "name_ar": "رأس السنة الهجرية (تقديري)"
+      },
+      {
+        "date": "2025-09-04",
+        "name_en": "Prophet Muhammad's Birthday (estimated)",
+        "name_ar": "المولد النبوي الشريف (تقديري)"
+      }
+    ]
+  },
+  {
+    "country_code": "KW",
+    "country_name_en": "Kuwait",
+    "country_name_ar": "الكويت",
+    "holidays": [
+      {
+        "date": "2025-01-01",
+        "name_en": "New Year's Day",
+        "name_ar": "رأس السنة الميلادية"
+      },
+      {
+        "date": "2025-02-25",
+        "name_en": "National Day",
+        "name_ar": "اليوم الوطني"
+      },
+      {
+        "date": "2025-02-26",
+        "name_en": "Liberation Day",
+        "name_ar": "عيد التحرير"
+      },
+      {
+        "date": "2025-03-30",
+        "name_en": "Eid al-Fitr Holiday (estimated)",
+        "name_ar": "إجازة عيد الفطر (تقديري)"
+      },
+      {
+        "date": "2025-03-31",
+        "name_en": "Eid al-Fitr Day 1 (estimated)",
+        "name_ar": "عيد الفطر المبارك اليوم الأول (تقديري)"
+      },
+      {
+        "date": "2025-04-01",
+        "name_en": "Eid al-Fitr Day 2 (estimated)",
+        "name_ar": "عيد الفطر المبارك اليوم الثاني (تقديري)"
+      },
+      {
+        "date": "2025-06-05",
+        "name_en": "Arafat Day (estimated)",
+        "name_ar": "وقفة عرفات (تقديري)"
+      },
+      {
+        "date": "2025-06-06",
+        "name_en": "Eid al-Adha Day 1 (estimated)",
+        "name_ar": "عيد الأضحى المبارك اليوم الأول (تقديري)"
+      },
+      {
+        "date": "2025-06-07",
+        "name_en": "Eid al-Adha Day 2 (estimated)",
+        "name_ar": "عيد الأضحى المبارك اليوم الثاني (تقديري)"
+      },
+      {
+        "date": "2025-06-26",
+        "name_en": "Islamic New Year (estimated)",
+        "name_ar": "رأس السنة الهجرية (تقديري)"
+      },
+      {
+        "date": "2025-09-04",
+        "name_en": "Prophet Muhammad's Birthday (estimated)",
+        "name_ar": "المولد النبوي الشريف (تقديري)"
+      }
+    ]
+  },
+  {
+    "country_code": "LB",
+    "country_name_en": "Lebanon",
+    "country_name_ar": "لبنان",
+    "holidays": [
+      {
+        "date": "2025-01-01",
+        "name_en": "New Year's Day",
+        "name_ar": "رأس السنة الميلادية"
+      },
+      {
+        "date": "2025-01-06",
+        "name_en": "Armenian Christmas",
+        "name_ar": "عيد الميلاد الأرمني"
+      },
+      {
+        "date": "2025-03-30",
+        "name_en": "Eid al-Fitr Holiday (estimated)",
+        "name_ar": "إجازة عيد الفطر (تقديري)"
+      },
+      {
+        "date": "2025-03-31",
+        "name_en": "Eid al-Fitr Day 1 (estimated)",
+        "name_ar": "عيد الفطر المبارك اليوم الأول (تقديري)"
+      },
+      {
+        "date": "2025-05-01",
+        "name_en": "Labour Day",
+        "name_ar": "عيد العمال"
+      },
+      {
+        "date": "2025-06-05",
+        "name_en": "Arafat Day (estimated)",
+        "name_ar": "وقفة عرفات (تقديري)"
+      },
+      {
+        "date": "2025-06-06",
+        "name_en": "Eid al-Adha Day 1 (estimated)",
+        "name_ar": "عيد الأضحى المبارك اليوم الأول (تقديري)"
+      },
+      {
+        "date": "2025-06-26",
+        "name_en": "Islamic New Year (estimated)",
+        "name_ar": "رأس السنة الهجرية (تقديري)"
+      },
+      {
+        "date": "2025-09-04",
+        "name_en": "Prophet Muhammad's Birthday (estimated)",
+        "name_ar": "المولد النبوي الشريف (تقديري)"
+      },
+      {
+        "date": "2025-11-22",
+        "name_en": "Independence Day",
+        "name_ar": "عيد الاستقلال"
+      }
+    ]
+  },
+  {
+    "country_code": "LY",
+    "country_name_en": "Libya",
+    "country_name_ar": "ليبيا",
+    "holidays": [
+      {
+        "date": "2025-02-24",
+        "name_en": "Independence Day",
+        "name_ar": "عيد الاستقلال"
+      },
+      {
+        "date": "2025-03-30",
+        "name_en": "Eid al-Fitr Holiday (estimated)",
+        "name_ar": "إجازة عيد الفطر (تقديري)"
+      },
+      {
+        "date": "2025-03-31",
+        "name_en": "Eid al-Fitr Day 1 (estimated)",
+        "name_ar": "عيد الفطر المبارك اليوم الأول (تقديري)"
+      },
+      {
+        "date": "2025-05-01",
+        "name_en": "Labour Day",
+        "name_ar": "عيد العمال"
+      },
+      {
+        "date": "2025-06-05",
+        "name_en": "Arafat Day (estimated)",
+        "name_ar": "وقفة عرفات (تقديري)"
+      },
+      {
+        "date": "2025-06-06",
+        "name_en": "Eid al-Adha Day 1 (estimated)",
+        "name_ar": "عيد الأضحى المبارك اليوم الأول (تقديري)"
+      },
+      {
+        "date": "2025-06-26",
+        "name_en": "Islamic New Year (estimated)",
+        "name_ar": "رأس السنة الهجرية (تقديري)"
+      },
+      {
+        "date": "2025-09-04",
+        "name_en": "Prophet Muhammad's Birthday (estimated)",
+        "name_ar": "المولد النبوي الشريف (تقديري)"
+      },
+      {
+        "date": "2025-09-16",
+        "name_en": "Martyrs' Day",
+        "name_ar": "يوم الشهداء"
+      }
+    ]
+  },
+  {
+    "country_code": "MR",
+    "country_name_en": "Mauritania",
+    "country_name_ar": "موريتانيا",
+    "holidays": [
+      {
+        "date": "2025-01-01",
+        "name_en": "New Year's Day",
+        "name_ar": "رأس السنة الميلادية"
+      },
+      {
+        "date": "2025-03-30",
+        "name_en": "Eid al-Fitr Holiday (estimated)",
+        "name_ar": "إجازة عيد الفطر (تقديري)"
+      },
+      {
+        "date": "2025-03-31",
+        "name_en": "Eid al-Fitr Day 1 (estimated)",
+        "name_ar": "عيد الفطر المبارك اليوم الأول (تقديري)"
+      },
+      {
+        "date": "2025-05-01",
+        "name_en": "Labour Day",
+        "name_ar": "عيد العمال"
+      },
+      {
+        "date": "2025-06-05",
+        "name_en": "Arafat Day (estimated)",
+        "name_ar": "وقفة عرفات (تقديري)"
+      },
+      {
+        "date": "2025-06-06",
+        "name_en": "Eid al-Adha Day 1 (estimated)",
+        "name_ar": "عيد الأضحى المبارك اليوم الأول (تقديري)"
+      },
+      {
+        "date": "2025-06-26",
+        "name_en": "Islamic New Year (estimated)",
+        "name_ar": "رأس السنة الهجرية (تقديري)"
+      },
+      {
+        "date": "2025-09-04",
+        "name_en": "Prophet Muhammad's Birthday (estimated)",
+        "name_ar": "المولد النبوي الشريف (تقديري)"
+      },
+      {
+        "date": "2025-11-28",
+        "name_en": "Independence Day",
+        "name_ar": "عيد الاستقلال"
+      }
+    ]
+  },
+  {
+    "country_code": "MA",
+    "country_name_en": "Morocco",
+    "country_name_ar": "المغرب",
+    "holidays": [
+      {
+        "date": "2025-01-01",
+        "name_en": "New Year's Day",
+        "name_ar": "رأس السنة الميلادية"
+      },
+      {
+        "date": "2025-01-11",
+        "name_en": "Independence Manifesto Day",
+        "name_ar": "يوم وثيقة الاستقلال"
+      },
+      {
+        "date": "2025-03-30",
+        "name_en": "Eid al-Fitr Holiday (estimated)",
+        "name_ar": "إجازة عيد الفطر (تقديري)"
+      },
+      {
+        "date": "2025-03-31",
+        "name_en": "Eid al-Fitr Day 1 (estimated)",
+        "name_ar": "عيد الفطر المبارك اليوم الأول (تقديري)"
+      },
+      {
+        "date": "2025-05-01",
+        "name_en": "Labour Day",
+        "name_ar": "عيد العمال"
+      },
+      {
+        "date": "2025-06-05",
+        "name_en": "Arafat Day (estimated)",
+        "name_ar": "وقفة عرفات (تقديري)"
+      },
+      {
+        "date": "2025-06-06",
+        "name_en": "Eid al-Adha Day 1 (estimated)",
+        "name_ar": "عيد الأضحى المبارك اليوم الأول (تقديري)"
+      },
+      {
+        "date": "2025-06-26",
+        "name_en": "Islamic New Year (estimated)",
+        "name_ar": "رأس السنة الهجرية (تقديري)"
+      },
+      { "date": "2025-07-30", "name_en": "Throne Day", "name_ar": "عيد العرش" },
+      {
+        "date": "2025-09-04",
+        "name_en": "Prophet Muhammad's Birthday (estimated)",
+        "name_ar": "المولد النبوي الشريف (تقديري)"
+      },
+      {
+        "date": "2025-11-06",
+        "name_en": "Green March Day",
+        "name_ar": "يوم المسيرة الخضراء"
+      },
+      {
+        "date": "2025-11-18",
+        "name_en": "Independence Day",
+        "name_ar": "عيد الاستقلال"
+      }
+    ]
+  },
+  {
+    "country_code": "OM",
+    "country_name_en": "Oman",
+    "country_name_ar": "عُمان",
+    "holidays": [
+      {
+        "date": "2025-03-30",
+        "name_en": "Eid al-Fitr Holiday (estimated)",
+        "name_ar": "إجازة عيد الفطر (تقديري)"
+      },
+      {
+        "date": "2025-03-31",
+        "name_en": "Eid al-Fitr Day 1 (estimated)",
+        "name_ar": "عيد الفطر المبارك اليوم الأول (تقديري)"
+      },
+      {
+        "date": "2025-04-01",
+        "name_en": "Eid al-Fitr Day 2 (estimated)",
+        "name_ar": "عيد الفطر المبارك اليوم الثاني (تقديري)"
+      },
+      {
+        "date": "2025-06-05",
+        "name_en": "Arafat Day (estimated)",
+        "name_ar": "وقفة عرفات (تقديري)"
+      },
+      {
+        "date": "2025-06-06",
+        "name_en": "Eid al-Adha Day 1 (estimated)",
+        "name_ar": "عيد الأضحى المبارك اليوم الأول (تقديري)"
+      },
+      {
+        "date": "2025-06-07",
+        "name_en": "Eid al-Adha Day 2 (estimated)",
+        "name_ar": "عيد الأضحى المبارك اليوم الثاني (تقديري)"
+      },
+      {
+        "date": "2025-06-26",
+        "name_en": "Islamic New Year (estimated)",
+        "name_ar": "رأس السنة الهجرية (تقديري)"
+      },
+      {
+        "date": "2025-09-04",
+        "name_en": "Prophet Muhammad's Birthday (estimated)",
+        "name_ar": "المولد النبوي الشريف (تقديري)"
+      },
+      {
+        "date": "2025-11-18",
+        "name_en": "National Day",
+        "name_ar": "اليوم الوطني"
+      }
+    ]
+  },
+  {
+    "country_code": "PS",
+    "country_name_en": "Palestine",
+    "country_name_ar": "فلسطين",
+    "holidays": [
+      {
+        "date": "2025-01-01",
+        "name_en": "New Year's Day",
+        "name_ar": "رأس السنة الميلادية"
+      },
+      {
+        "date": "2025-03-30",
+        "name_en": "Eid al-Fitr Holiday (estimated)",
+        "name_ar": "إجازة عيد الفطر (تقديري)"
+      },
+      {
+        "date": "2025-03-31",
+        "name_en": "Eid al-Fitr Day 1 (estimated)",
+        "name_ar": "عيد الفطر المبارك اليوم الأول (تقديري)"
+      },
+      {
+        "date": "2025-06-05",
+        "name_en": "Arafat Day (estimated)",
+        "name_ar": "وقفة عرفات (تقديري)"
+      },
+      {
+        "date": "2025-06-06",
+        "name_en": "Eid al-Adha Day 1 (estimated)",
+        "name_ar": "عيد الأضحى المبارك اليوم الأول (تقديري)"
+      },
+      {
+        "date": "2025-06-26",
+        "name_en": "Islamic New Year (estimated)",
+        "name_ar": "رأس السنة الهجرية (تقديري)"
+      },
+      {
+        "date": "2025-09-04",
+        "name_en": "Prophet Muhammad's Birthday (estimated)",
+        "name_ar": "المولد النبوي الشريف (تقديري)"
+      },
+      {
+        "date": "2025-11-15",
+        "name_en": "Independence Day",
+        "name_ar": "عيد الاستقلال"
+      }
+    ]
+  },
+  {
+    "country_code": "QA",
+    "country_name_en": "Qatar",
+    "country_name_ar": "قطر",
+    "holidays": [
+      {
+        "date": "2025-02-11",
+        "name_en": "National Sports Day",
+        "name_ar": "اليوم الرياضي الوطني"
+      },
+      {
+        "date": "2025-03-30",
+        "name_en": "Eid al-Fitr Holiday (estimated)",
+        "name_ar": "إجازة عيد الفطر (تقديري)"
+      },
+      {
+        "date": "2025-03-31",
+        "name_en": "Eid al-Fitr Day 1 (estimated)",
+        "name_ar": "عيد الفطر المبارك اليوم الأول (تقديري)"
+      },
+      {
+        "date": "2025-04-01",
+        "name_en": "Eid al-Fitr Day 2 (estimated)",
+        "name_ar": "عيد الفطر المبارك اليوم الثاني (تقديري)"
+      },
+      {
+        "date": "2025-06-05",
+        "name_en": "Arafat Day (estimated)",
+        "name_ar": "وقفة عرفات (تقديري)"
+      },
+      {
+        "date": "2025-06-06",
+        "name_en": "Eid al-Adha Day 1 (estimated)",
+        "name_ar": "عيد الأضحى المبارك اليوم الأول (تقديري)"
+      },
+      {
+        "date": "2025-06-07",
+        "name_en": "Eid al-Adha Day 2 (estimated)",
+        "name_ar": "عيد الأضحى المبارك اليوم الثاني (تقديري)"
+      },
+      {
+        "date": "2025-06-26",
+        "name_en": "Islamic New Year (estimated)",
+        "name_ar": "رأس السنة الهجرية (تقديري)"
+      },
+      {
+        "date": "2025-09-04",
+        "name_en": "Prophet Muhammad's Birthday (estimated)",
+        "name_ar": "المولد النبوي الشريف (تقديري)"
+      },
+      {
+        "date": "2025-12-18",
+        "name_en": "National Day",
+        "name_ar": "اليوم الوطني"
+      }
+    ]
+  },
+  {
+    "country_code": "SO",
+    "country_name_en": "Somalia",
+    "country_name_ar": "الصومال",
+    "holidays": [
+      {
+        "date": "2025-01-01",
+        "name_en": "New Year's Day",
+        "name_ar": "رأس السنة الميلادية"
+      },
+      {
+        "date": "2025-03-30",
+        "name_en": "Eid al-Fitr Holiday (estimated)",
+        "name_ar": "إجازة عيد الفطر (تقديري)"
+      },
+      {
+        "date": "2025-03-31",
+        "name_en": "Eid al-Fitr Day 1 (estimated)",
+        "name_ar": "عيد الفطر المبارك اليوم الأول (تقديري)"
+      },
+      {
+        "date": "2025-06-05",
+        "name_en": "Arafat Day (estimated)",
+        "name_ar": "وقفة عرفات (تقديري)"
+      },
+      {
+        "date": "2025-06-06",
+        "name_en": "Eid al-Adha Day 1 (estimated)",
+        "name_ar": "عيد الأضحى المبارك اليوم الأول (تقديري)"
+      },
+      {
+        "date": "2025-06-26",
+        "name_en": "Islamic New Year (estimated)",
+        "name_ar": "رأس السنة الهجرية (تقديري)"
+      },
+      {
+        "date": "2025-07-01",
+        "name_en": "Independence Day",
+        "name_ar": "عيد الاستقلال"
+      },
+      {
+        "date": "2025-09-04",
+        "name_en": "Prophet Muhammad's Birthday (estimated)",
+        "name_ar": "المولد النبوي الشريف (تقديري)"
+      }
+    ]
+  },
+  {
+    "country_code": "SD",
+    "country_name_en": "Sudan",
+    "country_name_ar": "السودان",
+    "holidays": [
+      {
+        "date": "2025-01-01",
+        "name_en": "New Year's Day",
+        "name_ar": "رأس السنة الميلادية"
+      },
+      {
+        "date": "2025-01-07",
+        "name_en": "Coptic Christmas Day",
+        "name_ar": "عيد الميلاد القبطي"
+      },
+      {
+        "date": "2025-03-30",
+        "name_en": "Eid al-Fitr Holiday (estimated)",
+        "name_ar": "إجازة عيد الفطر (تقديري)"
+      },
+      {
+        "date": "2025-03-31",
+        "name_en": "Eid al-Fitr Day 1 (estimated)",
+        "name_ar": "عيد الفطر المبارك اليوم الأول (تقديري)"
+      },
+      {
+        "date": "2025-06-05",
+        "name_en": "Arafat Day (estimated)",
+        "name_ar": "وقفة عرفات (تقديري)"
+      },
+      {
+        "date": "2025-06-06",
+        "name_en": "Eid al-Adha Day 1 (estimated)",
+        "name_ar": "عيد الأضحى المبارك اليوم الأول (تقديري)"
+      },
+      {
+        "date": "2025-06-26",
+        "name_en": "Islamic New Year (estimated)",
+        "name_ar": "رأس السنة الهجرية (تقديري)"
+      },
+      {
+        "date": "2025-09-04",
+        "name_en": "Prophet Muhammad's Birthday (estimated)",
+        "name_ar": "المولد النبوي الشريف (تقديري)"
+      },
+      {
+        "date": "2025-12-25",
+        "name_en": "Independence Day",
+        "name_ar": "عيد الاستقلال"
+      }
+    ]
+  },
+  {
+    "country_code": "SY",
+    "country_name_en": "Syria",
+    "country_name_ar": "سوريا",
+    "holidays": [
+      {
+        "date": "2025-01-01",
+        "name_en": "New Year's Day",
+        "name_ar": "رأس السنة الميلادية"
+      },
+      {
+        "date": "2025-03-08",
+        "name_en": "Revolution Day",
+        "name_ar": "يوم الثورة"
+      },
+      {
+        "date": "2025-03-30",
+        "name_en": "Eid al-Fitr Holiday (estimated)",
+        "name_ar": "إجازة عيد الفطر (تقديري)"
+      },
+      {
+        "date": "2025-03-31",
+        "name_en": "Eid al-Fitr Day 1 (estimated)",
+        "name_ar": "عيد الفطر المبارك اليوم الأول (تقديري)"
+      },
+      {
+        "date": "2025-04-17",
+        "name_en": "Independence Day",
+        "name_ar": "عيد الاستقلال"
+      },
+      {
+        "date": "2025-05-01",
+        "name_en": "Labour Day",
+        "name_ar": "عيد العمال"
+      },
+      {
+        "date": "2025-06-05",
+        "name_en": "Arafat Day (estimated)",
+        "name_ar": "وقفة عرفات (تقديري)"
+      },
+      {
+        "date": "2025-06-06",
+        "name_en": "Eid al-Adha Day 1 (estimated)",
+        "name_ar": "عيد الأضحى المبارك اليوم الأول (تقديري)"
+      },
+      {
+        "date": "2025-06-26",
+        "name_en": "Islamic New Year (estimated)",
+        "name_ar": "رأس السنة الهجرية (تقديري)"
+      },
+      {
+        "date": "2025-09-04",
+        "name_en": "Prophet Muhammad's Birthday (estimated)",
+        "name_ar": "المولد النبوي الشريف (تقديري)"
+      }
+    ]
+  },
+  {
+    "country_code": "TN",
+    "country_name_en": "Tunisia",
+    "country_name_ar": "تونس",
+    "holidays": [
+      {
+        "date": "2025-01-01",
+        "name_en": "New Year's Day",
+        "name_ar": "رأس السنة الميلادية"
+      },
+      {
+        "date": "2025-03-20",
+        "name_en": "Independence Day",
+        "name_ar": "عيد الاستقلال"
+      },
+      {
+        "date": "2025-03-30",
+        "name_en": "Eid al-Fitr Holiday (estimated)",
+        "name_ar": "إجازة عيد الفطر (تقديري)"
+      },
+      {
+        "date": "2025-03-31",
+        "name_en": "Eid al-Fitr Day 1 (estimated)",
+        "name_ar": "عيد الفطر المبارك اليوم الأول (تقديري)"
+      },
+      {
+        "date": "2025-04-09",
+        "name_en": "Martyrs' Day",
+        "name_ar": "يوم الشهداء"
+      },
+      {
+        "date": "2025-05-01",
+        "name_en": "Labour Day",
+        "name_ar": "عيد العمال"
+      },
+      {
+        "date": "2025-06-05",
+        "name_en": "Arafat Day (estimated)",
+        "name_ar": "وقفة عرفات (تقديري)"
+      },
+      {
+        "date": "2025-06-06",
+        "name_en": "Eid al-Adha Day 1 (estimated)",
+        "name_ar": "عيد الأضحى المبارك اليوم الأول (تقديري)"
+      },
+      {
+        "date": "2025-06-26",
+        "name_en": "Islamic New Year (estimated)",
+        "name_ar": "رأس السنة الهجرية (تقديري)"
+      },
+      {
+        "date": "2025-07-25",
+        "name_en": "Republic Day",
+        "name_ar": "عيد الجمهورية"
+      },
+      {
+        "date": "2025-09-04",
+        "name_en": "Prophet Muhammad's Birthday (estimated)",
+        "name_ar": "المولد النبوي الشريف (تقديري)"
+      }
+    ]
+  },
+  {
+    "country_code": "YE",
+    "country_name_en": "Yemen",
+    "country_name_ar": "اليمن",
+    "holidays": [
+      {
+        "date": "2025-03-30",
+        "name_en": "Eid al-Fitr Holiday (estimated)",
+        "name_ar": "إجازة عيد الفطر (تقديري)"
+      },
+      {
+        "date": "2025-03-31",
+        "name_en": "Eid al-Fitr Day 1 (estimated)",
+        "name_ar": "عيد الفطر المبارك اليوم الأول (تقديري)"
+      },
+      {
+        "date": "2025-05-01",
+        "name_en": "Labour Day",
+        "name_ar": "عيد العمال"
+      },
+      {
+        "date": "2025-05-22",
+        "name_en": "National Unity Day",
+        "name_ar": "يوم الوحدة الوطنية"
+      },
+      {
+        "date": "2025-06-05",
+        "name_en": "Arafat Day (estimated)",
+        "name_ar": "وقفة عرفات (تقديري)"
+      },
+      {
+        "date": "2025-06-06",
+        "name_en": "Eid al-Adha Day 1 (estimated)",
+        "name_ar": "عيد الأضحى المبارك اليوم الأول (تقديري)"
+      },
+      {
+        "date": "2025-06-26",
+        "name_en": "Islamic New Year (estimated)",
+        "name_ar": "رأس السنة الهجرية (تقديري)"
+      },
+      {
+        "date": "2025-09-04",
+        "name_en": "Prophet Muhammad's Birthday (estimated)",
+        "name_ar": "المولد النبوي الشريف (تقديري)"
+      },
+      {
+        "date": "2025-09-14",
+        "name_en": "Revolution Day",
+        "name_ar": "يوم الثورة"
+      }
+    ]
+  }
+]
