@@ -68,7 +68,9 @@
     "employee_name": "Employee Name",
     "missing_manager_name": "Missing manager name",
     "missing_department_name": "Missing department name",
-    "payroll_management": "Payroll management"
+    "payroll_management": "Payroll management",
+    "no_results_found_for": "No results found for",
+    "no_employee_id_available": "No employee IDs available."
   },
   "btn": {
     "go_back_home": "Go back Home",
@@ -207,7 +209,8 @@
     "enter_percentage": "Enter percentage",
     "notes": "Notes",
     "enter_your_notes": "Enter your notes",
-    "select_department": "Select department"
+    "select_department": "Select department",
+    "search_or_enter_employee_id": "Search or enter employee id"
   },
   "head": {
     "sign_in": "Sign in",
