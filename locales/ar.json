@@ -68,7 +68,9 @@
     "employee_name": "اسم الموظف",
     "missing_manager_name": "اسم المدير مفقود",
     "missing_department_name": "اسم القسم مفقود",
-    "payroll_management": "إدارة الرواتب"
+    "payroll_management": "إدارة الرواتب",
+    "no_results_found_for": "لم يتم العثور على نتائج لـ",
+    "no_employee_id_available": "لا تتوفر معرفات الموظفين."
   },
   "btn": {
     "go_back_home": "العودة إلى الصفحه الرئيسيه",
@@ -207,7 +209,8 @@
     "enter_percentage": "أدخل النسبة المئوية",
     "notes": "ملحوظات",
     "enter_your_notes": "أدخل ملاحظاتك",
-    "select_department": "اختر القسم"
+    "select_department": "اختر القسم",
+    "search_or_enter_employee_id": "ابحث عن معرف الموظف أو أدخله"
   },
   "head": {
     "sign_in": "تسجيل الدخول",

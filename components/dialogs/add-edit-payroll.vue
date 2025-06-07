@@ -2,7 +2,7 @@
   <div>
     <!-- Re-using your existing modal structure and classes -->
     <div v-if="modelValue" id="add-edit-payroll-modal">
-      <div @click.self="closeDialog"
+      <div
         class="fixed inset-0 p-4 flex flex-wrap justify-end items-end w-full h-full z-[1000] before:fixed before:inset-0 before:w-full before:h-full before:bg-[rgba(0,0,0,0.5)] overflow-auto">
         <div class="w-full max-w-lg bg-white shadow-lg rounded-lg p-6 relative">
           <div class="flex items-center pb-3 border-b border-gray-300">
@@ -17,25 +17,28 @@
           <div class="my-3 overflow-y-auto h-[calc(500px-88px)] hide-scrollbar">
             <ClientOnly>
               <div class="grid col-span-1 sm:grid-cols-2 gap-x-6 gap-y-1">
-
                 <div class="sm:col-span-1">
-                  <dynamic-inputs :label="t('form.employee_id')" :placeholder="t('form.enter_employee_id')" type="text"
-                    name="uid" rules="required" :required="true" :disabled="isEditing" v-model="formValues.uid" />
+                  <label class="block text-sm font-medium text-gray-700 mb-1">{{ t('form.employee_id') }}</label>
+                  <!-- auto-complete-input component -->
+                  <auto-complete-input @itemSelected="handleEmployeeSelected"
+                    :placeholder="t('form.search_or_enter_employee_id')" :disabled="isEditing"
+                    v-model="formValues.uid" />
                 </div>
 
                 <div class="sm:col-span-1">
                   <dynamic-inputs :label="t('form.employee_name')" :placeholder="t('form.enter_employee_name')"
-                    type="text" name="name" rules="required|alpha_spaces" :required="true"
+                    type="text" name="name" rules="required|alpha_spaces" :required="true" :disabled="isEditing"
                     v-model="formValues.employeeName" />
                 </div>
 
                 <div class="sm:col-span-1">
                   <label class="block text-sm font-medium text-gray-700 mb-1">{{ t('form.department') }}</label>
-                  <select v-model="formValues.department_id"
+                  <select v-model="formValues.department_id" :disabled="isEditing"
                     class="w-full px-3 py-2 transition duration-300 border rounded-md shadow-sm placeholder:text-slate-400 text-slate-700 focus:outline-none focus:border-slate-400 hover:border-slate-300 focus:shadow">
                     <option value="" disabled>{{ t('form.select_department') }}</option>
-                    <option v-for="team in filteredTeams" :key="team.id" :value="team.id">
+                    <option v-for="team in availableTeamsForDropdown" :key="team.id" :value="team.id">
                       {{ team.name }}
+                      <!-- {{ team.displayName }} -->
                     </option>
                   </select>
                 </div>
@@ -114,9 +117,12 @@
 
 <script lang="ts" setup>
 import type { Payroll, PayrollInputData } from '@/types/payroll';
+import type { Employee } from '@/types/employee';
 
 const { t } = useI18n();
 const { triggerToast } = useToast();
+const { getTeamName } = useTeamName()
+const teamsStore = useTeamStore()
 const loading = ref(false);
 
 const props = defineProps({
@@ -128,7 +134,7 @@ const props = defineProps({
     type: Boolean,
     default: false
   },
-  payrollData: { // For pre-filling the form in edit mode
+  payrollData: {
     type: Object as PropType<Payroll | null>,
     default: null
   },
@@ -153,9 +159,6 @@ const emit = defineEmits(['update:modelValue', 'save']);
 
 const formValues = reactive<PayrollInputData>(getInitialFormValues());
 
-// const authStore = useAuthStore();
-// const currentAuthUserUid = computed(() => authStore.currentUser?.uid || 'ANONYMOUS_OR_ERROR');
-
 function getInitialFormValues(): PayrollInputData {
   return {
     uid: '',
@@ -177,8 +180,6 @@ function getInitialFormValues(): PayrollInputData {
 
 const resetForm = () => {
   Object.assign(formValues, getInitialFormValues());
-  // If using VeeValidate, you might need to reset its state too:
-  // if (formRef.value) { formRef.value.resetForm(); }
 };
 
 // Watch for dialog opening/closing and prop changes
@@ -206,53 +207,53 @@ watch(() => props.modelValue, (newVal) => {
   }
 });
 
-const teamsStore = useTeamStore()
-// const managerssStore = useManagerStore();
-const selectedTeam = ref('')
-
 onMounted(() => {
   teamsStore.fetchAll();
-  // managerssStore.fetchManagers();
 })
 
-
-const filteredTeams = computed(() => {
-  if (!selectedTeam.value) return teamsStore.teams;
-  return teamsStore.teams.filter(manager =>
-    manager.departmentId === selectedTeam.value
-  );
+const availableTeamsForDropdown = computed(() => {
+  return teamsStore.teams.map(team => ({
+    ...team,
+    displayName: getTeamName(team.name)
+  }));
 });
-// const filteredManagers = computed(() => {
-//   if (!selectedTeam.value) return managerssStore.managers;
-//   return managerssStore.managers.filter(manager =>
-//     manager.teamId === selectedTeam.value
-//   );
-// });
 
-// Update created_by if adminUid prop changes (e.g. if user logs out/in while form iscached)
-// watch(() => props.adminUid, (newAdminUid) => {
-//   if (!props.isEditing) { // Only update for new records if admin changes
-//     formValues.created_by = newAdminUid;
-//   }
-// });
+const handleEmployeeSelected = (selectedEmployee: Employee | undefined) => {
+  // console.log("AddEditPayroll: handleEmployeeSelected CALLED with:", JSON.parse(JSON.stringify(selectedEmployee)));
+  if (selectedEmployee) {
+    // Ensure employeeId is a string before assigning
+    if (typeof selectedEmployee.employeeId === 'string' && selectedEmployee.employeeId.trim() !== '') {
+      formValues.uid = selectedEmployee.employeeId;
+      // console.log("AddEditPayroll: formValues.uid SET to:", formValues.uid);
+    } else {
+      formValues.uid = '';
+      // console.warn("AddEditPayroll: Selected employee missing valid employeeId, formValues.uid CLEARED");
+    }
+    const firstName = selectedEmployee.firstName || '';
+    const lastName = selectedEmployee.lastName || '';
+    formValues.employeeName = `${firstName} ${lastName}`.trim();
+    // console.log("AddEditPayroll: formValues.employeeName SET to:", formValues.employeeName);
+    if (selectedEmployee.teamId && typeof selectedEmployee.teamId === 'string') {
+      const teamExistsInDropdown = availableTeamsForDropdown.value.some(
+        (team) => team.id === selectedEmployee.teamId
+      );
+      if (teamExistsInDropdown) {
+        formValues.department_id = selectedEmployee.teamId;
+        // console.log("AddEditPayroll: formValues.department_id SET to:", formValues.department_id);
+      } else {
+        formValues.department_id = '';
+        // console.warn(`AddEditPayroll: Employee's teamId (${selectedEmployee.teamId}) not found in dropdown. Department CLEARED.`);
+      }
+    } else {
+      formValues.department_id = '';
+      // console.log("AddEditPayroll: Employee has no teamId. Department CLEARED.");
+    }
+  } else {
+    formValues.uid = '';
+    formValues.employeeName = '';
+  }
+};
 
-
-// const formRef = ref<InstanceType<typeof Form> | null>(null); // Ref for VeeValidate Form
-
-// const triggerSubmit = () => {
-//   // Programmatically submit the VeeValidate form
-//   // This relies on the <Form @submit="handleSubmit">
-//   // The actual handleSubmit function will be called by VeeValidate after validation.
-//   if (formRef.value) {
-//     formRef.value.submit();
-//   } else {
-//     // Fallback or simple direct submit if not using VeeValidate's <Form> for submission trigger
-//     handleSubmit();
-//   }
-// };
-
-
-// This is called by VeeValidate's <Form @submit="handleSubmit"> after validation passes
 const handleSubmit = async () => {
   loading.value = true;
   try {
@@ -274,7 +275,6 @@ const handleSubmit = async () => {
       notes: formValues.notes,
     };
     emit('save', dataToSave);
-    // Parent (PayrollPage) will handle actual store call and closing the dialog on success
     resetForm();
   } catch (error) {
     triggerToast({
@@ -291,7 +291,4 @@ const closeDialog = () => {
   emit('update:modelValue', false);
   resetForm();
 };
-
-// Expose resetForm if parent needs to call it, though usually not necessary
-// defineExpose({ resetForm });
 </script>

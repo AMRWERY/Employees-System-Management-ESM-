@@ -90,7 +90,7 @@ const tableColumns = computed((): Column<Payroll>[] => [
       return String((indexOnPage ?? 0) + baseIndex + 1);
     }
   },
-  { key: 'name', label: t('form.employee_name') },
+  { key: 'employeeName', label: t('form.employee_name') },
   { key: 'uid', label: t('dashboard.employee_id') },
   { key: 'pay_period', label: t('payroll.pay_period') },
   { key: 'net_salary', label: t('payroll.net_salary'), format: (p: Payroll) => formatCurrency(p.netSalary) },
