@@ -7,13 +7,13 @@
             <div class="container relative z-10 flex items-center px-6 py-32 mx-auto md:px-12 xl:py-40">
                 <div class="relative z-10 flex flex-col items-center w-full font-mono">
                     <h1 class="mt-4 text-5xl font-extrabold leading-tight text-center text-white">{{
-                        $t('error_page.you_are_all_alone_here') }}
+                        t('error_page.you_are_all_alone_here') }}
                     </h1>
                     <p class="my-12 font-extrabold text-white text-8xl animate-bounce">{{ error.statusCode }}</p>
                     <p class="mb-6 text-4xl font-extrabold text-white">{{ error.statusMessage }}</p>
                     <nuxt-link-locale to="/"
                         class="inline-block px-5 py-3 mt-6 text-sm font-medium text-white bg-indigo-600 rounded-xl hover:bg-indigo-700 focus:outline-none focus:ring">
-                        {{ $t('btn.go_back_home') }}
+                        {{ t('btn.go_back_home') }}
                     </nuxt-link-locale>
                 </div>
             </div>
@@ -22,5 +22,7 @@
 </template>
 
 <script lang="ts" setup>
+const { t } = useI18n()
+
 defineProps(['error'])
 </script>

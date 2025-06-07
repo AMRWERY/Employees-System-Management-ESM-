@@ -8,6 +8,9 @@ import {
   between,
   numeric,
   length,
+  min_value,
+  max_value,
+  integer,
 } from "@vee-validate/rules";
 import { localize, setLocale } from "@vee-validate/i18n";
 import en from "@vee-validate/i18n/dist/locale/en.json";
@@ -59,6 +62,9 @@ export default defineNuxtPlugin((nuxtApp) => {
   defineRule("between", between);
   defineRule("numeric", numeric);
   defineRule("length", length);
+  defineRule("min_value", min_value);
+  defineRule("max_value", max_value);
+  defineRule("integer", integer);
 
   const updateValidationLocale = (locale: string): void => {
     const messages: Record<string, any> = {
