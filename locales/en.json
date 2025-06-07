@@ -67,7 +67,8 @@
     "team_not_found": "Not Assigned",
     "employee_name": "Employee Name",
     "missing_manager_name": "Missing manager name",
-    "missing_department_name": "Missing department name"
+    "missing_department_name": "Missing department name",
+    "payroll_management": "Payroll management"
   },
   "btn": {
     "go_back_home": "Go back Home",
@@ -91,7 +92,11 @@
     "add": "Add",
     "add_team": "Add team",
     "update_password": "Update password",
-    "add_manager": "Add Manager"
+    "add_manager": "Add Manager",
+    "add_payroll_record": "Add payroll record",
+    "add_record": "Add record",
+    "save_changes": "Save changes",
+    "delete": "Delete"
   },
   "form": {
     "sign_in": "Sign in",
@@ -178,7 +183,31 @@
     "department": "Department / Team",
     "manager": "Manager",
     "managers": "Managers",
-    "select_manager": "Select manager"
+    "select_manager": "Select manager",
+    "filter_by_pay_period": "Filter by pay period",
+    "search_by_name_or_id": "Search by name or id",
+    "edit_payroll_record": "Edit payroll record",
+    "add_payroll_record": "Add payroll record",
+    "enter_employee_id": "Enter employee ID",
+    "enter_employee_name": "Enter employee name",
+    "pay_period_yyyy_mm": "Pay period",
+    "base_salary": "Base salary",
+    "enter_amount": "Enter amount",
+    "working_days": "Working days",
+    "enter_working_days": "Enter total working days",
+    "days_present": "Days present",
+    "enter_days": "Enter total days",
+    "overtime_hours": "Overtime hours",
+    "enter_hours": "enter total hours",
+    "overtime_rate": "Overtime rate",
+    "enter_rate": "Enter rate",
+    "bonuses": "Bonuses",
+    "deductions": "Deductions",
+    "tax_percent": "Tax percent",
+    "enter_percentage": "Enter percentage",
+    "notes": "Notes",
+    "enter_your_notes": "Enter your notes",
+    "select_department": "Select department"
   },
   "head": {
     "sign_in": "Sign in",
@@ -195,7 +224,8 @@
     "admin_managers_managerid": "Manager Details",
     "admin_leave_request_id": "Leave request details",
     "managers": "Managers",
-    "holiday_dates": "Holiday dates"
+    "holiday_dates": "Holiday dates",
+    "payroll_management": "Payroll management"
   },
   "error_page": {
     "you_are_all_alone_here": "You are all alone here 😁"
@@ -252,7 +282,8 @@
     "failed_to_delete_manager": "Failed to delete manager",
     "manager_blocked": "Manager blocked",
     "manager_unblocked": "Manager unblocked",
-    "failed_to_load_holidays_data": "Failed to load holidays data."
+    "failed_to_load_holidays_data": "Failed to load holidays data.",
+    "operation_failed": "Operation failed"
   },
   "status": {
     "all": "All",
@@ -267,7 +298,8 @@
     "no_leave_requests_found": "No leave requests found",
     "no_employees_found": "No employees found",
     "no_teams_found": "No teams / departments found",
-    "no_managers_found": "No managers found"
+    "no_managers_found": "No managers found",
+    "no_payroll_records_found": "No payroll records found"
   },
   "breadcrumb": {
     "home": "Home",
@@ -285,7 +317,8 @@
     "admin_managers_manager": "Employee Details",
     "admin_teams_employees_employeeid": "Employee Details",
     "employee_leave_request_id": "Leave request details",
-    "holiday_dates": "Holiday dates"
+    "holiday_dates": "Holiday dates",
+    "admin_payroll": "Payroll management"
   },
   "days": {
     "mon": "Mon",
