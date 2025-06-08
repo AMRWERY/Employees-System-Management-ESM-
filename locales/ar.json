@@ -8,7 +8,7 @@
     "hr_processes": "عمليات الموارد البشرية",
     "attendance": "الحضور",
     "leave_management": "إدارة الإجازات",
-    "payroll": "الرواتب",
+    "payroll_management": "إدارة الرواتب",
     "performance_reviews": "مراجعات الأداء",
     "settings": "الإعدادات",
     "team_management": "إدارة الفريق",
@@ -70,7 +70,14 @@
     "missing_department_name": "اسم القسم مفقود",
     "payroll_management": "إدارة الرواتب",
     "no_results_found_for": "لم يتم العثور على نتائج لـ",
-    "no_employee_id_available": "لا تتوفر معرفات الموظفين."
+    "no_employee_id_available": "لا تتوفر معرفات الموظفين.",
+    "pay_period": "فترة الدفع",
+    "net_salary": "الراتب الصافي",
+    "paid_on": "تم الدفع على",
+    "delete_payroll_title": "هل أنت متأكد أنك تريد حذف هذا السجل؟",
+    "delete_payroll_confirmation_01": "أنت على وشك حذف سجل راتب {name} عن فترة {period}.",
+    "delete_payroll_confirmation_02": "لا يمكن التراجع عن هذا الإجراء.",
+    "base_salary": "الراتب الأساسي"
   },
   "btn": {
     "go_back_home": "العودة إلى الصفحه الرئيسيه",
@@ -286,7 +293,14 @@
     "manager_blocked": "تم حظر المدير",
     "manager_unblocked": "تم إلغاء حظر المدير",
     "failed_to_load_holidays_data": "فشل تحميل بيانات العطلات.",
-    "operation_failed": "فشلت العملية"
+    "operation_failed": "فشلت العملية",
+    "payroll_updated": "تم تحديث الراتب",
+    "payroll_added": "تمت إضافة الراتب",
+    "failed_to_delete_payroll": "فشل في حذف سجل الراتب",
+    "payroll_marked_paid": "تم وضع علامه مدفوعه علي هذا السجل",
+    "marked_as_paid_successfully": "تم وضع علامة على الدفع بنجاح",
+    "failed_to_mark_paid": "فشل في وضع علامة على الدفع",
+    "payroll_deleted": "تم حذف سجل الراتب"
   },
   "status": {
     "all": "الكل",
@@ -295,7 +309,8 @@
     "rejected": "مرفوض",
     "cancelled": "تم الإلغاء",
     "blocked": "محظور",
-    "active": "نشط"
+    "active": "نشط",
+    "paid": "مدفوع"
   },
   "no_data": {
     "no_leave_requests_found": "لم يتم العثور على طلبات إجازة",

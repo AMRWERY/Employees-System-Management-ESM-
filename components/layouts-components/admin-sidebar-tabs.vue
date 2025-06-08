@@ -75,7 +75,7 @@
           <li>
             <nuxt-link-locale to="/admin/payroll" class="flex items-center p-2 text-white rounded-lg group ps-7"
               exact-active-class="bg-gray-400 text-white hover:bg-gray-500">
-              {{ t('layouts.payroll') }}
+              {{ t('layouts.payroll_management') }}
             </nuxt-link-locale>
           </li>
           <li>

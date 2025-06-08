@@ -8,7 +8,7 @@
     "hr_processes": "HR Processes",
     "attendance": "Attendance",
     "leave_management": "Leave Management",
-    "payroll": "Payroll",
+    "payroll_management": "Payroll management",
     "performance_reviews": "Performance Reviews",
     "settings": "Settings",
     "team_management": "Team Management",
@@ -70,7 +70,14 @@
     "missing_department_name": "Missing department name",
     "payroll_management": "Payroll management",
     "no_results_found_for": "No results found for",
-    "no_employee_id_available": "No employee IDs available."
+    "no_employee_id_available": "No employee IDs available.",
+    "pay_period": "Pay period",
+    "net_salary": "Net salary",
+    "paid_on": "Paid on",
+    "delete_payroll_title": "Are you sure you want to delete this record?",
+    "delete_payroll_confirmation_01": "You are about to delete the salary record of {name} for the period {period}.",
+    "delete_payroll_confirmation_02": "This action cannot be undone.",
+    "base_salary": "Base salary"
   },
   "btn": {
     "go_back_home": "Go back Home",
@@ -286,7 +293,14 @@
     "manager_blocked": "Manager blocked",
     "manager_unblocked": "Manager unblocked",
     "failed_to_load_holidays_data": "Failed to load holidays data.",
-    "operation_failed": "Operation failed"
+    "operation_failed": "Operation failed",
+    "payroll_updated": "Payroll updated",
+    "payroll_added": "Payroll added",
+    "failed_to_delete_payroll": "Failed to delete payroll record",
+    "payroll_marked_paid": "Payroll marked paid",
+    "marked_as_paid_successfully": "Marked as paid successfully",
+    "failed_to_mark_paid": "Failed to mark paid",
+    "payroll_deleted": "Payroll record deleted"
   },
   "status": {
     "all": "All",
@@ -295,7 +309,8 @@
     "rejected": "Rejected",
     "cancelled": "Cancelled",
     "blocked": "Blocked",
-    "active": "Active"
+    "active": "Active",
+    "paid": "Paid"
   },
   "no_data": {
     "no_leave_requests_found": "No leave requests found",
