@@ -64,22 +64,23 @@ import type { TableHeader } from '@/types/table-header';
 import type { Column } from '@/types/tables';
 import type { DeleteDialogProps } from '@/types/delete-dialog';
 
-const { t } = useI18n();
+const { t, n, locale } = useI18n();
 const payrollStore = usePayrollStore();
-// const { triggerToast } = useToast();
+const { getTeamName } = useTeamName();
+const { triggerToast } = useToast();
+const { currentCurrency, currencyLocale } = useCurrencyLocale();
 
-// --- Component State for UI control ---
 const showPayrollDialog = ref(false);
 const isEditingPayroll = ref(false);
-const selectedPayrollForForm = ref<Payroll | null>(null); // For passing to the form dialog
-const selectedPayrollForAction = ref<Payroll | null>(null); // For context in delete/mark actions
+const selectedPayrollForForm = ref<Payroll | null>(null);
+const selectedPayrollForAction = ref<Payroll | null>(null);
 
-const deleteDialogProps = ref<Omit<DeleteDialogProps, 'loading'>>({ // loading is local
+const deleteDialogProps = ref<Omit<DeleteDialogProps, 'loading'>>({
   show: false, title: '', message: '',
   cancelText: t('btn.cancel'), confirmText: t('btn.delete'),
 });
-const deleteDialogActive = ref(false); // Local loading for delete dialog confirm button
 
+const deleteDialogActive = ref(false);
 
 // --- Table Columns and Action Conditions ---
 const tableColumns = computed((): Column<Payroll>[] => [
@@ -90,19 +91,24 @@ const tableColumns = computed((): Column<Payroll>[] => [
       return String((indexOnPage ?? 0) + baseIndex + 1);
     }
   },
-  { key: 'employeeName', label: t('form.employee_name') },
   { key: 'uid', label: t('dashboard.employee_id') },
-  { key: 'pay_period', label: t('payroll.pay_period') },
-  { key: 'net_salary', label: t('payroll.net_salary'), format: (p: Payroll) => formatCurrency(p.netSalary) },
-  { key: 'status', label: t('form.status'), format: (p: Payroll) => t(`payroll_status.${p.status.toLowerCase()}`, p.status) },
-  { key: 'paidOn', label: t('payroll.paidOn'), format: (p: Payroll) => p.paidOn ? formatDate(p.paidOn) : t('common.na') }
+  { key: 'employeeName', label: t('form.employee_name') },
+  { key: 'department_id', label: t('dashboard.department'), format: (employee: Payroll) => getTeamName(employee.department_id) },
+  { key: 'pay_period', label: t('dashboard.pay_period') },
+  { key: 'base_salary', label: t('dashboard.base_salary'), format: (p: Payroll) => formatCurrency(p.base_salary) },
+  { key: 'net_salary', label: t('dashboard.net_salary'), format: (p: Payroll) => formatCurrency(p.netSalary) },
+  // { key: 'paidOn', label: t('dashboard.paid_on'), format: (p: Payroll) => p.paidOn ? formatDate(p.paidOn) : t('common.na') },
+  { key: 'status', label: t('form.status'), format: (p: Payroll) => t(`status.${p.status.toLowerCase()}`, p.status) },
 ]);
 
 const skeletonHeaders = ref<TableHeader[]>([
-  { type: 'text', loaderWidth: 'w-10' }, { type: 'text', loaderWidth: 'w-40' },
-  { type: 'text', loaderWidth: 'w-32' }, { type: 'text', loaderWidth: 'w-32' },
-  { type: 'text', loaderWidth: 'w-32' }, { type: 'text', loaderWidth: 'w-24' },
-  { type: 'text', loaderWidth: 'w-32' }, { type: 'action', loaderWidth: 'w-48' },
+  { type: 'text', loaderWidth: 'w-10' },
+  { type: 'text', loaderWidth: 'w-40' },
+  { type: 'text', loaderWidth: 'w-32' },
+  { type: 'text', loaderWidth: 'w-32' },
+  { type: 'text', loaderWidth: 'w-32' },
+  { type: 'text', loaderWidth: 'w-32' },
+  { type: 'action', loaderWidth: 'w-48' },
 ]);
 
 const payrollActionConditions = computed(() => ({
@@ -112,9 +118,7 @@ const payrollActionConditions = computed(() => ({
   delete: (_item: Payroll) => true,
 }));
 
-// --- Initial Data Load ---
 onMounted(async () => {
-  // Initialize filterPayPeriod in store if not already set
   if (!payrollStore.filterPayPeriod) {
     const now = new Date();
     payrollStore.filterPayPeriod = `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}`;
@@ -145,17 +149,23 @@ const handleSavePayroll = async (payrollInput: PayrollInputData | Payroll) => {
   const actionToTake = isEditingPayroll.value && selectedPayrollForForm.value?.id
     ? payrollStore.updatePayroll(selectedPayrollForForm.value.id, payrollInput as Partial<PayrollInputData>)
     : payrollStore.addPayroll(payrollInput as PayrollInputData);
-
   try {
     const result = await actionToTake;
-    if (result) { // Check if operation returned a payroll object (success)
-      // triggerToast({ message: t(isEditingPayroll.value ? 'toast.payroll_updated' : 'toast.payroll_added'), type: 'success' });
-      await payrollStore.fetchPayrolls(); // Re-fetch to update the list correctly
+    if (result) {
+      triggerToast({
+        message: t(isEditingPayroll.value ? 'toast.payroll_updated' : 'toast.payroll_added'),
+        type: 'success',
+        icon: 'mdi-check-circle',
+      })
+      await payrollStore.fetchPayrolls();
     }
-    // Error handling can be done here based on store's error state or if actionToTake throws
-  } catch (error) { // Catch errors re-thrown by store actions
-    // triggerToast({ message: payrollStore.error || t('toast.operation_failed'), type: 'error' });
-    console.error("Save payroll failed:", error);
+  } catch (error) {
+    triggerToast({
+      message: t('toast.operation_failed'),
+      type: 'error',
+      icon: 'material-symbols:error-outline-rounded',
+    })
+    // console.error("Save payroll failed:", error);
   } finally {
     isEditingPayroll.value = false;
     selectedPayrollForForm.value = null;
@@ -167,8 +177,8 @@ const deletePayrollClicked = (payroll: Payroll) => {
   deleteDialogProps.value = {
     ...deleteDialogProps.value, // Keep default texts
     show: true,
-    title: t('payroll.delete_payroll_title'),
-    message: t('payroll.delete_payroll_confirmation', { name: payroll.employeeName, period: payroll.pay_period }),
+    title: t('dashboard.delete_payroll_title'),
+    message: `${t('dashboard.delete_payroll_confirmation_01', { name: payroll.employeeName, period: payroll.pay_period })} ${t('dashboard.delete_payroll_confirmation_02')}`,
   };
 };
 
@@ -182,12 +192,18 @@ const confirmDelete = async () => {
   deleteDialogActive.value = true;
   try {
     await payrollStore.deletePayroll(selectedPayrollForAction.value.id);
-    // triggerToast({ message: t('toast.payroll_deleted'), type: 'success' });
-    // The store's deletePayroll action already updates `allPayrolls` and calls `_applyFiltersAndPagination`
-    // So, the view should update reactively.
+    triggerToast({
+      message: t('toast.payroll_deleted'),
+      type: 'success',
+      icon: 'mdi-check-circle',
+    })
   } catch (error) {
-    // triggerToast({ message: payrollStore.error || t('toast.failed_to_delete_payroll'), type: 'error' });
-    console.error("Delete payroll failed:", error);
+    triggerToast({
+      message: t('toast.failed_to_delete_payroll'),
+      type: 'error',
+      icon: 'material-symbols:error-outline-rounded',
+    })
+    // console.error("Delete payroll failed:", error);
   } finally {
     deleteDialogActive.value = false;
     closeDeleteDialog();
@@ -196,25 +212,39 @@ const confirmDelete = async () => {
 
 const markPayrollAsPaid = async (payroll: Payroll) => {
   if (!payroll.id) return;
-  if (confirm(t('payroll.confirm_mark_paid', { name: payroll.employeeName, period: payroll.pay_period }))) {
-    try {
-      await payrollStore.processPayment(payroll.id, 'ADMIN_UID_PLACEHOLDER'); // Replace with actual admin UID
-      // triggerToast({ message: t('toast.payroll_marked_paid'), type: 'success' });
-      await payrollStore.fetchPayrolls(); // Re-fetch to reflect changes accurately
-    } catch (error) {
-      // triggerToast({ message: payrollStore.error || t('toast.failed_to_mark_paid'), type: 'error' });
-      console.error("Mark paid failed:", error);
-    }
+  // if (confirm(t('payroll.confirm_mark_paid', { name: payroll.employeeName, period: payroll.pay_period }))) {
+  try {
+    await payrollStore.processPayment(payroll.id, 'ADMIN_UID_PLACEHOLDER'); // Replace with actual admin UID
+    triggerToast({
+      message: t('toast.marked_as_paid_successfully'),
+      type: 'success',
+      icon: 'mdi-check-circle',
+    })
+    await payrollStore.fetchPayrolls();
+  } catch (error) {
+    triggerToast({
+      message: t('toast.failed_to_mark_paid'),
+      type: 'error',
+      icon: 'material-symbols:error-outline-rounded',
+    })
   }
+}
+
+const formatCurrency = (value?: number) => {
+  if (value == null) return t('dashboard.na');
+  const formatKey = `currency_${currentCurrency.value}`;
+  const formatted = n(value, formatKey);
+  return formatted;
 };
 
-// --- Utility ---
-const formatCurrency = (value?: number) => value != null ? new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value) : t('common.na');
-const formatDate = (timestamp?: AppTimestamp | Date | null) => {
-  if (!timestamp) return t('common.na');
-  const date = (timestamp as AppTimestamp)?.toDate ? (timestamp as AppTimestamp).toDate() : new Date(timestamp as Date);
-  return date.toLocaleDateString();
-};
 
-useHead({ title: () => t('head.payroll_management') }); // For Nuxt, or document.title
+// const formatDate = (timestamp?: AppTimestamp | Date | null) => {
+//   if (!timestamp) return t('common.na');
+//   const date = (timestamp as AppTimestamp)?.toDate ? (timestamp as AppTimestamp).toDate() : new Date(timestamp as Date);
+//   return date.toLocaleDateString();
+// };
+
+useHead({
+  titleTemplate: () => t('head.payroll_management'),
+})
 </script>

@@ -37,8 +37,8 @@
                     class="w-full px-3 py-2 transition duration-300 border rounded-md shadow-sm placeholder:text-slate-400 text-slate-700 focus:outline-none focus:border-slate-400 hover:border-slate-300 focus:shadow">
                     <option value="" disabled>{{ t('form.select_department') }}</option>
                     <option v-for="team in availableTeamsForDropdown" :key="team.id" :value="team.id">
-                      {{ team.name }}
-                      <!-- {{ team.displayName }} -->
+                      {{ team.displayName }}
+                      <!-- {{ team.name }} -->
                     </option>
                   </select>
                 </div>
@@ -214,7 +214,7 @@ onMounted(() => {
 const availableTeamsForDropdown = computed(() => {
   return teamsStore.teams.map(team => ({
     ...team,
-    displayName: getTeamName(team.name)
+    displayName: getTeamName(team.id, team.name)
   }));
 });
 
