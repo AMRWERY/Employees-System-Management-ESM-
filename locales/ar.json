@@ -217,7 +217,9 @@
     "notes": "ملحوظات",
     "enter_your_notes": "أدخل ملاحظاتك",
     "select_department": "اختر القسم",
-    "search_or_enter_employee_id": "ابحث عن معرف الموظف أو أدخله"
+    "search_or_enter_employee_id": "ابحث عن معرف الموظف أو أدخله",
+    "search_placeholder": "ابحث هنا...",
+    "search_by_email_or_name": "ابحث عن طريق الأيميل أو الاسم"
   },
   "head": {
     "sign_in": "تسجيل الدخول",
@@ -301,7 +303,12 @@
     "payroll_marked_paid": "تم وضع علامه مدفوعه علي هذا السجل",
     "marked_as_paid_successfully": "تم وضع علامة على الدفع بنجاح",
     "failed_to_mark_paid": "فشل في وضع علامة على الدفع",
-    "payroll_deleted": "تم حذف سجل الراتب"
+    "payroll_deleted": "تم حذف سجل الراتب",
+    "failed_to_reload_data": "فشل في إعادة تحميل البيانات",
+    "data_refreshed_successfully": "تم تحديث البيانات بنجاح",
+    "no_data_to_export": "لا توجد بيانات للتحميل",
+    "download_successful": "تم التحميل بنجاح",
+    "download_error": "فشل تحميل الملف"
   },
   "status": {
     "all": "الكل",

@@ -217,7 +217,9 @@
     "notes": "Notes",
     "enter_your_notes": "Enter your notes",
     "select_department": "Select department",
-    "search_or_enter_employee_id": "Search or enter employee id"
+    "search_or_enter_employee_id": "Search or enter employee id",
+    "search_placeholder": "Search here...",
+    "search_by_email_or_name": "Search by email or name"
   },
   "head": {
     "sign_in": "Sign in",
@@ -301,7 +303,12 @@
     "payroll_marked_paid": "Payroll marked paid",
     "marked_as_paid_successfully": "Marked as paid successfully",
     "failed_to_mark_paid": "Failed to mark paid",
-    "payroll_deleted": "Payroll record deleted"
+    "payroll_deleted": "Payroll record deleted",
+    "failed_to_reload_data": "Failed to reload data",
+    "data_refreshed_successfully": "Data refreshed successfully",
+    "no_data_to_export": "No data to export",
+    "download_successful": "Download successful",
+    "download_error": "Download error"
   },
   "status": {
     "all": "All",
