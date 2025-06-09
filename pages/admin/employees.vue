@@ -85,7 +85,6 @@ const reloadData = async () => {
       icon: 'mdi:check-circle-outline',
     });
   } catch (error) {
-    console.error("Failed to reload data:", error);
     triggerToast({
       message: t('toast.failed_to_reload_data'),
       type: 'error',
@@ -178,7 +177,6 @@ onMounted(async () => {
       await managerssStore.fetchManagers()
     }
   } catch (error) {
-    console.error('Error fetching employees:', error)
     triggerToast({
       message: t('toast.failed_to_load_employees'),
       type: 'error',
@@ -205,7 +203,6 @@ const toggleBlockEmployee = async (employee: Employee) => {
       icon: 'mdi-check-circle',
     })
   } catch (error) {
-    // console.error('Error blocking employee:', error)
     triggerToast({
       message: t('toast.failed_to_toggle_block'),
       type: 'error',

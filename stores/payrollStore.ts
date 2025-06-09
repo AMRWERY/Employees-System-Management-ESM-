@@ -68,15 +68,6 @@ export const usePayrollStore = defineStore("payroll", {
     error: null,
   }),
 
-  getters: {
-    totalPages: (state) => Math.ceil(state.totalItems / state.itemsPerPage),
-    // other getters can remain as they were, operating on `allPayrolls` if needed
-    getPayrollById:
-      (state) =>
-      (id: string): Payroll | undefined =>
-        state.allPayrolls.find((p) => p.id === id),
-  },
-
   actions: {
     _applyFiltersAndPagination() {
       let filtered = this.allPayrolls;
@@ -347,5 +338,14 @@ export const usePayrollStore = defineStore("payroll", {
         throw err;
       }
     },
+  },
+
+  getters: {
+    totalPages: (state) => Math.ceil(state.totalItems / state.itemsPerPage),
+    // other getters can remain as they were, operating on `allPayrolls` if needed
+    getPayrollById:
+      (state) =>
+      (id: string): Payroll | undefined =>
+        state.allPayrolls.find((p) => p.id === id),
   },
 });

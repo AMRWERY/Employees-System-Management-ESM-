@@ -14,17 +14,28 @@
     </div>
 
     <!-- Search input -->
-    <div class="relative w-[300px]">
+    <!-- <div class="relative w-[300px]">
       <input type="text" v-model="searchTerm" :placeholder="t('form.search_by_email')"
         class="px-4 py-2 pe-10 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full" />
       <div class="absolute inset-y-0 end-0 flex items-center pe-3 pointer-events-none">
         <icon name="heroicons-solid:magnifying-glass" class="w-5 h-5 text-gray-400" />
       </div>
+    </div> -->
+    <div class="flex items-center gap-4">
+      <!-- search-input component -->
+      <search-input v-model="localSearchTerm" @search="handleGlobalSearch"
+        :placeholder="t('form.search_by_email_or_name')" class="w-full sm:w-[300px]" :debounce="300" />
+
+      <!-- refresh-data-btn component -->
+      <refresh-data-btn @refresh="reloadData" :is-loading="refreshingData" />
+
+      <!-- download-files-menu component -->
+      <download-files-menu :allItems="managerStore.managers" :columns="tableColumns" fileNameBase="managers" />
     </div>
 
-    <div v-if="loading" key="skeleton">
+    <div v-if="loading || refreshingData" key="skeleton">
       <!-- table-skeleton-loader component -->
-      <table-skeleton-loader :headers="skeletonHeaders" :rows="5" />
+      <table-skeleton-loader :headers="skeletonHeaders" :rows="6" />
     </div>
 
     <div class="mt-8" v-else>
@@ -65,8 +76,9 @@ const teamStore = useTeamStore()
 const { triggerToast } = useToast()
 const { getTeamName } = useTeamName();
 const showAddDialog = ref(false);
-const searchTerm = ref('')
 const loading = ref(true)
+const localSearchTerm = ref<string>(managerStore.searchManagersByEmail || '');
+const refreshingData = ref(false); // For when the refresh button is clicked
 
 const dialogProps = ref<DeleteDialogProps>({
   show: false,
@@ -81,9 +93,34 @@ const handlePageChange = (newPage: number) => {
   managerStore.setCurrentPage(newPage);
 };
 
-watch(searchTerm, (value: string) => {
-  managerStore.setSearchTerm(value)
-})
+const handleGlobalSearch = (newSearchTerm: string) => {
+  managerStore.setSearchTerm(newSearchTerm);
+};
+
+const reloadData = async () => {
+  if (refreshingData.value) return;
+  refreshingData.value = true;
+  try {
+    await managerStore.fetchManagers();
+    triggerToast({
+      message: t('toast.data_refreshed_successfully'),
+      type: 'info',
+      icon: 'mdi:check-circle-outline',
+    });
+  } catch (error) {
+    triggerToast({
+      message: t('toast.failed_to_reload_data'),
+      type: 'error',
+      icon: 'material-symbols:error-outline-rounded',
+    });
+  } finally {
+    refreshingData.value = false;
+  }
+};
+
+// watch(searchTerm, (value: string) => {
+//   managerStore.setSearchTerm(value)
+// })
 
 const tableColumns = computed(() => {
   const columns: Column<Manager>[] = [
@@ -131,14 +168,16 @@ const skeletonHeaders = ref<TableHeader[]>([
 ])
 
 onMounted(async () => {
+  refreshingData.value = false;
   loading.value = true
   try {
+    localSearchTerm.value = managerStore.searchManagersByEmail || '';
     await Promise.all([
       managerStore.fetchManagers(),
       teamStore.fetchAll()
     ]);
   } catch (error) {
-    console.error('Error fetching managers:', error)
+    // console.error('Error fetching managers:', error)
     triggerToast({
       message: t('toast.failed_to_load_managers'),
       type: 'error',
@@ -146,6 +185,7 @@ onMounted(async () => {
     })
   } finally {
     loading.value = false
+    refreshingData.value = false;
   }
 })
 

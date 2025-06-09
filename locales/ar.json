@@ -219,7 +219,8 @@
     "select_department": "اختر القسم",
     "search_or_enter_employee_id": "ابحث عن معرف الموظف أو أدخله",
     "search_placeholder": "ابحث هنا...",
-    "search_by_email_or_name": "ابحث عن طريق الأيميل أو الاسم"
+    "search_by_email_or_name": "ابحث عن طريق الأيميل أو الاسم",
+    "search_by_name": "البحث حسب اسم القسم / الفريق"
   },
   "head": {
     "sign_in": "تسجيل الدخول",

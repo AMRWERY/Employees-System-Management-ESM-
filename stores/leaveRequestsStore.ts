@@ -26,7 +26,7 @@ export const useLeaveRequestsStore = defineStore("leave-requests", {
     requestsPerPage: 8,
     loading: false,
     error: "",
-    searchText: "",
+    searchTerm: "",
     activeFilter: "all",
   }),
 
@@ -282,6 +282,12 @@ export const useLeaveRequestsStore = defineStore("leave-requests", {
       }
     },
 
+    setSearchTerm(term: string) {
+      this.searchTerm = term.toLowerCase(); // Store search term, usually in lowercase
+      this.currentPage = 1; // Reset to first page on new search
+      this.updatePagination(); // Re-apply pagination with new search results
+    },
+
     setFilter(filter: string) {
       this.activeFilter = filter;
       this.currentPage = 1; // Reset to first page when filter changes
@@ -297,9 +303,8 @@ export const useLeaveRequestsStore = defineStore("leave-requests", {
       const start = (this.currentPage - 1) * this.requestsPerPage;
       const end = this.currentPage * this.requestsPerPage;
       // Use the store's filteredRequests getter
-      const filtered = this.filteredRequests;
+      const filtered = this.filteredAndSearchedRequests;
       this.paginatedRequests = filtered.slice(start, end);
-
       const maxPage = Math.max(
         1,
         Math.ceil(filtered.length / this.requestsPerPage)
@@ -334,9 +339,38 @@ export const useLeaveRequestsStore = defineStore("leave-requests", {
     allRejected: (state) =>
       state.allRequests.filter((r) => r.status === "rejected"),
 
-    totalPages(): number {
-      return Math.ceil(this.filteredRequests.length / this.requestsPerPage);
+    filteredAndSearchedRequests: (state): LeaveRequest[] => {
+      let requests = state.allRequests;
+      // 1. Filter by active status filter (e.g., "pending", "approved")
+      if (state.activeFilter !== "all" && state.activeFilter !== "") {
+        requests = requests.filter(
+          (request) => request.status === state.activeFilter
+        );
+      }
+      // 2. Filter by search term (employeeName or employeeId)
+      if (state.searchTerm.trim() !== "") {
+        requests = requests.filter((request) => {
+          const nameMatch = request.employeeName
+            ? request.employeeName.toLowerCase().includes(state.searchTerm)
+            : false;
+          const idMatch = request.employeeId
+            ? request.employeeId.toLowerCase().includes(state.searchTerm)
+            : false;
+          // You could also add other fields to search here if needed
+          return nameMatch || idMatch;
+        });
+      }
+      return requests;
     },
+
+    totalPages(): number {
+      // Use the combined filter and search getter for total pages
+      return Math.ceil(this.filteredAndSearchedRequests.length / this.requestsPerPage);
+    },
+    
+    // totalPages(): number {
+    //   return Math.ceil(this.filteredRequests.length / this.requestsPerPage);
+    // },
 
     filteredRequests: (state) => {
       let requests = state.allRequests;
