@@ -219,7 +219,8 @@
     "select_department": "Select department",
     "search_or_enter_employee_id": "Search or enter employee id",
     "search_placeholder": "Search here...",
-    "search_by_email_or_name": "Search by email or name"
+    "search_by_email_or_name": "Search by email or name",
+    "search_by_name": "Search by department / team name"
   },
   "head": {
     "sign_in": "Sign in",

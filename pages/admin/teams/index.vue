@@ -13,16 +13,17 @@
       </div>
     </div>
 
-    <div class="relative w-[300px] mb-4">
-      <input type="text" v-model="searchTerm" :placeholder="t('form.search_by_email')"
-        class="px-4 py-2 pe-10 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full" />
-      <div class="absolute inset-y-0 end-0 flex items-center pe-3 pointer-events-none">
-        <icon name="heroicons-solid:magnifying-glass" class="w-5 h-5 text-gray-400" />
-      </div>
+    <div class="flex items-center gap-4">
+      <!-- search-input component -->
+      <search-input v-model="localSearchTerm" @search="handleGlobalSearch" :placeholder="t('form.search_by_name')"
+        class="w-full sm:w-[300px]" :debounce="300" />
+
+      <!-- download-files-menu component -->
+      <download-files-menu :allItems="teamsStore.teams" :columns="tableColumns" fileNameBase="teams" />
     </div>
 
     <div v-if="loading" key="skeleton">
-      <table-skeleton-loader :headers="skeletonHeaders" :rows="5" />
+      <table-skeleton-loader :headers="skeletonHeaders" :rows="3" />
     </div>
 
     <div class="mt-8" v-else>
@@ -51,11 +52,11 @@ import type { Column } from '@/types/tables'
 const { t } = useI18n()
 const { triggerToast } = useToast()
 const teamsStore = useTeamStore()
-const searchTerm = ref('');
+const localSearchTerm = ref<string>(teamsStore.searchTeamsByName || '');
 
-watch(searchTerm, (term) => {
-  teamsStore.setTeamSearchTerm(term);
-});
+const handleGlobalSearch = (newSearchTerm: string) => {
+  teamsStore.setTeamSearchTerm(newSearchTerm);
+};
 
 const handlePageChange = (newPage: number) => {
   teamsStore.setTeamCurrentPage(newPage);
@@ -104,6 +105,7 @@ const refreshTeamList = async () => {
 
 onMounted(async () => {
   try {
+    localSearchTerm.value = teamsStore.searchTeamsByName || '';
     await refreshTeamList()
   } catch (error) {
     triggerToast({

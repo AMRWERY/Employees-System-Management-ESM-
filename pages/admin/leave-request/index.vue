@@ -19,10 +19,23 @@
         </li>
       </transition-group>
     </ul>
+
+    <div class="flex items-center gap-4 mt-4">
+      <!-- search-input component -->
+      <search-input v-model="leaveStore.searchTerm" @search="handleGlobalSearch"
+        :placeholder="t('form.search_by_email_or_name')" class="w-full sm:w-[300px]" :debounce="300" />
+
+      <!-- refresh-data-btn component -->
+      <refresh-data-btn @refresh="reloadData" :is-loading="refreshingData" />
+
+      <!-- download-files-menu component -->
+      <download-files-menu :allItems="leaveStore.allRequests" :columns="tableColumns" fileNameBase="leave-requests" />
+    </div>
+
     <transition name="fade-slide" mode="out-in">
-      <div v-if="loading" key="skeleton">
+      <div v-if="loading || refreshingData" key="skeleton-refresh">
         <!-- table-skeleton-loader component -->
-        <table-skeleton-loader :headers="skeletonHeaders" :rows="5" />
+        <table-skeleton-loader :headers="skeletonHeaders" :rows="8" />
       </div>
 
       <div class="mt-8" v-else>
@@ -52,22 +65,70 @@ import type { Tab } from '@/types/tabs'
 const { t } = useI18n()
 const leaveStore = useLeaveRequestsStore()
 const managersStore = useManagerStore();
-const teamssStore = useTeamStore();
+// const teamssStore = useTeamStore();
 const { triggerToast } = useToast()
 const { formatDate } = useDateFormat();
 const { getTeamName } = useTeamName();
+const localSearchTerm = ref<string>(leaveStore.searchTerm || '');
+const refreshingData = ref(false); // For when the refresh button is clicked
+const activeTab = ref<Tab['id']>('all')
+const loading = ref(true)
+
 const {
   paginatedRequests,
   currentPage,
   totalPages
 } = storeToRefs(leaveStore)
 
+const handleGlobalSearch = (newSearchTerm: string) => {
+  leaveStore.setSearchTerm(newSearchTerm);
+};
+
+onMounted(async () => {
+  refreshingData.value = false;
+  try {
+    localSearchTerm.value = leaveStore.searchTerm || '';
+    await managersStore.fetchManagers();
+    // await teamssStore.fetchAll();
+    await leaveStore.fetchAllRequests()
+    leaveStore.updatePagination();
+  } catch (error) {
+    triggerToast({
+      message: t('toast.failed_to_load_leave_requests'),
+      type: 'error',
+      icon: 'material-symbols:error-outline-rounded',
+    })
+  } finally {
+    loading.value = false
+    refreshingData.value = false;
+  }
+})
+
+const reloadData = async () => {
+  if (refreshingData.value) return;
+  refreshingData.value = true;
+  try {
+    leaveStore.allRequests = [];
+    await leaveStore.fetchAllRequests();
+    triggerToast({
+      message: t('toast.data_refreshed_successfully'),
+      type: 'info',
+      icon: 'mdi:check-circle-outline',
+    });
+  } catch (error) {
+    triggerToast({
+      message: t('toast.failed_to_reload_data'),
+      type: 'error',
+      icon: 'material-symbols:error-outline-rounded',
+    });
+  } finally {
+    refreshingData.value = false;
+  }
+};
+
 const handlePageChange = (newPage: number) => {
   leaveStore.setCurrentPage(newPage);
 };
-
-const activeTab = ref<Tab['id']>('all')
-const loading = ref(true)
 
 watch(activeTab, (newTab) => {
   leaveStore.setFilter(newTab);
@@ -134,29 +195,16 @@ const tabs = ref<Tab[]>([
   { id: 'cancelled', label: t('status.cancelled') },
 ])
 
-onMounted(async () => {
-  try {
-    await managersStore.fetchManagers();
-    // await teamssStore.fetchAll();
-    await leaveStore.fetchAllRequests()
-    leaveStore.updatePagination();
-  } catch (error) {
-    triggerToast({
-      message: t('toast.failed_to_load_leave_requests'),
-      type: 'error',
-      icon: 'material-symbols:error-outline-rounded',
-    })
-  } finally {
-    loading.value = false
-  }
-})
-
 const filteredRequests = computed(() => {
-  if (activeTab.value === 'all') return leaveStore.allRequests;
-  return leaveStore.allRequests.filter(request =>
-    request.status === activeTab.value
-  );
-})
+  return leaveStore.filteredAndSearchedRequests;
+});
+
+// const filteredRequests = computed(() => {
+//   if (activeTab.value === 'all') return leaveStore.allRequests;
+//   return leaveStore.allRequests.filter(request =>
+//     request.status === activeTab.value
+//   );
+// })
 
 const openDetailsModal = (request: LeaveRequest) => {
   navigateTo(`./leave-request/${request.id}`)
