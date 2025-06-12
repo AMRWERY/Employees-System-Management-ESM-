@@ -1,5 +1,8 @@
+import type { Payroll, PayrollSummary } from "@/types/payroll";
+
 export interface Employee {
   id: string;
+  uid?: string;
   email: string;
   firstName?: string;
   lastName?: string;
@@ -12,7 +15,9 @@ export interface Employee {
   managerId: string | null;
   teamId: string | null;
   // isBlocked?: boolean;
-  status: 'blocked' | 'active';
+  status: "blocked" | "active";
+  payrolls?: PayrollSummary[];
+  // payrolls?: (PayrollSummary | Payroll)[];
   [key: string]: any;
 }
 
@@ -25,4 +30,5 @@ export interface EmployeeState {
   searchEmployeesByEmail: string;
   managerId: string | null;
   teamId: string | null;
+  selectedEmployeeDetails: Employee | null;
 }

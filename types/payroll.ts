@@ -30,6 +30,7 @@ export interface Payroll {
   created_at: AppTimestamp;
   updated_at?: AppTimestamp;
   notes?: string;
+  failureReason?: string;
 }
 
 export interface PayrollInputData {
@@ -68,4 +69,13 @@ export interface PayrollState {
   filterPayPeriod: string; // Store the current pay period filter
   isLoading: boolean;
   error: string | null;
+}
+
+export interface PayrollSummary {
+  payrollDocId: string; // The ID of the document in 'ems-payrolls'
+  pay_period: string;
+  netSalary: number;
+  status: PayrollAllStatus;
+  created_at: AppTimestamp; // Or Date if you convert it before embedding
+  failureReason?: string | null;
 }

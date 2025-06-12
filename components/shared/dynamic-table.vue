@@ -57,23 +57,26 @@
                   <icon name="material-symbols:block" class="w-6 h-6"
                     :class="[item.status === 'blocked' ? 'text-green-500 hover:text-green-700' : 'text-red-500 hover:text-red-700']" />
                 </button>
-                <button v-if="hasDelete" class="cursor-pointer" title="Delete" @click="$emit('delete', item)">
+                <button v-if="hasDelete && actionConditions?.delete && actionConditions.delete(item)"
+                  class="cursor-pointer" title="Delete" @click="$emit('delete', item)">
                   <icon name="material-symbols:delete-sharp" class="w-6 h-6 text-red-500 hover:text-red-700" />
                 </button>
-                <button v-if="hasEdit" class="cursor-pointer" title="Edit" @click="$emit('edit', item)">
+                <button v-if="hasEdit && actionConditions?.edit && actionConditions.edit(item)" class="cursor-pointer"
+                  title="Edit" @click="$emit('edit', item)">
                   <icon name="heroicons-outline:pencil-alt"
                     class="w-5 h-5 sm:w-6 sm:h-6 text-indigo-600 hover:text-indigo-800" />
                 </button>
 
                 <!-- Mark Paid Action (NEW for Payroll) -->
-                <button v-if="hasMarkPaid" class="cursor-pointer" title="Mark Paid" @click="$emit('markPaid', item)">
+                <button v-if="hasMarkPaid && actionConditions?.markPaid && actionConditions.markPaid(item)"
+                  class="cursor-pointer" title="Mark Paid" @click="$emit('markPaid', item)">
                   <icon name="heroicons-outline:check-circle"
                     class="w-5 h-5 sm:w-6 sm:h-6 text-green-600 hover:text-green-800" />
                 </button>
 
                 <!-- Mark Failed Action (NEW for Payroll) -->
-                <button v-if="hasMarkFailed" class="cursor-pointer" title="Mark Failed"
-                  @click="$emit('markFailed', item)">
+                <button v-if="hasMarkFailed && actionConditions?.markFailed && actionConditions.markFailed(item)"
+                  class="cursor-pointer" title="Mark Failed" @click="$emit('markFailed', item)">
                   <icon name="heroicons-outline:x-circle"
                     class="w-5 h-5 sm:w-6 sm:h-6 text-yellow-500 hover:text-yellow-700" />
                 </button>
@@ -90,7 +93,6 @@
 import type { Column, TableItem } from '@/types/tables'
 
 type StatusType = 'pending' | 'approved' | 'rejected' | 'cancelled' | 'blocked' | 'active' | 'paid' | 'failed';
-// type StatusType = 'pending' | 'approved' | 'rejected' | 'cancelled' | 'blocked' | 'active';
 
 const props = defineProps<{
   items: readonly any[];
@@ -101,7 +103,20 @@ const props = defineProps<{
   hasEdit?: boolean;
   hasMarkPaid?: boolean;
   hasMarkFailed?: boolean;
+  actionConditions?: {
+    edit?: (item: any) => boolean;
+    delete?: (item: any) => boolean;
+    markPaid?: (item: any) => boolean;
+    markFailed?: (item: any) => boolean;
+  };
 }>()
+
+const actionConditions = props.actionConditions || {
+  edit: () => true,
+  delete: () => true,
+  markPaid: () => true,
+  markFailed: () => true
+};
 
 defineEmits<{
   <T = any>(event: 'view', item: T): void;

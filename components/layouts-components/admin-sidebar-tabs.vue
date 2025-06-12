@@ -66,14 +66,14 @@
             </nuxt-link>
           </li>
           <li>
-            <nuxt-link-locale to="/admin/leave-request"
-              class="flex items-center p-2 text-white rounded-lg group ps-7"
+            <nuxt-link-locale to="/admin/leave-request" class="flex items-center p-2 text-white rounded-lg group ps-7"
               exact-active-class="bg-gray-400 text-white hover:bg-gray-500">
               {{ t('layouts.leave_management') }}
             </nuxt-link-locale>
           </li>
           <li>
-            <nuxt-link-locale to="/admin/payroll" class="flex items-center p-2 text-white rounded-lg group ps-7"
+            <nuxt-link-locale to="/admin/payroll-management"
+              class="flex items-center p-2 text-white rounded-lg group ps-7"
               exact-active-class="bg-gray-400 text-white hover:bg-gray-500">
               {{ t('layouts.payroll_management') }}
             </nuxt-link-locale>
@@ -90,8 +90,7 @@
       <li v-if="hasAnyRole('admin')">
         <nuxt-link-locale to="/holiday-dates" class="flex items-center p-2 text-white rounded-lg group"
           exact-active-class="bg-gray-400 text-white hover:bg-gray-500">
-          <icon name="heroicons-solid:calendar-days"
-            class="w-5 h-5 transition duration-75 group-hover:text-white"
+          <icon name="heroicons-solid:calendar-days" class="w-5 h-5 transition duration-75 group-hover:text-white"
             :class="{ 'text-gray-400': route.path === '/holiday-dates', 'text-white': route.path !== '/holiday-dates' }" />
           <span class="flex-1 ms-3 whitespace-nowrap">{{ t('layouts.holiday_dates') }}</span>
         </nuxt-link-locale>
