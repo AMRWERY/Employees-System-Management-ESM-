@@ -77,7 +77,12 @@
     "delete_payroll_title": "هل أنت متأكد أنك تريد حذف هذا السجل؟",
     "delete_payroll_confirmation_01": "أنت على وشك حذف سجل راتب {name} عن فترة {period}.",
     "delete_payroll_confirmation_02": "لا يمكن التراجع عن هذا الإجراء.",
-    "base_salary": "الراتب الأساسي"
+    "base_salary": "الراتب الأساسي",
+    "mark_as_failed_title": "الراتب كسبب للفشل",
+    "payroll_history": "سجل الرواتب",
+    "no_payroll_history_found": "لم يتم العثور على سجل الرواتب لهذا الموظف.",
+    "details": "تفاصيل",
+    "employee_details": "Employee details"
   },
   "btn": {
     "go_back_home": "العودة إلى الصفحه الرئيسيه",
@@ -105,7 +110,8 @@
     "add_payroll_record": "إضافة سجل الرواتب",
     "add_record": "إضافة سجل",
     "save_changes": "حفظ التغييرات",
-    "delete": "حذف"
+    "delete": "حذف",
+    "submit": "حفظ"
   },
   "form": {
     "sign_in": "تسجيل الدخول",
@@ -220,7 +226,9 @@
     "search_or_enter_employee_id": "ابحث عن معرف الموظف أو أدخله",
     "search_placeholder": "ابحث هنا...",
     "search_by_email_or_name": "ابحث عن طريق الأيميل أو الاسم",
-    "search_by_name": "البحث حسب اسم القسم / الفريق"
+    "search_by_name": "البحث حسب اسم القسم / الفريق",
+    "failure_reason": "سبب الفشل",
+    "enter_failure_reason_placeholder": "أدخل السبب..."
   },
   "head": {
     "sign_in": "تسجيل الدخول",
@@ -309,7 +317,10 @@
     "data_refreshed_successfully": "تم تحديث البيانات بنجاح",
     "no_data_to_export": "لا توجد بيانات للتحميل",
     "download_successful": "تم التحميل بنجاح",
-    "download_error": "فشل تحميل الملف"
+    "download_error": "فشل تحميل الملف",
+    "marked_as_failed_successfully": "تم وضع علامة على الفشل بنجاح",
+    "failed_to_mark_failed": "فشل في وضع علامة فشل",
+    "could_not_find_full_details_for_employee": "لم نتمكن من العثور على تفاصيل كاملة للموظف"
   },
   "status": {
     "all": "الكل",
@@ -319,7 +330,8 @@
     "cancelled": "تم الإلغاء",
     "blocked": "محظور",
     "active": "نشط",
-    "paid": "مدفوع"
+    "paid": "مدفوع",
+    "failed": "فشل"
   },
   "no_data": {
     "no_leave_requests_found": "لم يتم العثور على طلبات إجازة",
@@ -345,7 +357,8 @@
     "admin_teams_employees_employeeid": "تفاصيل الموظف",
     "employee_leave_request_id": "تفاصيل طلب الإجازة",
     "holiday_dates": "تواريخ العطلات",
-    "admin_payroll": "إدارة الرواتب"
+    "admin_payroll_management": "إدارة الرواتب",
+    "admin_payroll_management_recordid": "تفاصيل الموظف"
   },
   "days": {
     "sun": "الأحد",

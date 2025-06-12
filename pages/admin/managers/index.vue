@@ -118,10 +118,6 @@ const reloadData = async () => {
   }
 };
 
-// watch(searchTerm, (value: string) => {
-//   managerStore.setSearchTerm(value)
-// })
-
 const tableColumns = computed(() => {
   const columns: Column<Manager>[] = [
     {

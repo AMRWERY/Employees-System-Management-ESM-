@@ -44,7 +44,7 @@ export default defineNuxtConfig({
       strict: false, // Allow trailing slashes
     },
   },
-  plugins: ["~/plugins/locale.client.ts", "~/plugins/auth.client.ts"],
+  plugins: ["~/plugins/locale.client.ts", "~/plugins/auth.client.ts", "~/plugins/log-routes.client.ts"],
   css: ["~/assets/css/main.css"],
   components: [
     {

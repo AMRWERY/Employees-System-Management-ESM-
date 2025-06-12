@@ -11,6 +11,7 @@ import {
   orderBy,
   Timestamp,
   serverTimestamp,
+  arrayUnion,
   // For pagination with cursors if you choose that route later:
   // limit as firestoreLimit,
   // startAfter,
@@ -23,6 +24,7 @@ import {
   PayrollAllStatus,
   type PayrollState,
   type AppTimestamp,
+  type PayrollSummary,
   // type FetchPayrollParams, // We'll define params inline or specifically for the action
 } from "@/types/payroll";
 
@@ -115,7 +117,7 @@ export const usePayrollStore = defineStore("payroll", {
         );
         this._applyFiltersAndPagination(); // Apply search and pagination to the fetched data
       } catch (err) {
-        console.error("Error fetching payrolls:", err);
+        // console.error("Error fetching payrolls:", err);
         this.error =
           err instanceof Error ? err.message : "Failed to fetch payrolls";
         this.allPayrolls = [];
@@ -124,6 +126,45 @@ export const usePayrollStore = defineStore("payroll", {
       } finally {
         this.isLoading = false;
       }
+    },
+
+    async fetchPayrollsByEmployeeId(employeeId: string): Promise<Payroll[]> {
+      const payrollsQuery = query(
+        collection(db, PAYROLL_COLLECTION),
+        where("uid", "==", employeeId),
+        orderBy("pay_period", "desc")
+      );
+      const querySnapshot = await getDocs(payrollsQuery);
+      const payrolls = querySnapshot.docs.map((doc) => {
+        const data = doc.data();
+        // console.log("Payroll document data:", data);
+        return {
+          id: doc.id,
+          uid: data.uid || employeeId,
+          employeeName: data.employeeName || "",
+          department_id: data.department_id || "",
+          pay_period: data.pay_period || "",
+          base_salary: data.base_salary || 0,
+          working_days: data.working_days || 0,
+          days_present: data.days_present || 0,
+          overtime_hours: data.overtime_hours || 0,
+          overtime_rate: data.overtime_rate || 0,
+          bonuses: data.bonuses || 0,
+          deductions: data.deductions || 0,
+          tax_percent: data.tax_percent || 0,
+          netSalary: data.netSalary || 0,
+          status: data.status || PayrollAllStatus.Pending,
+          paidOn: data.paidOn?.toDate() || null,
+          paidBy: data.paidBy || null,
+          created_by: data.created_by || "",
+          created_at: data.created_at || new Timestamp(0, 0),
+          updated_at: data.updated_at?.toDate() || null,
+          notes: data.notes || null,
+          failureReason: data.failureReason || null,
+        } satisfies Payroll;
+      });
+      console.log("Mapped payrolls:", payrolls);
+      return payrolls;
     },
 
     setSearchTerm(term: string) {
@@ -153,8 +194,8 @@ export const usePayrollStore = defineStore("payroll", {
     },
 
     async addPayroll(payrollData: PayrollInputData): Promise<Payroll | null> {
-      // isLoading and error are handled by the calling component or a global interceptor
-      // This action should focus on the DB operation and minimal state update.
+      this.isLoading = true;
+      this.error = null;
       try {
         const q = query(
           collection(db, PAYROLL_COLLECTION),
@@ -167,38 +208,126 @@ export const usePayrollStore = defineStore("payroll", {
             `Payroll for ${payrollData.employeeName} (${payrollData.uid}) for period ${payrollData.pay_period} already exists.`
           );
         }
-
         const netSalary = calculateNetSalary(payrollData);
-        const now = serverTimestamp() as AppTimestamp;
-        const newPayrollDoc: Omit<Payroll, "id"> = {
-          ...payrollData,
+        const now = serverTimestamp();
+        // Construct the object for Firestore, handling undefined explicitly
+        const firestorePayrollData: any = {
+          // Start with any, then narrow down
+          uid: payrollData.uid,
+          employeeName: payrollData.employeeName,
+          department_id: payrollData.department_id || "", // Default to empty string
+          pay_period: payrollData.pay_period,
+          base_salary: payrollData.base_salary,
+          working_days: payrollData.working_days,
+          days_present: payrollData.days_present,
+          overtime_hours: payrollData.overtime_hours,
+          overtime_rate: payrollData.overtime_rate,
+          bonuses: payrollData.bonuses,
+          deductions: payrollData.deductions,
+          tax_percent: payrollData.tax_percent,
+          created_by: payrollData.created_by,
           netSalary,
           status: PayrollAllStatus.Pending,
-          paidOn: null,
+          paidOn: null, // Explicitly null
+          paidBy: "", // Explicitly empty string
           created_at: now,
           updated_at: now,
-          department_id: payrollData.department_id || "",
-          paidBy: "",
         };
+        if (payrollData.notes !== undefined) {
+          firestorePayrollData.notes = payrollData.notes;
+        } else {
+          firestorePayrollData.notes = null; // Or "" or omit, based on preference
+        }
+        firestorePayrollData.failureReason = null;
+        const typedFirestorePayrollData = firestorePayrollData as Omit<
+          Payroll,
+          "id" | "created_at" | "updated_at"
+        > & { created_at: any; updated_at: any };
         const docRef = await addDoc(
           collection(db, PAYROLL_COLLECTION),
-          newPayrollDoc
+          typedFirestorePayrollData
         );
-        // After adding, re-fetch to ensure allPayrolls is up-to-date and pagination/filters apply correctly.
-        // Or, if the new item matches current filters, add it and re-apply local filters.
-        // For simplicity and consistency:
-        // await this.fetchPayrolls(); // This will apply current filters including payPeriod
-        return {
+        // console.log("Payroll record created with ID:", docRef.id);
+        const payrollSummary: PayrollSummary = {
+          payrollDocId: docRef.id,
+          pay_period: payrollData.pay_period,
+          netSalary: netSalary,
+          status: PayrollAllStatus.Pending,
+          created_at: Timestamp.now(),
+        };
+        // Find and update employee document
+        const employeesStore = useEmployeesStore();
+        let employeeFirestoreId: string | null = null;
+        const targetEmployee = employeesStore.employees.find(
+          (emp) => emp.employeeId === payrollData.uid
+        );
+        if (targetEmployee && targetEmployee.id) {
+          employeeFirestoreId = targetEmployee.id;
+        } else {
+          const userQuery = query(
+            collection(db, "ems-users"),
+            where("employeeId", "==", payrollData.uid)
+          );
+          const userSnapshot = await getDocs(userQuery);
+          if (!userSnapshot.empty) {
+            employeeFirestoreId = userSnapshot.docs[0].id;
+          }
+        }
+        if (employeeFirestoreId) {
+          const employeeDocRef = doc(db, "ems-users", employeeFirestoreId);
+          try {
+            await updateDoc(employeeDocRef, {
+              payrolls: arrayUnion(payrollSummary),
+            });
+          } catch (updateError) {
+            console.error(
+              `Failed to update employee ${employeeFirestoreId} with payroll summary:`,
+              updateError
+            );
+          }
+        } else {
+          console.error(
+            `addPayroll: Critical - Could not find employee in ems-users with employeeId ${payrollData.uid} to update their payrolls array.`
+          );
+        }
+        const createdPayroll: Payroll = {
           id: docRef.id,
-          ...newPayrollDoc,
+          ...typedFirestorePayrollData, // Use the version that went to Firestore
           created_at: Timestamp.now(),
           updated_at: Timestamp.now(),
-        } as Payroll; // return the optimistic object
+          // Ensure optional fields from typedFirestorePayrollData are correctly typed in Payroll
+          notes:
+            typedFirestorePayrollData.notes === null
+              ? undefined
+              : typedFirestorePayrollData.notes,
+          failureReason:
+            typedFirestorePayrollData.failureReason === null
+              ? undefined
+              : typedFirestorePayrollData.failureReason,
+        };
+        // Update local store state
+        if (
+          this.filterPayPeriod === payrollData.pay_period ||
+          !this.filterPayPeriod
+        ) {
+          // Ensure the object added to allPayrolls matches the Payroll type exactly
+          const payrollToAdd = { ...createdPayroll };
+          // If Payroll type has optional notes/failureReason, ensure they are undefined if null
+          if (payrollToAdd.notes === null) delete payrollToAdd.notes;
+          if (payrollToAdd.failureReason === null)
+            delete payrollToAdd.failureReason;
+
+          this.allPayrolls.unshift(payrollToAdd);
+          this._applyFiltersAndPagination();
+        }
+        return createdPayroll;
       } catch (err) {
-        console.error("Error adding payroll:", err);
+        // console.error("Error adding payroll:", err);
         this.error =
-          err instanceof Error ? err.message : "Failed to add payroll"; // Set store error
-        throw err; // Re-throw for component to catch
+          err instanceof Error ? err.message : "Failed to add payroll";
+        throw err;
+      } finally {
+        this.isLoading = false;
       }
     },
 
@@ -212,7 +341,6 @@ export const usePayrollStore = defineStore("payroll", {
           ...updates,
           updated_at: serverTimestamp() as AppTimestamp,
         };
-
         if (
           Object.keys(updates).some((k) =>
             [
@@ -251,7 +379,7 @@ export const usePayrollStore = defineStore("payroll", {
           ? ({ id: updatedDoc.id, ...updatedDoc.data() } as Payroll)
           : null;
       } catch (err) {
-        console.error("Error updating payroll:", err);
+        // console.error("Error updating payroll:", err);
         this.error =
           err instanceof Error ? err.message : "Failed to update payroll";
         throw err;
@@ -266,76 +394,172 @@ export const usePayrollStore = defineStore("payroll", {
         this._applyFiltersAndPagination(); // Important to update paginatedItems
         return true;
       } catch (err) {
-        console.error("Error deleting payroll:", err);
+        // console.error("Error deleting payroll:", err);
         this.error =
           err instanceof Error ? err.message : "Failed to delete payroll";
         throw err;
       }
     },
 
+    async _getEmployeeFirestoreId(
+      payrollEmployeeId: string
+    ): Promise<string | null> {
+      const employeesStore = useEmployeesStore();
+      let employeeFirestoreId: string | null = null;
+      const targetEmployee = employeesStore.employees.find(
+        (emp) => emp.employeeId === payrollEmployeeId
+      );
+      if (targetEmployee && targetEmployee.id) {
+        employeeFirestoreId = targetEmployee.id;
+      } else {
+        // console.warn(`_getEmployeeFirestoreId: Employee not found in local store by ems-ID ${payrollEmployeeId}. Attempting Firestore query.`);
+        const userQuery = query(
+          collection(db, "ems-users"),
+          where("employeeId", "==", payrollEmployeeId)
+        );
+        const userSnapshot = await getDocs(userQuery);
+        if (!userSnapshot.empty) {
+          employeeFirestoreId = userSnapshot.docs[0].id;
+        } else {
+          console.error(
+            `_getEmployeeFirestoreId: Critical - Could not find employee in ems-users with employeeId ${payrollEmployeeId}.`
+          );
+        }
+      }
+      return employeeFirestoreId;
+    },
+
     async processPayment(
-      payrollId: string,
+      payrollDocId: string, // ID of the document in 'ems-payrolls'
       paidBy: string
     ): Promise<Payroll | null> {
+      this.isLoading = true;
+      this.error = null;
+      const payrollRef = doc(db, PAYROLL_COLLECTION, payrollDocId);
       try {
-        const payrollRef = doc(db, PAYROLL_COLLECTION, payrollId);
-        // Optional: Fetch current doc to check status before updating if needed
-        // const currentDoc = await getDoc(payrollRef);
-        // if (currentDoc.exists() && (currentDoc.data() as Payroll).status === PayrollAllStatus.Paid) {
-        //   throw new Error("Payroll already marked as paid.");
-        // }
-        await updateDoc(payrollRef, {
+        const payrollSnap = await getDoc(payrollRef);
+        if (!payrollSnap.exists()) {
+          throw new Error("Payroll record not found to mark as paid.");
+        }
+        const currentPayrollData = payrollSnap.data() as Payroll;
+        // 1. Update the main payroll document in 'ems-payrolls'
+        const updatedPayrollFields = {
           status: PayrollAllStatus.Paid,
           paidOn: Timestamp.now(),
           paidBy,
           updated_at: serverTimestamp(),
-        });
-        // await this.fetchPayrolls();
-        const updatedDoc = await getDoc(payrollRef);
+          failureReason: null, // Clear any previous failure reason
+        };
+        await updateDoc(payrollRef, updatedPayrollFields);
+
+        // 2. Update the embedded summary in the employee's document
+        if (currentPayrollData.uid) {
+          // currentPayrollData.uid is the "ems-XXXX" employeeId
+          const employeeFirestoreId = await this._getEmployeeFirestoreId(
+            currentPayrollData.uid
+          );
+          if (employeeFirestoreId) {
+            const employeeDocRef = doc(db, "ems-users", employeeFirestoreId);
+            const employeeDocSnap = await getDoc(employeeDocRef);
+            if (employeeDocSnap.exists()) {
+              const employeeData = employeeDocSnap.data();
+              const existingPayrolls = (employeeData.payrolls ||
+                []) as PayrollSummary[];
+              const updatedPayrolls = existingPayrolls.map((summary) =>
+                summary.payrollDocId === payrollDocId
+                  ? {
+                      ...summary,
+                      status: PayrollAllStatus.Paid,
+                      failureReason: null,
+                    } // Update status, clear failureReason
+                  : summary
+              );
+              await updateDoc(employeeDocRef, { payrolls: updatedPayrolls });
+              // console.log(`Employee ${employeeFirestoreId} payrolls array updated for payment: ${payrollDocId}`);
+            }
+          }
+        }
+        const updatedDoc = await getDoc(payrollRef); // Get the fully updated doc
         return updatedDoc.exists()
           ? ({ id: updatedDoc.id, ...updatedDoc.data() } as Payroll)
           : null;
       } catch (err) {
-        console.error("Error processing payment:", err);
+        // console.error("Error processing payment:", err);
         this.error =
           err instanceof Error ? err.message : "Failed to process payment";
         throw err;
+      } finally {
+        this.isLoading = false;
       }
     },
 
     async recordPaymentFailure(
-      payrollId: string,
+      payrollDocId: string, // ID of the document in 'ems-payrolls'
       reason: string,
       failedBy: string
     ): Promise<Payroll | null> {
+      this.isLoading = true;
+      this.error = null;
+      const payrollRef = doc(db, PAYROLL_COLLECTION, payrollDocId);
       try {
-        const payrollRef = doc(db, PAYROLL_COLLECTION, payrollId);
-        const currentDoc = await getDoc(payrollRef);
-        const currentNotes = currentDoc.exists()
-          ? (currentDoc.data() as Payroll).notes || ""
-          : "";
-        const newNotes = `${currentNotes}${
-          currentNotes ? "\n" : ""
+        const payrollSnap = await getDoc(payrollRef);
+        if (!payrollSnap.exists()) {
+          throw new Error("Payroll record not found to mark as failed.");
+        }
+        const currentPayrollData = payrollSnap.data() as Payroll;
+        // Append to existing notes/failure reason if necessary
+        const existingFailureNotes = currentPayrollData.failureReason || "";
+        const newFailureReason = `${existingFailureNotes}${
+          existingFailureNotes ? "\n" : ""
         }Payment failed by ${failedBy}: ${reason}`;
-
-        await updateDoc(payrollRef, {
+        // 1. Update the main payroll document in 'ems-payrolls'
+        const updatedPayrollFields = {
           status: PayrollAllStatus.Failed,
-          paidOn: null,
-          notes: newNotes,
+          paidOn: null, // Ensure paidOn is null for failed
+          failureReason: newFailureReason,
           updated_at: serverTimestamp(),
-        });
-        // await this.fetchPayrolls();
+        };
+        await updateDoc(payrollRef, updatedPayrollFields);
+        // 2. Update the embedded summary in the employee's document
+        if (currentPayrollData.uid) {
+          // currentPayrollData.uid is the "ems-XXXX" employeeId
+          const employeeFirestoreId = await this._getEmployeeFirestoreId(
+            currentPayrollData.uid
+          );
+          if (employeeFirestoreId) {
+            const employeeDocRef = doc(db, "ems-users", employeeFirestoreId);
+            const employeeDocSnap = await getDoc(employeeDocRef);
+            if (employeeDocSnap.exists()) {
+              const employeeData = employeeDocSnap.data();
+              const existingPayrolls = (employeeData.payrolls ||
+                []) as PayrollSummary[];
+              const updatedPayrolls = existingPayrolls.map((summary) =>
+                summary.payrollDocId === payrollDocId
+                  ? {
+                      ...summary,
+                      status: PayrollAllStatus.Failed,
+                      failureReason: newFailureReason,
+                    } // Update status and reason
+                  : summary
+              );
+              await updateDoc(employeeDocRef, { payrolls: updatedPayrolls });
+              // console.log(`Employee ${employeeFirestoreId} payrolls array updated for failure: ${payrollDocId}`);
+            }
+          }
+        }
         const updatedDoc = await getDoc(payrollRef);
         return updatedDoc.exists()
           ? ({ id: updatedDoc.id, ...updatedDoc.data() } as Payroll)
           : null;
       } catch (err) {
-        console.error("Error recording payment failure:", err);
+        // console.error("Error recording payment failure:", err);
         this.error =
           err instanceof Error
             ? err.message
             : "Failed to record payment failure";
         throw err;
+      } finally {
+        this.isLoading = false;
       }
     },
   },

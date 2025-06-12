@@ -14,6 +14,7 @@ import {
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import type { DocumentData, QueryDocumentSnapshot } from "firebase/firestore";
 import type { Employee, EmployeeState } from "@/types/employee";
+import type { Payroll } from "@/types/payroll";
 
 export const useEmployeesStore = defineStore("employees", {
   state: (): EmployeeState => ({
@@ -25,6 +26,7 @@ export const useEmployeesStore = defineStore("employees", {
     searchEmployeesByEmail: "",
     managerId: null,
     teamId: null,
+    selectedEmployeeDetails: null,
   }),
 
   actions: {
@@ -48,10 +50,17 @@ export const useEmployeesStore = defineStore("employees", {
               permissions: data.permissions || {},
               roledId: data.roledId || null,
               // isBlocked: data.isBlocked,
-              position: data.position,
-              status: data.status || "active",
+              position: data.position || "N/A",
+              // position: data.position,
+              status:
+                data.status === "blocked" || data.status === "active"
+                  ? data.status
+                  : "active",
+              // status: data.status || "active",
               managerId: data.managerId,
               teamId: data.teamId,
+              profileImg: data.profileImg,
+              createdAt: data.createdAt?.toDate(),
               ...data,
             } satisfies Employee;
           }
@@ -62,6 +71,103 @@ export const useEmployeesStore = defineStore("employees", {
         this.updatePagination();
       } catch (error) {
         throw error;
+      }
+    },
+
+    async fetchEmployeeById(employeeId: string): Promise<Employee | null> {
+      try {
+        const employeeRef = doc(db, "ems-users", employeeId);
+        const employeeDoc = await getDoc(employeeRef);
+        if (!employeeDoc.exists()) {
+          // console.warn(`Employee with ID ${employeeId} not found`);
+          return null;
+        }
+        const data = employeeDoc.data();
+        return {
+          id: employeeDoc.id,
+          email: data.email || "",
+          firstName: data.firstName,
+          lastName: data.lastName,
+          employeeId: data.employeeId,
+          role: data.role,
+          permissions: data.permissions || {},
+          roledId: data.roledId || null,
+          position: data.position,
+          // status: data.status || "active",
+          status:
+            data.status === "blocked" || data.status === "active"
+              ? data.status
+              : "active", // Required
+          managerId: data.managerId,
+          teamId: data.teamId,
+          profileImg: data.profileImg,
+          createdAt: data.createdAt?.toDate(),
+          ...data,
+        } satisfies Employee;
+      } catch (error) {
+        // console.error(`Error fetching employee ${employeeId}:`, error);
+        throw error;
+      }
+    },
+
+    async fetchEmployeeWithPayrolls(
+      employeeFirestoreId: string
+    ): Promise<void> {
+      this.selectedEmployeeDetails = null;
+      let employeeBase: Employee | null = null; // Use Employee type, initialize to null
+      try {
+        // console.log("Store: Attempting to fetch employee document for ID:", employeeFirestoreId);
+        const employeeDocRef = doc(db, "ems-users", employeeFirestoreId);
+        const employeeDocSnap = await getDoc(employeeDocRef);
+        if (!employeeDocSnap.exists()) return;
+        // console.log("Store: Employee document fetched successfully.");
+        const employeeData = employeeDocSnap.data();
+        employeeBase = {
+          id: employeeDocSnap.id,
+          uid: employeeData.uid || employeeDocSnap.id,
+          email: employeeData.email || "",
+          firstName: employeeData.firstName || "",
+          lastName: employeeData.lastName || "",
+          employeeId: employeeData.employeeId,
+          departmentId: employeeData.departmentId,
+          position: employeeData.position || "Not Specified",
+          role: employeeData.role,
+          permissions: employeeData.permissions || {},
+          roledId: employeeData.roledId || null,
+          managerId: employeeData.managerId || null,
+          teamId: employeeData.teamId || null,
+          status:
+            employeeData.status === "blocked" ||
+            employeeData.status === "active"
+              ? employeeData.status
+              : "active",
+          profileImg: employeeData.profileImg,
+          createdAt: employeeData.createdAt?.toDate(),
+          payrolls: [],
+        };
+        let fetchedPayrolls: Payroll[] = [];
+        if (employeeBase.employeeId) {
+          // console.log(
+          //   "Store: Attempting to fetch payrolls for employeeId (ems-XXXX):",
+          //   employeeBase.employeeId
+          // );
+          const payrollStore = usePayrollStore();
+          fetchedPayrolls = await payrollStore.fetchPayrollsByEmployeeId(
+            employeeBase.employeeId
+          );
+          // console.log(`Store: Fetched ${fetchedPayrolls.length} payrolls.`);
+        } else {
+          console.warn(
+            "Store: Employee missing 'employeeId', cannot fetch payrolls by it."
+          );
+        }
+        this.selectedEmployeeDetails = {
+          ...employeeBase,
+          payrolls: fetchedPayrolls,
+        };
+      } catch (error) {
+        console.error("Store: Error in fetchEmployeeWithPayrolls:", error);
+      } finally {
       }
     },
 
@@ -96,23 +202,26 @@ export const useEmployeesStore = defineStore("employees", {
           throw new Error("Employee role not configured");
         }
         const employeeId = `ems-${Math.floor(1000 + Math.random() * 9000)}`;
-        const userData = {
-          uid: userCredential.user.uid,
-          employeeId: employeeId,
-          firstName: employeeData.firstName,
-          lastName: employeeData.lastName,
-          email: employeeData.email,
-          position: employeeData.position || "Employee",
-          role: "employee",
-          roledId: employeeRole.id,
-          permissions: employeeRole.permissions || {},
-          status: "active",
-          // isBlocked: false,
-          loginType: "email",
-          createdAt: serverTimestamp(),
-          teamId: employeeData.teamId || null,
-          managerId: employeeData.managerId || null,
-        };
+        const userData: Omit<Employee, "id" | "payrolls"> & { createdAt: any } =
+          {
+            uid: userCredential.user.uid,
+            employeeId: employeeId,
+            firstName: employeeData.firstName,
+            lastName: employeeData.lastName,
+            email: employeeData.email,
+            position: employeeData.position || "Employee",
+            role: "employee",
+            roledId: employeeRole.id,
+            permissions: employeeRole.permissions || {},
+            status: "active",
+            // isBlocked: false,
+            loginType: "email",
+            createdAt: serverTimestamp(),
+            teamId: employeeData.teamId || null,
+            managerId: employeeData.managerId || null,
+            profileImg: null,
+            payrolls: [],
+          };
         await setDoc(doc(db, "ems-users", userCredential.user.uid), userData);
         if (employeeData.teamId) {
           try {
@@ -331,5 +440,7 @@ export const useEmployeesStore = defineStore("employees", {
         if (!user?.roledId) return undefined;
         return rolesStore.getRolePermissions(user.roledId);
       },
+
+    getLoadedEmployeeDetails: (state) => state.selectedEmployeeDetails,
   },
 });

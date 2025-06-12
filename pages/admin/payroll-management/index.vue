@@ -3,6 +3,7 @@
     <div class="flex items-center justify-between my-6 flex-nowrap">
       <p class="text-2xl font-semibold text-gray-700">{{ t('dashboard.payroll_management') }}</p>
       <div class="flex items-center justify-center gap-4 ms-auto">
+        <!-- base-button component -->
         <base-button :default-icon="false" @click="openAddPayrollDialog()">
           {{ t('btn.add_record') }}
         </base-button>
@@ -39,25 +40,36 @@
     <!-- Use store's isLoading for the skeleton -->
     <div v-if="payrollStore.isLoading && payrollStore.paginatedItems.length === 0 || refreshingData"
       key="skeleton-loader">
+      <!-- table-skeleton-loader componenet -->
       <table-skeleton-loader :headers="skeletonHeaders" :rows="9" />
     </div>
 
     <div class="mt-8" v-else>
       <div v-if="!payrollStore.isLoading && payrollStore.paginatedItems.length === 0" class="text-center">
+        <!-- no-data-message componenet -->
         <no-data-message :message="t('no_data.no_payroll_records_found')" icon="heroicons-solid:document-text" />
       </div>
       <div v-else>
+        <!-- dynamic-table componenet -->
         <dynamic-table :items="payrollStore.paginatedItems" :columns="tableColumns" :has-edit="true" :has-delete="true"
-          :has-mark-paid="true" :has-mark-failed="true" :action-conditions="payrollActionConditions" @edit="editPayroll"
-          @delete="deletePayrollClicked" @markPaid="markPayrollAsPaid" />
+          :has-view="true" :has-mark-paid="true" :has-mark-failed="true" :action-conditions="payrollActionConditions"
+          @edit="editPayroll" @delete="deletePayrollClicked" @markPaid="markPayrollAsPaid"
+          @markFailed="markPayrollAsFailed" @view="navigateToEmployeeDetails" />
       </div>
+
+      <!-- pagination componenet -->
       <pagination v-if="payrollStore.totalPages > 1" :current-page="payrollStore.currentPage"
         :total-pages="payrollStore.totalPages" @page-change="payrollStore.setCurrentPage" />
     </div>
 
+    <!-- delete-dialog componenet -->
     <delete-dialog :show="deleteDialogProps.show" :title="deleteDialogProps.title" :message="deleteDialogProps.message"
       :confirm-text="deleteDialogProps.confirmText" :cancel-text="deleteDialogProps.cancelText"
       :loading="deleteDialogActive" @close="closeDeleteDialog" @confirm="confirmDelete" />
+
+    <!-- mark-failed-reson componenet -->
+    <mark-failed-reson v-model="showFailureReasonDialog" :confirm-text="t('btn.submit')" :loading="isSubmittingFailure"
+      @confirm="submitFailureReason" @close="cancelFailureReason" />
   </div>
 </template>
 
@@ -69,7 +81,9 @@ import type { Column } from '@/types/tables';
 import type { DeleteDialogProps } from '@/types/delete-dialog';
 
 const { t, n } = useI18n();
+const router = useRouter()
 const payrollStore = usePayrollStore();
+const employeeStore = useEmployeesStore();
 const { getTeamName } = useTeamName();
 const { triggerToast } = useToast();
 const { currentCurrency } = useCurrencyLocale();
@@ -78,6 +92,11 @@ const showPayrollDialog = ref(false);
 const isEditingPayroll = ref(false);
 const selectedPayrollForForm = ref<Payroll | null>(null);
 const selectedPayrollForAction = ref<Payroll | null>(null);
+
+const showFailureReasonDialog = ref(false);
+const failureReasonError = ref(''); // For displaying validation errors in the reason dialog
+const isSubmittingFailure = ref(false);
+const payrollToMarkFailed = ref<Payroll | null>(null);
 
 const deleteDialogProps = ref<Omit<DeleteDialogProps, 'loading'>>({
   show: false, title: '', message: '',
@@ -143,10 +162,18 @@ const skeletonHeaders = ref<TableHeader[]>([
 ]);
 
 const payrollActionConditions = computed(() => ({
-  edit: (item: Payroll) => item.status === PayrollAllStatus.Pending,
-  markPaid: (item: Payroll) => item.status === PayrollAllStatus.Pending,
-  markFailed: (item: Payroll) => item.status === PayrollAllStatus.Pending,
-  delete: (_item: Payroll) => true,
+  edit: (item: Payroll): boolean => {
+    return item.status === PayrollAllStatus.Pending;
+  },
+  markPaid: (item: Payroll): boolean => {
+    return item.status === PayrollAllStatus.Pending;
+  },
+  markFailed: (item: Payroll): boolean => {
+    return item.status === PayrollAllStatus.Pending;
+  },
+  delete: (item: Payroll): boolean => {
+    return item.status === PayrollAllStatus.Pending || item.status === PayrollAllStatus.Paid || item.status === PayrollAllStatus.Failed;
+  },
 }));
 
 onMounted(async () => {
@@ -175,6 +202,52 @@ const editPayroll = (payroll: Payroll) => {
   isEditingPayroll.value = true;
   selectedPayrollForForm.value = { ...payroll }; // Clone for editing
   showPayrollDialog.value = true;
+};
+
+const markPayrollAsFailed = (payroll: Payroll) => {
+  payrollToMarkFailed.value = payroll;
+  showFailureReasonDialog.value = true;
+};
+
+const submitFailureReason = async (reason: string) => {
+  if (!payrollToMarkFailed.value?.id) return;
+  isSubmittingFailure.value = true;
+  const startTime = Date.now();
+  try {
+    const user = JSON.parse(sessionStorage.getItem('user') ?? '{}');
+    const failedBy = user?.role;
+    // Mark as failed with reason
+    await payrollStore.recordPaymentFailure(
+      payrollToMarkFailed.value.id,
+      reason,
+      failedBy
+    );
+    triggerToast({
+      message: t('toast.marked_as_failed_successfully'),
+      type: 'success',
+      icon: 'mdi-check-circle',
+    });
+    await payrollStore.fetchPayrolls();
+    showFailureReasonDialog.value = false;
+  } catch (error) {
+    triggerToast({
+      message: t('toast.failed_to_mark_failed'),
+      type: 'error',
+      icon: 'material-symbols:error-outline-rounded',
+    });
+  } finally {
+    // Ensure spinner shows for at least 2 seconds
+    const elapsed = Date.now() - startTime;
+    if (elapsed < 2000) {
+      await new Promise(resolve => setTimeout(resolve, 2000 - elapsed));
+    }
+    isSubmittingFailure.value = false;
+  }
+};
+
+const cancelFailureReason = () => {
+  showFailureReasonDialog.value = false;
+  payrollToMarkFailed.value = null;
 };
 
 const handleSavePayroll = async (payrollInput: PayrollInputData | Payroll) => {
@@ -245,7 +318,6 @@ const confirmDelete = async () => {
 
 const markPayrollAsPaid = async (payroll: Payroll) => {
   if (!payroll.id) return;
-  // if (confirm(t('payroll.confirm_mark_paid', { name: payroll.employeeName, period: payroll.pay_period }))) {
   try {
     await payrollStore.processPayment(payroll.id, 'ADMIN_UID_PLACEHOLDER'); // Replace with actual admin UID
     triggerToast({
@@ -262,6 +334,29 @@ const markPayrollAsPaid = async (payroll: Payroll) => {
     })
   }
 }
+
+const navigateToEmployeeDetails = async (payrollItem: Payroll) => {
+  if (!payrollItem || !payrollItem.uid) return;
+  if (employeeStore.employees.length === 0) {
+    try {
+      await employeeStore.fetchEmployees();
+    } catch (e) {
+      return;
+    }
+  }
+  const targetEmployee = employeeStore.employees.find(emp => emp.employeeId === payrollItem.uid);
+  if (targetEmployee && targetEmployee.id) {
+    const employeeFirestoreId = targetEmployee.id;
+    const routepath = `/admin/payroll-management/${employeeFirestoreId}`
+    router.push(routepath);
+  } else {
+    triggerToast({
+      message: t('toast.could_not_find_full_details_for_employee'),
+      type: 'error',
+      icon: 'material-symbols:error-outline-rounded',
+    })
+  }
+};
 
 const formatCurrency = (value?: number) => {
   if (value == null) return t('dashboard.na');
