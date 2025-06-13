@@ -24,7 +24,8 @@ export interface Payroll {
   tax_percent: number;
   netSalary: number; // Calculated
   status: PayrollAllStatus;
-  paidOn: AppTimestamp | null;
+  // paidOn: AppTimestamp | null;
+  paidOn: Date | null;
   paidBy?: string;
   created_by: string;
   created_at: AppTimestamp;

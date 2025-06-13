@@ -13,7 +13,7 @@ import {
 } from "firebase/firestore";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import type { DocumentData, QueryDocumentSnapshot } from "firebase/firestore";
-import type { Employee, EmployeeState } from "@/types/employee";
+import type { Employee, EmployeeState, EmployeeWithPayrolls } from "@/types/employee";
 import type { Payroll } from "@/types/payroll";
 
 export const useEmployeesStore = defineStore("employees", {
@@ -61,6 +61,7 @@ export const useEmployeesStore = defineStore("employees", {
               teamId: data.teamId,
               profileImg: data.profileImg,
               createdAt: data.createdAt?.toDate(),
+              payrolls: data.payrolls || [],
               ...data,
             } satisfies Employee;
           }
@@ -102,6 +103,7 @@ export const useEmployeesStore = defineStore("employees", {
           teamId: data.teamId,
           profileImg: data.profileImg,
           createdAt: data.createdAt?.toDate(),
+          payrolls: data.payrolls || [],
           ...data,
         } satisfies Employee;
       } catch (error) {
@@ -143,7 +145,7 @@ export const useEmployeesStore = defineStore("employees", {
               : "active",
           profileImg: employeeData.profileImg,
           createdAt: employeeData.createdAt?.toDate(),
-          payrolls: [],
+          payrolls: employeeData.payrolls || [],
         };
         let fetchedPayrolls: Payroll[] = [];
         if (employeeBase.employeeId) {
@@ -164,7 +166,7 @@ export const useEmployeesStore = defineStore("employees", {
         this.selectedEmployeeDetails = {
           ...employeeBase,
           payrolls: fetchedPayrolls,
-        };
+        } as EmployeeWithPayrolls;
       } catch (error) {
         console.error("Store: Error in fetchEmployeeWithPayrolls:", error);
       } finally {

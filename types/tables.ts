@@ -1,7 +1,8 @@
 export interface Column<T = any> {
   key: keyof T | string;
   label: string;
-  class?: string;
+  class?: string | ((item: T) => string[]);
+  // class?: string;
   format?: (row: T, index?: number) => string;
 }
 

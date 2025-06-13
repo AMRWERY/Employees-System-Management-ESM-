@@ -16,9 +16,14 @@ export interface Employee {
   teamId: string | null;
   // isBlocked?: boolean;
   status: "blocked" | "active";
+  createdAt?: Date;
+  profileImg?: string | null;
   payrolls?: PayrollSummary[];
-  // payrolls?: (PayrollSummary | Payroll)[];
   [key: string]: any;
+}
+
+export interface EmployeeWithPayrolls extends Omit<Employee, 'payrolls'> {
+  payrolls: Payroll[];
 }
 
 export interface EmployeeState {
@@ -30,5 +35,6 @@ export interface EmployeeState {
   searchEmployeesByEmail: string;
   managerId: string | null;
   teamId: string | null;
-  selectedEmployeeDetails: Employee | null;
+  selectedEmployeeDetails: EmployeeWithPayrolls | null
+  // selectedEmployeeDetails: Employee | null;
 }
