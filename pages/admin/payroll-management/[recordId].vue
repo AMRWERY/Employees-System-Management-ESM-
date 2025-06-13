@@ -60,7 +60,8 @@
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <p class="text-sm text-gray-500">{{ t('dashboard.base_salary') }}</p>
-              <p class="text-gray-900 font-medium capitalize">{{ employee.base_salary }}</p>
+              <p class="text-gray-900 font-medium capitalize">{{ formatCurrency(employee.payrolls[0]?.base_salary) }}
+              </p>
             </div>
 
             <div class="flex items-center gap-2">
@@ -75,49 +76,25 @@
         </div>
       </div>
 
-      <div v-if="employee" class="border-t pt-6">
+      <div class="border-t pt-6">
         <h2 class="text-2xl font-semibold text-gray-700 mb-4">
           {{ t('dashboard.payroll_history') }}
         </h2>
-        <div v-if="!employee.payrolls || employee.payrolls.length === 0 || employee.payrolls.every(p => !p.id)"
-          class="text-gray-500 text-center py-4">
-          {{ t('dashboard.no_payroll_history_found') }}
+
+        <!-- refresh-data-btn component -->
+        <refresh-data-btn @refresh="reloadData" :is-loading="refreshingData" class="mb-4" />
+
+        <div v-if="!employee.payrolls || employee.payrolls.length === 0 || employee.payrolls.every(p => !p.id)">
+          <!-- no-data-message componenet -->
+          <no-data-message :message="t('no_data.no_payroll_history_found')" icon="heroicons-solid:document-text" />
         </div>
+
         <div v-else class="overflow-x-auto">
-          <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gray-50">
-              <tr>
-                <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 tracking-wider">
-                  {{ t('dashboard.pay_period') }}
-                </th>
-                <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 tracking-wider">
-                  {{ t('dashboard.net_salary') }}
-                </th>
-                <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 tracking-wider">
-                  {{ t('dashboard.status') }}
-                </th>
-                <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 tracking-wider">
-                  {{ t('dashboard.paid_on') }}
-                </th>
-              </tr>
-            </thead>
-            <tbody class="bg-white divide-y divide-gray-200">
-              <tr v-for="payroll in employee.payrolls" :key="payroll.id" class="hover:bg-gray-50">
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ payroll.pay_period || 'N/A' }}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ formatCurrency(payroll.netSalary) ||
-                  'N/A' }}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm">
-                  <span
-                    :class="['px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full', getPayrollStatusClass(payroll.status)]">
-                    {{ t(`status.${payroll.status?.toLowerCase() || 'unknown'}`, payroll.status || 'Unknown') }}
-                  </span>
-                </td>
-                <!-- <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-            {{ payroll.paidOn ? formatDate(payroll.paidOn) : t('common.na') }}
-          </td> -->
-              </tr>
-            </tbody>
-          </table>
+          <!-- table-skeleton-loader componenet -->
+          <table-skeleton-loader :headers="skeletonHeaders" :rows="5" v-if="isLoading || refreshingData" />
+
+          <!-- dynamic-table componenet -->
+          <dynamic-table :items="employee.payrolls" :columns="tableColumns" v-else />
         </div>
       </div>
     </div>
@@ -126,6 +103,9 @@
 
 <script lang="ts" setup>
 import { PayrollAllStatus } from '@/types/payroll';
+import type { Payroll } from '@/types/payroll'
+import type { TableHeader } from '@/types/table-header';
+import type { Column } from '@/types/tables';
 
 const { t, n } = useI18n();
 const route = useRoute();
@@ -135,6 +115,9 @@ const managerStore = useManagerStore();
 const { formatDate } = useDateFormat();
 const { currentCurrency } = useCurrencyLocale();
 const { getTeamName: getTeamNameFromComposable } = useTeamName();
+const { triggerToast } = useToast();
+const isLoading = ref(false);
+const refreshingData = ref(false);
 
 const employeeIdFromRoute = computed(() => {
   const id = route.params.recordId;
@@ -152,9 +135,14 @@ const { selectedEmployeeDetails: employee } = storeToRefs(employeesStore);
 const fetchDetails = async () => {
   if (employeeIdFromRoute.value) {
     try {
+      isLoading.value = true;
+      employeesStore.selectedEmployeeDetails = null;
       await employeesStore.fetchEmployeeWithPayrolls(employeeIdFromRoute.value);
+      // console.log('Fetched payrolls:', employee.value?.payrolls);
     } catch (error) {
       console.error('Failed to fetch employee details:', error);
+    } finally {
+      isLoading.value = false;
     }
   }
 };
@@ -175,7 +163,7 @@ watch(() => route.params.recordId, async (newId, oldId) => {
   if (newId && newId !== oldId) {
     await fetchDetails();
   }
-});
+}, { immediate: false });
 
 const getPayrollStatusClass = (status: PayrollAllStatus | undefined): string => {
   if (!status) return 'bg-gray-100 text-gray-800'; // Default for undefined or null
@@ -199,16 +187,91 @@ const getTeamName = (teamId?: string | null): string => {
 const getManagerName = (managerId?: string | null): string => {
   if (!managerId) return t('dashboard.not_assigned', 'N/A');
   const manager = managerStore.managers.find(m => m.id === managerId);
-  return manager ? `${manager.firstName || ''} ${manager.lastName || ''}`.trim() : t('dashboard.manager_not_found', 'Manager Not Found');
+  return manager ? `${manager.firstName || ''} ${manager.lastName || ''}`.trim() : t('dashboard.not_assigned');
 };
 
 const formatCurrency = (value?: number) => {
-  if (value == null || isNaN(value)) return t('common.na', 'N/A');
+  if (value == null || isNaN(value)) return;
   const formatKey = `currency_${currentCurrency.value}`;
   try {
     return n(value, formatKey);
   } catch (e) {
     return String(value);
+  }
+};
+
+const tableColumns = computed((): Column<Payroll>[] => [
+  {
+    key: 'index',
+    label: '#',
+    format: (_row: Payroll, indexOnPage?: number) => String((indexOnPage ?? 0) + 1), // Simple index
+  },
+  {
+    key: 'pay_period',
+    label: t('dashboard.pay_period'),
+    format: (p: Payroll) => p.pay_period || t('common.na', 'N/A'),
+  },
+  {
+    key: 'netSalary',
+    label: t('dashboard.net_salary'),
+    format: (p: Payroll) => formatCurrency(p.netSalary) || t('common.na', 'N/A'),
+  },
+  {
+    key: 'status',
+    label: t('dashboard.status'),
+    format: (p: Payroll) => t(`status.${p.status?.toLowerCase() || 'unknown'}`, p.status || 'Unknown'),
+    class: (p: Payroll) => ['px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full', getPayrollStatusClass(p.status)],
+  },
+  {
+    key: 'paidOn',
+    label: t('dashboard.paid_on'),
+    format: (p: Payroll) => {
+      // console.log('paidOn type:', typeof p.paidOn, 'value:', p.paidOn);
+      return p.paidOn ? formatDate(p.paidOn) : t('common.na', 'N/A');
+    },
+  },
+]);
+
+const skeletonHeaders = ref<TableHeader[]>([
+  { type: 'text', loaderWidth: 'w-10' }, // Index
+  { type: 'text', loaderWidth: 'w-32' }, // Pay Period
+  { type: 'text', loaderWidth: 'w-32' }, // Net Salary
+  { type: 'text', loaderWidth: 'w-32' }, // Status
+  { type: 'text', loaderWidth: 'w-32' }, // Paid On
+]);
+
+const reloadData = async () => {
+  if (refreshingData.value || isLoading.value) return;
+  refreshingData.value = true;
+  try {
+    await fetchPayrollsOnly(),
+      triggerToast({
+        message: t('toast.data_refreshed_successfully'),
+        type: 'info',
+        icon: 'mdi:check-circle-outline',
+      });
+  } catch (error) {
+    triggerToast({
+      message: t('toast.failed_to_reload_data'),
+      type: 'error',
+      icon: 'material-symbols:error-outline-rounded',
+    });
+  } finally {
+    refreshingData.value = false;
+  }
+};
+
+const fetchPayrollsOnly = async () => {
+  if (employee.value) {
+    const payrollStore = usePayrollStore();
+    try {
+      // Use employee's custom ID instead of document ID
+      const payrolls = await payrollStore.fetchPayrollsByEmployeeId(employee.value.employeeId);
+      employee.value.payrolls = payrolls;
+    } catch (error) {
+      console.error('Failed to fetch payrolls:', error);
+      throw error;
+    }
   }
 };
 

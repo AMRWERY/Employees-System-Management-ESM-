@@ -80,7 +80,6 @@
     "base_salary": "Base salary",
     "mark_as_failed_title": "Payroll as Failed reason",
     "payroll_history": "Payroll history",
-    "no_payroll_history_found": "No payroll history found for this employee.",
     "details": "Details",
     "employee_details": "Employee details"
   },
@@ -338,7 +337,8 @@
     "no_employees_found": "No employees found",
     "no_teams_found": "No teams / departments found",
     "no_managers_found": "No managers found",
-    "no_payroll_records_found": "No payroll records found"
+    "no_payroll_records_found": "No payroll records found",
+    "no_payroll_history_found": "No payroll history found for this employee."
   },
   "breadcrumb": {
     "home": "Home",
