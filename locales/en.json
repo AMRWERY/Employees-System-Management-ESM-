@@ -84,7 +84,9 @@
     "employee_details": "Employee details",
     "overtime_hours": "Overtime hours",
     "overtime_rate":"Overtime rate",
-    "creation_date": "Creation Date"
+    "creation_date": "Creation Date",
+    "payrolls": "Payrolls history",
+    "employee_payrolls": "Employee payrolls history"
   },
   "btn": {
     "go_back_home": "Go back Home",

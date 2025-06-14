@@ -81,8 +81,13 @@
           {{ t('dashboard.payroll_history') }}
         </h2>
 
-        <!-- refresh-data-btn component -->
-        <refresh-data-btn @refresh="reloadData" :is-loading="refreshingData" class="mb-4" />
+        <div class="flex items-center gap-4 mb-4">
+          <!-- refresh-data-btn component -->
+          <refresh-data-btn @refresh="reloadData" :is-loading="refreshingData" />
+
+          <!-- download-files-menu component -->
+          <download-files-menu :allItems="employee.payrolls" :columns="tableColumns" :fileNameBase="fileName" />
+        </div>
 
         <div v-if="!employee.payrolls || employee.payrolls.length === 0 || employee.payrolls.every(p => !p.id)">
           <!-- no-data-message componenet -->
@@ -310,6 +315,12 @@ const handleSelectedItemsUpdate = (items: TableItem[]) => {
   // console.log('Selected items updated:', items);
   selectedItems.value = items;
 };
+
+const fileName = computed(() =>
+  employee.value
+    ? `${employee.value.firstName} ${employee.value.lastName} - ${t('dashboard.payrolls')}`
+    : t('dashboard.employee_payrolls')
+);
 
 useHead({
   title: computed(() =>
