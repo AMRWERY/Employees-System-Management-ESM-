@@ -6,6 +6,7 @@ export enum PayrollAllStatus {
   Pending = "pending",
   Paid = "paid",
   Failed = "failed",
+  All = "all",
 }
 
 export interface Payroll {
@@ -79,4 +80,9 @@ export interface PayrollSummary {
   status: PayrollAllStatus;
   created_at: AppTimestamp; // Or Date if you convert it before embedding
   failureReason?: string | null;
+}
+
+export interface SelectOption {
+  value: string;
+  label: string;
 }

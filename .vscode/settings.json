@@ -1,8 +1,9 @@
 {
-    "i18n-ally.localesPaths": [
-        "locales"
-    ],
-    "i18n-ally.keystyle": "nested",
-    "tailwind-fold.autoFold": true,
-    "tailwind-fold.foldedText": "....."
+  "i18n-ally.localesPaths": ["locales"],
+  "i18n-ally.keystyle": "nested",
+  "tailwind-fold.autoFold": true,
+  "tailwind-fold.foldedText": ".....",
+
+  // "vue.features.templateInterpolationService": true,
+  // "editor.semanticHighlighting.enabled": false,
 }

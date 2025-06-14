@@ -87,6 +87,9 @@
 
           <!-- download-files-menu component -->
           <download-files-menu :allItems="employee.payrolls" :columns="tableColumns" :fileNameBase="fileName" />
+
+          <!-- select-input component -->
+          <select-input v-model="selectedStatus" :options="statusOptions" placeholder="Filter by Status" />
         </div>
 
         <div v-if="!employee.payrolls || employee.payrolls.length === 0 || employee.payrolls.every(p => !p.id)">
@@ -99,7 +102,7 @@
           <table-skeleton-loader :headers="skeletonHeaders" :rows="8" v-if="isLoading || refreshingData" />
 
           <!-- dynamic-table componenet -->
-          <dynamic-table :items="employee.payrolls" :columns="tableColumns" v-model:selectedItems="selectedItems"
+          <dynamic-table :items="filteredPayrolls" :columns="tableColumns" v-model:selectedItems="selectedItems"
             @update:selectedItems="handleSelectedItemsUpdate" v-else />
         </div>
       </div>
@@ -109,7 +112,7 @@
 
 <script lang="ts" setup>
 import { PayrollAllStatus } from '@/types/payroll';
-import type { Payroll } from '@/types/payroll'
+import type { Payroll, SelectOption } from '@/types/payroll'
 import type { TableHeader } from '@/types/table-header';
 import type { Column, TableItem } from '@/types/tables';
 
@@ -124,6 +127,24 @@ const { getTeamName: getTeamNameFromComposable } = useTeamName();
 const { triggerToast } = useToast();
 const isLoading = ref(false);
 const refreshingData = ref(false);
+const selectedStatus = ref(PayrollAllStatus.All);
+
+const statusOptions = computed<SelectOption[]>(() => [
+  { value: PayrollAllStatus.All, label: t('status.all') },
+  { value: PayrollAllStatus.Pending, label: t('status.pending') },
+  { value: PayrollAllStatus.Paid, label: t('status.paid') },
+  { value: PayrollAllStatus.Failed, label: t('status.failed') },
+]);
+
+const filteredPayrolls = computed(() => {
+  if (!employee.value?.payrolls) return [];
+  if (selectedStatus.value === PayrollAllStatus.All) {
+    return employee.value.payrolls;
+  }
+  return employee.value.payrolls.filter(
+    payroll => payroll.status === selectedStatus.value
+  );
+});
 
 const employeeIdFromRoute = computed(() => {
   const id = route.params.recordId;
@@ -303,7 +324,7 @@ const fetchPayrollsOnly = async () => {
       const payrolls = await payrollStore.fetchPayrollsByEmployeeId(employee.value.employeeId);
       employee.value.payrolls = payrolls;
     } catch (error) {
-      console.error('Failed to fetch payrolls:', error);
+      // console.error('Failed to fetch payrolls:', error);
       throw error;
     }
   }

@@ -163,7 +163,7 @@ export const usePayrollStore = defineStore("payroll", {
           failureReason: data.failureReason || null,
         } satisfies Payroll;
       });
-      console.log("Mapped payrolls:", payrolls);
+      // console.log("Mapped payrolls:", payrolls);
       return payrolls;
     },
 
