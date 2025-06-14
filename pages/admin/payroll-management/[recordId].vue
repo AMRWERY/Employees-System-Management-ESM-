@@ -89,7 +89,8 @@
           <download-files-menu :allItems="employee.payrolls" :columns="tableColumns" :fileNameBase="fileName" />
 
           <!-- select-input component -->
-          <select-input v-model="selectedStatus" :options="statusOptions" placeholder="Filter by Status" />
+          <select-input v-model="selectedStatus" :options="statusOptions"
+            :placeholder="t('dashboard.filter_by_status')" />
         </div>
 
         <div v-if="!employee.payrolls || employee.payrolls.length === 0 || employee.payrolls.every(p => !p.id)">

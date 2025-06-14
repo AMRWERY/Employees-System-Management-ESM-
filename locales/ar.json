@@ -86,7 +86,8 @@
     "overtime_rate":"معدل العمل الإضافي",
     "creation_date": "تاريخ الإنشاء",
     "payrolls": "سجل رواتب",
-    "employee_payrolls": "سجل رواتب الموظف"
+    "employee_payrolls": "سجل رواتب الموظف",
+    "filter_by_status": "تصفية حسب الحالة"
   },
   "btn": {
     "go_back_home": "العودة إلى الصفحه الرئيسيه",

@@ -86,7 +86,8 @@
     "overtime_rate":"Overtime rate",
     "creation_date": "Creation Date",
     "payrolls": "Payrolls history",
-    "employee_payrolls": "Employee payrolls history"
+    "employee_payrolls": "Employee payrolls history",
+    "filter_by_status": "Filter by Status"
   },
   "btn": {
     "go_back_home": "Go back Home",
