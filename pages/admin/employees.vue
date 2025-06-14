@@ -40,7 +40,8 @@
         <!-- dynamic-table component -->
         <dynamic-table :items="paginatedEmployees" :columns="tableColumns" :has-view="true" :has-block="true"
           :has-delete="true" @view="(item: Employee) => viewEmployee(item)"
-          @block="(item: Employee) => toggleBlockEmployee(item)" @delete="(item: Employee) => deleteEmployee(item)" />
+          @block="(item: Employee) => toggleBlockEmployee(item)" @delete="(item: Employee) => deleteEmployee(item)"
+          v-model:selectedItems="selectedItems" @update:selectedItems="handleSelectedItemsUpdate" />
       </div>
 
       <!-- pagination component -->
@@ -58,7 +59,7 @@
 <script lang="ts" setup>
 import type { TableHeader } from '@/types/table-header'
 import type { Employee } from '@/types/employee'
-import type { Column } from '@/types/tables'
+import type { Column, TableItem } from '@/types/tables';
 import type { DeleteDialogProps } from '@/types/delete-dialog'
 
 const { t } = useI18n()
@@ -259,6 +260,13 @@ const handleSave = async () => {
   } catch (error) {
     // Error handling
   }
+};
+
+const selectedItems = ref<TableItem[]>([]);
+
+const handleSelectedItemsUpdate = (items: TableItem[]) => {
+  // console.log('Selected items updated:', items);
+  selectedItems.value = items;
 };
 
 useHead({

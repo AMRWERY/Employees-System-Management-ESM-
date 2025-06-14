@@ -54,7 +54,8 @@
         <dynamic-table :items="payrollStore.paginatedItems" :columns="tableColumns" :has-edit="true" :has-delete="true"
           :has-view="true" :has-mark-paid="true" :has-mark-failed="true" :action-conditions="payrollActionConditions"
           @edit="editPayroll" @delete="deletePayrollClicked" @markPaid="markPayrollAsPaid"
-          @markFailed="markPayrollAsFailed" @view="navigateToEmployeeDetails" />
+          @markFailed="markPayrollAsFailed" @view="navigateToEmployeeDetails" v-model:selectedItems="selectedItems"
+            @update:selectedItems="handleSelectedItemsUpdate" />
       </div>
 
       <!-- pagination componenet -->
@@ -77,7 +78,7 @@
 import type { Payroll, PayrollInputData, AppTimestamp } from '@/types/payroll';
 import { PayrollAllStatus } from '@/types/payroll';
 import type { TableHeader } from '@/types/table-header';
-import type { Column } from '@/types/tables';
+import type { Column, TableItem } from '@/types/tables';
 import type { DeleteDialogProps } from '@/types/delete-dialog';
 
 const { t, n } = useI18n();
@@ -147,7 +148,7 @@ const tableColumns = computed((): Column<Payroll>[] => [
   { key: 'pay_period', label: t('dashboard.pay_period') },
   { key: 'base_salary', label: t('dashboard.base_salary'), format: (p: Payroll) => formatCurrency(p.base_salary) },
   { key: 'net_salary', label: t('dashboard.net_salary'), format: (p: Payroll) => formatCurrency(p.netSalary) },
-  // { key: 'paidOn', label: t('dashboard.paid_on'), format: (p: Payroll) => p.paidOn ? formatDate(p.paidOn) : t('common.na') },
+  // { key: 'paidOn', label: t('dashboard.paid_on'), format: (p: Payroll) => p.paidOn ? formatDate(p.paidOn) : '-' },
   { key: 'status', label: t('form.status'), format: (p: Payroll) => t(`status.${p.status.toLowerCase()}`, p.status) },
 ]);
 
@@ -359,18 +360,18 @@ const navigateToEmployeeDetails = async (payrollItem: Payroll) => {
 };
 
 const formatCurrency = (value?: number) => {
-  if (value == null) return t('dashboard.na');
+  if (value == null) return '-';
   const formatKey = `currency_${currentCurrency.value}`;
   const formatted = n(value, formatKey);
   return formatted;
 };
 
+const selectedItems = ref<TableItem[]>([]);
 
-// const formatDate = (timestamp?: AppTimestamp | Date | null) => {
-//   if (!timestamp) return t('common.na');
-//   const date = (timestamp as AppTimestamp)?.toDate ? (timestamp as AppTimestamp).toDate() : new Date(timestamp as Date);
-//   return date.toLocaleDateString();
-// };
+const handleSelectedItemsUpdate = (items: TableItem[]) => {
+  // console.log('Selected items updated:', items);
+  selectedItems.value = items;
+};
 
 useHead({
   titleTemplate: () => t('head.payroll_management'),

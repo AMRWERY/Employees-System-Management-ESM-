@@ -34,7 +34,8 @@
 
       <!-- dynamic-table component -->
       <div v-else>
-        <dynamic-table :items="teamsStore.paginatedTeams" :columns="tableColumns" :has-view="true" @view="viewTeam" />
+        <dynamic-table :items="teamsStore.paginatedTeams" :columns="tableColumns" :has-view="true" @view="viewTeam" v-model:selectedItems="selectedItems"
+            @update:selectedItems="handleSelectedItemsUpdate" />
       </div>
 
       <!-- pagination component -->
@@ -47,11 +48,12 @@
 <script lang="ts" setup>
 import type { Teams } from '@/types/teams'
 import type { TableHeader } from '@/types/table-header'
-import type { Column } from '@/types/tables'
+import type { Column, TableItem } from '@/types/tables'
 
 const { t } = useI18n()
-const { triggerToast } = useToast()
 const teamsStore = useTeamStore()
+const { triggerToast } = useToast()
+const { getTeamName } = useTeamName();
 const localSearchTerm = ref<string>(teamsStore.searchTeamsByName || '');
 
 const handleGlobalSearch = (newSearchTerm: string) => {
@@ -61,9 +63,6 @@ const handleGlobalSearch = (newSearchTerm: string) => {
 const handlePageChange = (newPage: number) => {
   teamsStore.setTeamCurrentPage(newPage);
 };
-
-// useTeamNameTranslation composable
-const { getTeamName } = useTeamName();
 
 const tableColumns = computed(() => {
   const columns: Column<Teams>[] = [
@@ -132,6 +131,13 @@ const skeletonHeaders = ref<TableHeader[]>([
   // { type: 'text', loaderWidth: 'w-32' },
   { type: 'action', loaderWidth: 'w-48' },
 ])
+
+const selectedItems = ref<TableItem[]>([]);
+
+const handleSelectedItemsUpdate = (items: TableItem[]) => {
+  // console.log('Selected items updated:', items);
+  selectedItems.value = items;
+};
 
 useHead({
   titleTemplate: () => t('head.teams'),

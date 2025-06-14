@@ -48,7 +48,8 @@
         <!-- dynamic-table component -->
         <dynamic-table :items="managerStore.paginatedManagers" :columns="tableColumns" :has-view="true"
           :has-block="true" :has-delete="true" @view="viewManagerDetails"
-          @block="(item: Manager) => toggleBlockManager(item)" @delete="(item: Manager) => deleteManager(item)" />
+          @block="(item: Manager) => toggleBlockManager(item)" @delete="(item: Manager) => deleteManager(item)" v-model:selectedItems="selectedItems"
+            @update:selectedItems="handleSelectedItemsUpdate" />
       </div>
 
       <!-- pagination component -->
@@ -66,7 +67,7 @@
 <script lang="ts" setup>
 import type { TableHeader } from '@/types/table-header'
 import type { Manager } from '@/types/managers'
-import type { Column } from '@/types/tables'
+import type { Column, TableItem } from '@/types/tables'
 import type { DeleteDialogProps } from '@/types/delete-dialog'
 
 const { t } = useI18n()
@@ -253,6 +254,13 @@ const toggleBlockManager = async (manager: Manager) => {
     })
   }
 }
+
+const selectedItems = ref<TableItem[]>([]);
+
+const handleSelectedItemsUpdate = (items: TableItem[]) => {
+  // console.log('Selected items updated:', items);
+  selectedItems.value = items;
+};
 
 useHead({
   titleTemplate: () => t('head.managers'),

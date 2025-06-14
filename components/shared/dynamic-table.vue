@@ -1,9 +1,18 @@
 <template>
   <div>
     <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-      <table class="w-full text-sm text-start text-gray-500">
+      <table class="w-full text-sm text-start text-gray-500 whitespace-nowrap">
         <thead class="text-sm text-gray-700 bg-gray-100">
           <tr>
+            <th scope="col" class="p-4">
+              <div class="flex items-center">
+                <input id="checkbox-all-search" type="checkbox"
+                  class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded"
+                  :checked="areAllPageItemsSelectableAndSelected" :indeterminate="isHeaderCheckboxIndeterminate"
+                  @change="toggleSelectAllOnPage" />
+                <label for="checkbox-all-search" class="sr-only">checkbox</label>
+              </div>
+            </th>
             <th v-for="(column, index) in columns" :key="index" scope="col" class="px-6 py-3">
               {{ column.label }}
             </th>
@@ -14,6 +23,15 @@
         </thead>
         <tbody>
           <tr v-for="(item, index) in items" :key="index" class="bg-white border-b border-gray-200 hover:bg-gray-50">
+            <td class="w-4 p-4">
+              <div class="flex items-center">
+                <input v-if="item.id !== undefined" :id="'checkbox-table-search-' + item.id" type="checkbox"
+                  class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded" :checked="isItemSelected(item)"
+                  @change="() => toggleSelectItem(item)" />
+                <label v-if="item.id !== undefined" :for="'checkbox-table-search-' + item.id"
+                  class="sr-only">checkbox</label>
+              </div>
+            </td>
             <td v-for="(column, colIndex) in columns" :key="colIndex" class="px-6 py-4">
               <template v-if="column.key === 'status'">
                 <span v-if="item.status"
@@ -109,6 +127,7 @@ const props = defineProps<{
     markPaid?: (item: any) => boolean;
     markFailed?: (item: any) => boolean;
   };
+  selectedItems?: TableItem[];
 }>()
 
 const actionConditions = props.actionConditions || {
@@ -118,14 +137,83 @@ const actionConditions = props.actionConditions || {
   markFailed: () => true
 };
 
-defineEmits<{
+const emit = defineEmits<{
   <T = any>(event: 'view', item: T): void;
   <T = any>(event: 'delete', item: T): void;
   <T = any>(event: 'block', item: T): void;
   <T = any>(event: 'edit', item: T): void;
   <T = any>(event: 'markPaid', item: T): void;
-  <T = any>(event: 'markFailed', item: T): void;
+  (event: 'update:selectedItems', items: TableItem[]): void;
 }>()
+
+const localSelectedItems = computed({
+  get: () => props.selectedItems || [],
+  set: (newValue: TableItem[]) => {
+    // console.log('Emitting update:selectedItems with:', newValue);
+    emit('update:selectedItems', newValue);
+  }
+});
+
+watch(() => props.selectedItems, (newSelection) => {
+  return newSelection
+  // console.log('Parent updated selectedItems:', newSelection);
+}, { deep: true });
+
+const isItemSelected = (item: TableItem): boolean => {
+  if (item.id === undefined) {
+    // console.warn('Item missing id:', item);
+    return false;
+  }
+  return localSelectedItems.value.some(selected => selected.id === item.id);
+};
+
+const toggleSelectItem = (item: TableItem) => {
+  if (item.id === undefined) return;
+  const currentSelection = [...localSelectedItems.value];
+  const index = currentSelection.findIndex(selected => selected.id === item.id);
+  if (index > -1) {
+    currentSelection.splice(index, 1);
+    // console.log(`Deselected item ${item.id}`);
+  } else {
+    currentSelection.push(item);
+    // console.log(`Selected item ${item.id}`);
+  }
+  localSelectedItems.value = currentSelection;
+};
+
+const areAllPageItemsSelectableAndSelected = computed(() => {
+  if (!props.items || props.items.length === 0) return false;
+  const selectablePageItems = props.items.filter(item => item.id !== undefined);
+  if (selectablePageItems.length === 0) return false;
+  return selectablePageItems.every(item => isItemSelected(item));
+});
+
+const isAnyPageItemSelected = computed(() => {
+  if (!props.items || props.items.length === 0) return false;
+  return props.items.some(item => item.id !== undefined && isItemSelected(item));
+});
+
+const isHeaderCheckboxIndeterminate = computed(() => {
+  return isAnyPageItemSelected.value && !areAllPageItemsSelectableAndSelected.value;
+});
+
+const toggleSelectAllOnPage = (event: Event) => {
+  const checkbox = event.target as HTMLInputElement;
+  let currentFullSelection = [...localSelectedItems.value];
+  const pageItemIds = new Set(props.items.map(i => i.id).filter(id => id !== undefined));
+  if (checkbox.checked) {
+    props.items.forEach(pageItem => {
+      if (pageItem.id !== undefined && !currentFullSelection.some(selected => selected.id === pageItem.id)) {
+        currentFullSelection.push(pageItem);
+      }
+    });
+    // console.log('Selected all items on page:', currentFullSelection);
+  } else {
+    currentFullSelection = currentFullSelection.filter(selectedItem => !pageItemIds.has(selectedItem.id));
+    // console.log('Deselected all items on page:', currentFullSelection);
+  }
+  localSelectedItems.value = currentFullSelection;
+};
 
 const statusClasses: Record<StatusType, string> = {
   pending: 'text-yellow-600 bg-yellow-100 hover:bg-yellow-200',

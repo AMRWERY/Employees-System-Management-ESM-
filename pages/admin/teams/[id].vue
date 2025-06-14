@@ -31,7 +31,8 @@
       <template v-if="teamsStore.paginatedMembers.length > 0">
         <!-- dynamic-table component -->
         <dynamic-table :items="teamsStore.paginatedMembers" :columns="tableColumns" :has-view="true"
-          @view="viewEmployeeDetails" />
+          @view="viewEmployeeDetails" v-model:selectedItems="selectedItems"
+          @update:selectedItems="handleSelectedItemsUpdate" />
 
         <!-- pagination component -->
         <pagination v-if="teamsStore.totalMemberPages > 1" :current-page="teamsStore.currentMemberPage"
@@ -49,7 +50,7 @@
 <script lang="ts" setup>
 import type { TableHeader } from '@/types/table-header'
 import type { Member } from '@/types/teams'
-import type { Column } from '@/types/tables'
+import type { Column, TableItem } from '@/types/tables'
 
 const { t } = useI18n()
 const route = useRoute()
@@ -251,6 +252,13 @@ const viewEmployeeDetails = (member: Member) => {
 //     // Error handling
 //   }
 // };
+
+const selectedItems = ref<TableItem[]>([]);
+
+const handleSelectedItemsUpdate = (items: TableItem[]) => {
+  // console.log('Selected items updated:', items);
+  selectedItems.value = items;
+};
 
 useHead({
   titleTemplate: () => t('head.admin_teams_id'),

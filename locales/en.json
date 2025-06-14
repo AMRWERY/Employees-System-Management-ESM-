@@ -81,7 +81,10 @@
     "mark_as_failed_title": "Payroll as Failed reason",
     "payroll_history": "Payroll history",
     "details": "Details",
-    "employee_details": "Employee details"
+    "employee_details": "Employee details",
+    "overtime_hours": "Overtime hours",
+    "overtime_rate":"Overtime rate",
+    "creation_date": "Creation Date"
   },
   "btn": {
     "go_back_home": "Go back Home",
@@ -382,6 +385,14 @@
     "october": "October",
     "november": "November",
     "december": "December"
+  },
+  "units": {
+    "hour": "hour",
+    "hours": "hours",
+    "minute": "minute",
+    "minutes": "minutes",
+    "second": "second",
+    "seconds": "seconds"
   },
   "teams": {
     "accounting": "Accounting",
