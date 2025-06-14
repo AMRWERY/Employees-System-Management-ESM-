@@ -252,7 +252,7 @@ const cancelFailureReason = () => {
 };
 
 const handleSavePayroll = async (payrollInput: PayrollInputData | Payroll) => {
-  showPayrollDialog.value = false; // Close dialog optimistic
+  showPayrollDialog.value = false;
   const actionToTake = isEditingPayroll.value && selectedPayrollForForm.value?.id
     ? payrollStore.updatePayroll(selectedPayrollForForm.value.id, payrollInput as Partial<PayrollInputData>)
     : payrollStore.addPayroll(payrollInput as PayrollInputData);
