@@ -34,7 +34,8 @@
 
       <!-- dynamic-table component -->
       <dynamic-table v-else :items="filteredRequests" :columns="tableColumns" :has-view="true"
-        @view="(item: LeaveRequest) => openDetailsModal(item)" />
+        @view="(item: LeaveRequest) => openDetailsModal(item)" v-model:selectedItems="selectedItems"
+        @update:selectedItems="handleSelectedItemsUpdate" />
     </div>
   </div>
 </template>
@@ -42,7 +43,7 @@
 <script lang="ts" setup>
 import type { TableHeader } from '@/types/table-header'
 import type { LeaveRequest } from '@/types/leaveRequest'
-import type { Column } from '@/types/tables'
+import type { Column, TableItem } from '@/types/tables'
 import type { Tab } from '@/types/tabs'
 
 const { t } = useI18n()
@@ -155,6 +156,13 @@ const skeletonHeaders = ref<TableHeader[]>([
   { type: 'text', loaderWidth: 'w-32' }, // Status
   { type: 'action', loaderWidth: 'w-32' }, // Actions
 ])
+
+const selectedItems = ref<TableItem[]>([]);
+
+const handleSelectedItemsUpdate = (items: TableItem[]) => {
+  // console.log('Selected items updated:', items);
+  selectedItems.value = items;
+};
 
 useHead({
   titleTemplate: () => t('head.my_leave_requests'),

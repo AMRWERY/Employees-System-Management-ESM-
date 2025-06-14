@@ -91,10 +91,11 @@
 
         <div v-else class="overflow-x-auto">
           <!-- table-skeleton-loader componenet -->
-          <table-skeleton-loader :headers="skeletonHeaders" :rows="5" v-if="isLoading || refreshingData" />
+          <table-skeleton-loader :headers="skeletonHeaders" :rows="8" v-if="isLoading || refreshingData" />
 
           <!-- dynamic-table componenet -->
-          <dynamic-table :items="employee.payrolls" :columns="tableColumns" v-else />
+          <dynamic-table :items="employee.payrolls" :columns="tableColumns" v-model:selectedItems="selectedItems"
+            @update:selectedItems="handleSelectedItemsUpdate" v-else />
         </div>
       </div>
     </div>
@@ -105,7 +106,7 @@
 import { PayrollAllStatus } from '@/types/payroll';
 import type { Payroll } from '@/types/payroll'
 import type { TableHeader } from '@/types/table-header';
-import type { Column } from '@/types/tables';
+import type { Column, TableItem } from '@/types/tables';
 
 const { t, n } = useI18n();
 const route = useRoute();
@@ -166,7 +167,7 @@ watch(() => route.params.recordId, async (newId, oldId) => {
 }, { immediate: false });
 
 const getPayrollStatusClass = (status: PayrollAllStatus | undefined): string => {
-  if (!status) return 'bg-gray-100 text-gray-800'; // Default for undefined or null
+  if (!status) return 'bg-gray-100 text-gray-800';
   switch (status.toLowerCase()) {
     case PayrollAllStatus.Pending:
       return 'bg-yellow-100 text-yellow-800';
@@ -175,17 +176,17 @@ const getPayrollStatusClass = (status: PayrollAllStatus | undefined): string => 
     case PayrollAllStatus.Failed:
       return 'bg-red-100 text-red-800';
     default:
-      return 'bg-gray-100 text-gray-800'; // Fallback for unexpected status
+      return 'bg-gray-100 text-gray-800';
   }
 };
 
 const getTeamName = (teamId?: string | null): string => {
-  if (!teamId) return t('dashboard.not_assigned', 'N/A');
-  return getTeamNameFromComposable(teamId); // Use the imported composable
+  if (!teamId) return t('dashboard.not_assigned');
+  return getTeamNameFromComposable(teamId);
 };
 
 const getManagerName = (managerId?: string | null): string => {
-  if (!managerId) return t('dashboard.not_assigned', 'N/A');
+  if (!managerId) return t('dashboard.not_assigned');
   const manager = managerStore.managers.find(m => m.id === managerId);
   return manager ? `${manager.firstName || ''} ${manager.lastName || ''}`.trim() : t('dashboard.not_assigned');
 };
@@ -204,17 +205,43 @@ const tableColumns = computed((): Column<Payroll>[] => [
   {
     key: 'index',
     label: '#',
-    format: (_row: Payroll, indexOnPage?: number) => String((indexOnPage ?? 0) + 1), // Simple index
+    format: (_row: Payroll, indexOnPage?: number) => String((indexOnPage ?? 0) + 1),
   },
   {
     key: 'pay_period',
     label: t('dashboard.pay_period'),
-    format: (p: Payroll) => p.pay_period || t('common.na', 'N/A'),
+    format: (p: Payroll) => p.pay_period || '-',
   },
   {
     key: 'netSalary',
     label: t('dashboard.net_salary'),
-    format: (p: Payroll) => formatCurrency(p.netSalary) || t('common.na', 'N/A'),
+    format: (p: Payroll) => formatCurrency(p.netSalary) || '-',
+  },
+  {
+    key: 'base_salary',
+    label: t('dashboard.base_salary',),
+    format: (p: Payroll) => formatCurrency(p.base_salary) || '-',
+  },
+  {
+    key: 'overtime_hours',
+    label: t('dashboard.overtime_hours'),
+    format: (p: Payroll) => {
+      if (typeof p.overtime_hours === 'number') {
+        const hoursLabel = p.overtime_hours === 1 ? t('units.hour', 'hour') : t('units.hours', 'hours');
+        return `${p.overtime_hours} ${hoursLabel}`;
+      }
+      return '-';
+    },
+  },
+  {
+    key: 'overtime_rate',
+    label: t('dashboard.overtime_rate'),
+    format: (p: Payroll) => {
+      if (typeof p.overtime_rate === 'number') {
+        return n(p.overtime_rate / 100, 'percent');
+      }
+      return '-';
+    },
   },
   {
     key: 'status',
@@ -223,21 +250,23 @@ const tableColumns = computed((): Column<Payroll>[] => [
     class: (p: Payroll) => ['px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full', getPayrollStatusClass(p.status)],
   },
   {
-    key: 'paidOn',
-    label: t('dashboard.paid_on'),
+    key: 'created_at',
+    label: t('dashboard.creation_date'),
     format: (p: Payroll) => {
-      // console.log('paidOn type:', typeof p.paidOn, 'value:', p.paidOn);
-      return p.paidOn ? formatDate(p.paidOn) : t('common.na', 'N/A');
+      return p.created_at ? formatDate(p.created_at.toDate()) : '-';
     },
   },
 ]);
 
 const skeletonHeaders = ref<TableHeader[]>([
-  { type: 'text', loaderWidth: 'w-10' }, // Index
-  { type: 'text', loaderWidth: 'w-32' }, // Pay Period
-  { type: 'text', loaderWidth: 'w-32' }, // Net Salary
-  { type: 'text', loaderWidth: 'w-32' }, // Status
-  { type: 'text', loaderWidth: 'w-32' }, // Paid On
+  { type: 'text', loaderWidth: 'w-10' },  // Index
+  { type: 'text', loaderWidth: 'w-24' },  // Pay Period
+  { type: 'text', loaderWidth: 'w-28' },  // Net Salary
+  { type: 'text', loaderWidth: 'w-28' },  // Base Salary
+  { type: 'text', loaderWidth: 'w-24' },  // Overtime Hours
+  { type: 'text', loaderWidth: 'w-24' },  // Overtime Rate
+  { type: 'text', loaderWidth: 'w-24' },  // Status
+  { type: 'text', loaderWidth: 'w-28' },  // Creation Date
 ]);
 
 const reloadData = async () => {
@@ -273,6 +302,13 @@ const fetchPayrollsOnly = async () => {
       throw error;
     }
   }
+};
+
+const selectedItems = ref<TableItem[]>([]);
+
+const handleSelectedItemsUpdate = (items: TableItem[]) => {
+  // console.log('Selected items updated:', items);
+  selectedItems.value = items;
 };
 
 useHead({
