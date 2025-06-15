@@ -1,6 +1,9 @@
 <template>
   <div>
-    <div class="max-w-3xl mx-auto p-4 border border-gray-200 rounded-lg shadow mt-7" v-if="employee">
+    <!-- employee-profile-skeleton-loader component -->
+    <employee-profile-skeleton-loader v-if="isLoading || !minLoadingDone" />
+
+    <div class="max-w-3xl mx-auto p-4 border border-gray-200 rounded-lg shadow mt-7" v-else-if="employee">
       <div class="flex justify-center">
         <div class="relative w-36 h-36">
           <span class="sr-only">user photo</span>
@@ -17,7 +20,7 @@
           <p class="text-gray-700 mt-1 font-semibold text-lg">{{ employee.position }}</p>
         </div>
 
-        <div class="space-y-6 mt-7 border-t pt-4">
+        <div class="space-y-6 mt-4 border-t pt-4">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <p class="text-sm text-gray-500">{{ t('dashboard.employee_id') }}</p>
@@ -93,14 +96,19 @@
             :placeholder="t('dashboard.filter_by_status')" />
         </div>
 
-        <div v-if="!employee.payrolls || employee.payrolls.length === 0 || employee.payrolls.every(p => !p.id)">
-          <!-- no-data-message componenet -->
-          <no-data-message :message="t('no_data.no_payroll_history_found')" icon="heroicons-solid:document-text" />
-        </div>
-
-        <div v-else class="overflow-x-auto">
+        <div class="overflow-x-auto">
           <!-- table-skeleton-loader componenet -->
           <table-skeleton-loader :headers="skeletonHeaders" :rows="8" v-if="isLoading || refreshingData" />
+
+          <div v-else-if="isFiltering" class="flex justify-center items-center h-full min-h-[250px]">
+            <!-- loading-spinner component -->
+            <loading-spinner size="xl" color="text-blue-500" />
+          </div>
+
+          <div v-else-if="!filteredPayrolls.length">
+            <!-- no-data-message componenet -->
+            <no-data-message :message="t('no_data.no_payroll_history_found')" icon="heroicons-solid:document-text" />
+          </div>
 
           <!-- dynamic-table componenet -->
           <dynamic-table :items="filteredPayrolls" :columns="tableColumns" v-model:selectedItems="selectedItems"
@@ -129,6 +137,14 @@ const { triggerToast } = useToast();
 const isLoading = ref(false);
 const refreshingData = ref(false);
 const selectedStatus = ref(PayrollAllStatus.All);
+const isFiltering = ref(false);
+const minLoadingDone = ref(false);
+
+onMounted(() => {
+  setTimeout(() => {
+    minLoadingDone.value = true;
+  }, 1000);
+});
 
 const statusOptions = computed<SelectOption[]>(() => [
   { value: PayrollAllStatus.All, label: t('status.all') },
@@ -164,11 +180,12 @@ const fetchDetails = async () => {
   if (employeeIdFromRoute.value) {
     try {
       isLoading.value = true;
+      minLoadingDone.value = false;
       employeesStore.selectedEmployeeDetails = null;
       await employeesStore.fetchEmployeeWithPayrolls(employeeIdFromRoute.value);
       // console.log('Fetched payrolls:', employee.value?.payrolls);
     } catch (error) {
-      console.error('Failed to fetch employee details:', error);
+      // console.error('Failed to fetch employee details:', error);
     } finally {
       isLoading.value = false;
     }
@@ -321,12 +338,15 @@ const fetchPayrollsOnly = async () => {
   if (employee.value) {
     const payrollStore = usePayrollStore();
     try {
+      isFiltering.value = true;
       // Use employee's custom ID instead of document ID
       const payrolls = await payrollStore.fetchPayrollsByEmployeeId(employee.value.employeeId);
       employee.value.payrolls = payrolls;
     } catch (error) {
       // console.error('Failed to fetch payrolls:', error);
       throw error;
+    } finally {
+      isFiltering.value = false;
     }
   }
 };
@@ -343,6 +363,15 @@ const fileName = computed(() =>
     ? `${employee.value.firstName} ${employee.value.lastName} - ${t('dashboard.payrolls')}`
     : t('dashboard.employee_payrolls')
 );
+
+watch(selectedStatus, (newValue, oldValue) => {
+  if (newValue !== oldValue) {
+    isFiltering.value = true;
+    setTimeout(() => {
+      isFiltering.value = false;
+    }, 1000);
+  }
+});
 
 useHead({
   title: computed(() =>
