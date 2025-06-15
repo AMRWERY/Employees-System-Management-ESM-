@@ -25,6 +25,10 @@
 
         <!-- download-files-menu component -->
         <download-files-menu :allItems="payrollStore.allPayrolls" :columns="tableColumns" fileNameBase="payrolls" />
+
+        <!-- select-input component -->
+        <select-input v-model="selectedStatus" :options="statusOptions"
+          :placeholder="t('dashboard.filter_by_status')" />
       </div>
 
       <div class="flex flex-col">
@@ -38,24 +42,23 @@
     </div>
 
     <!-- Use store's isLoading for the skeleton -->
-    <div v-if="payrollStore.isLoading && payrollStore.paginatedItems.length === 0 || refreshingData"
-      key="skeleton-loader">
+    <div v-if="payrollStore.isLoading || refreshingData || isFiltering" key="skeleton-loader">
       <!-- table-skeleton-loader componenet -->
-      <table-skeleton-loader :headers="skeletonHeaders" :rows="9" />
+      <table-skeleton-loader :headers="skeletonHeaders" :rows="8" />
     </div>
 
     <div class="mt-8" v-else>
-      <div v-if="!payrollStore.isLoading && payrollStore.paginatedItems.length === 0" class="text-center">
+      <div v-if="!filteredPayrolls.length" class="text-center">
         <!-- no-data-message componenet -->
         <no-data-message :message="t('no_data.no_payroll_records_found')" icon="heroicons-solid:document-text" />
       </div>
       <div v-else>
         <!-- dynamic-table componenet -->
-        <dynamic-table :items="payrollStore.paginatedItems" :columns="tableColumns" :has-edit="true" :has-delete="true"
+        <dynamic-table :items="filteredPayrolls" :columns="tableColumns" :has-edit="true" :has-delete="true"
           :has-view="true" :has-mark-paid="true" :has-mark-failed="true" :action-conditions="payrollActionConditions"
           @edit="editPayroll" @delete="deletePayrollClicked" @markPaid="markPayrollAsPaid"
           @markFailed="markPayrollAsFailed" @view="navigateToEmployeeDetails" v-model:selectedItems="selectedItems"
-            @update:selectedItems="handleSelectedItemsUpdate" />
+          @update:selectedItems="handleSelectedItemsUpdate" />
       </div>
 
       <!-- pagination componenet -->
@@ -75,7 +78,7 @@
 </template>
 
 <script lang="ts" setup>
-import type { Payroll, PayrollInputData, AppTimestamp } from '@/types/payroll';
+import type { Payroll, PayrollInputData, SelectOption, AppTimestamp } from '@/types/payroll';
 import { PayrollAllStatus } from '@/types/payroll';
 import type { TableHeader } from '@/types/table-header';
 import type { Column, TableItem } from '@/types/tables';
@@ -89,15 +92,45 @@ const { getTeamName } = useTeamName();
 const { triggerToast } = useToast();
 const { currentCurrency } = useCurrencyLocale();
 
-const showPayrollDialog = ref(false);
-const isEditingPayroll = ref(false);
 const selectedPayrollForForm = ref<Payroll | null>(null);
 const selectedPayrollForAction = ref<Payroll | null>(null);
-
-const showFailureReasonDialog = ref(false);
-const failureReasonError = ref(''); // For displaying validation errors in the reason dialog
-const isSubmittingFailure = ref(false);
+const selectedStatus = ref(PayrollAllStatus.All);
 const payrollToMarkFailed = ref<Payroll | null>(null);
+
+// const failureReasonError = ref('');
+const showFailureReasonDialog = ref(false);
+const isSubmittingFailure = ref(false);
+const showPayrollDialog = ref(false);
+const isEditingPayroll = ref(false);
+const isFiltering = ref(false);
+
+const statusOptions = computed<SelectOption[]>(() => [
+  { value: PayrollAllStatus.All, label: t('status.all') },
+  { value: PayrollAllStatus.Pending, label: t('status.pending') },
+  { value: PayrollAllStatus.Paid, label: t('status.paid') },
+  { value: PayrollAllStatus.Failed, label: t('status.failed') },
+]);
+
+const filteredPayrolls = computed(() => {
+  let payrolls = [...payrollStore.allPayrolls]; // Create a copy to avoid mutating store data
+  // Apply status filter
+  if (selectedStatus.value !== PayrollAllStatus.All) {
+    payrolls = payrolls.filter(payroll => payroll.status === selectedStatus.value);
+  }
+  // Apply pay period filter
+  if (payrollStore.filterPayPeriod) {
+    payrolls = payrolls.filter(payroll => payroll.pay_period === payrollStore.filterPayPeriod);
+  }
+  // Apply search term filter
+  if (localSearchTerm.value.trim()) {
+    const searchLower = localSearchTerm.value.trim().toLowerCase();
+    payrolls = payrolls.filter(payroll =>
+      payroll.employeeName?.toLowerCase().includes(searchLower) ||
+      payroll.uid?.toLowerCase().includes(searchLower)
+    );
+  }
+  return payrolls;
+});
 
 const deleteDialogProps = ref<Omit<DeleteDialogProps, 'loading'>>({
   show: false, title: '', message: '',
@@ -159,6 +192,8 @@ const skeletonHeaders = ref<TableHeader[]>([
   { type: 'text', loaderWidth: 'w-32' },
   { type: 'text', loaderWidth: 'w-32' },
   { type: 'text', loaderWidth: 'w-32' },
+  { type: 'text', loaderWidth: 'w-32' },
+  // { type: 'text', loaderWidth: 'w-32' },
   { type: 'action', loaderWidth: 'w-48' },
 ]);
 
@@ -372,6 +407,18 @@ const handleSelectedItemsUpdate = (items: TableItem[]) => {
   // console.log('Selected items updated:', items);
   selectedItems.value = items;
 };
+
+const triggerFilteringSpinner = () => {
+  isFiltering.value = true;
+  setTimeout(() => {
+    isFiltering.value = false;
+  }, 500); // 0.5 second delay for spinner
+};
+
+// Watch for changes in filters
+watch([selectedStatus, () => payrollStore.filterPayPeriod, localSearchTerm], () => {
+  triggerFilteringSpinner();
+});
 
 useHead({
   titleTemplate: () => t('head.payroll_management'),

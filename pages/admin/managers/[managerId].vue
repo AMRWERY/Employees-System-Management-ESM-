@@ -1,6 +1,9 @@
 <template>
   <div>
-    <div class="max-w-3xl mx-auto p-4 border border-gray-200 rounded-lg shadow mt-7">
+    <!-- employee-profile-skeleton-loader component -->
+    <employee-profile-skeleton-loader v-if="loading || !minLoadingDone" />
+
+    <div class="max-w-3xl mx-auto p-4 border border-gray-200 rounded-lg shadow mt-7" v-else-if="manager">
       <div class="flex justify-center">
         <div class="relative w-36 h-36">
           <span class="sr-only">user photo</span>
@@ -9,7 +12,7 @@
         </div>
       </div>
 
-      <div v-if="manager">
+      <div>
         <div class="p-2 text-center">
           <h1 class="text-2xl font-bold capitalize text-gray-800">
             {{ manager.firstName }} {{ manager.lastName }}
@@ -86,14 +89,15 @@
 <script lang="ts" setup>
 import type { Manager } from '@/types/managers'
 
-const route = useRoute();
 const { t } = useI18n()
+const route = useRoute();
 const managerStore = useManagerStore();
 const teamStore = useTeamStore();
 const { formatDate } = useDateFormat();
 const { getTeamName } = useTeamName();
 const manager = ref<Manager | null>(null);
 const loading = ref(true);
+const minLoadingDone = ref(false);
 
 const teamName = computed(() => getTeamName(manager.value?.teamId))
 
@@ -104,12 +108,16 @@ const managerId = computed(() => {
 
 onMounted(async () => {
   try {
+    minLoadingDone.value = false;
     if (!managerId.value) return;
     const result = await managerStore.fetchManagerById(managerId.value);
     manager.value = result;
     if (teamStore.teams.length === 0) {
       await teamStore.fetchAll();
     }
+    setTimeout(() => {
+      minLoadingDone.value = true;
+    }, 1000);
   } catch (error) {
     manager.value = null;
   } finally {

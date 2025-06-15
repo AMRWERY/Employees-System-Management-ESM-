@@ -98,12 +98,8 @@
 
         <div class="overflow-x-auto">
           <!-- table-skeleton-loader componenet -->
-          <table-skeleton-loader :headers="skeletonHeaders" :rows="8" v-if="isLoading || refreshingData" />
-
-          <div v-else-if="isFiltering" class="flex justify-center items-center h-full min-h-[250px]">
-            <!-- loading-spinner component -->
-            <loading-spinner size="xl" color="text-blue-500" />
-          </div>
+          <table-skeleton-loader :headers="skeletonHeaders" :rows="8"
+            v-if="isLoading || refreshingData || isFiltering" />
 
           <div v-else-if="!filteredPayrolls.length">
             <!-- no-data-message componenet -->
@@ -139,12 +135,6 @@ const refreshingData = ref(false);
 const selectedStatus = ref(PayrollAllStatus.All);
 const isFiltering = ref(false);
 const minLoadingDone = ref(false);
-
-onMounted(() => {
-  setTimeout(() => {
-    minLoadingDone.value = true;
-  }, 1000);
-});
 
 const statusOptions = computed<SelectOption[]>(() => [
   { value: PayrollAllStatus.All, label: t('status.all') },
@@ -184,6 +174,9 @@ const fetchDetails = async () => {
       employeesStore.selectedEmployeeDetails = null;
       await employeesStore.fetchEmployeeWithPayrolls(employeeIdFromRoute.value);
       // console.log('Fetched payrolls:', employee.value?.payrolls);
+      setTimeout(() => {
+        minLoadingDone.value = true;
+      }, 1000);
     } catch (error) {
       // console.error('Failed to fetch employee details:', error);
     } finally {
@@ -288,17 +281,17 @@ const tableColumns = computed((): Column<Payroll>[] => [
     },
   },
   {
-    key: 'status',
-    label: t('dashboard.status'),
-    format: (p: Payroll) => t(`status.${p.status?.toLowerCase() || 'unknown'}`, p.status || 'Unknown'),
-    class: (p: Payroll) => ['px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full', getPayrollStatusClass(p.status)],
-  },
-  {
     key: 'created_at',
     label: t('dashboard.creation_date'),
     format: (p: Payroll) => {
       return p.created_at ? formatDate(p.created_at.toDate()) : '-';
     },
+  },
+  {
+    key: 'status',
+    label: t('dashboard.status'),
+    format: (p: Payroll) => t(`status.${p.status?.toLowerCase() || 'unknown'}`, p.status || 'Unknown'),
+    class: (p: Payroll) => ['px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full', getPayrollStatusClass(p.status)],
   },
 ]);
 
@@ -309,8 +302,8 @@ const skeletonHeaders = ref<TableHeader[]>([
   { type: 'text', loaderWidth: 'w-28' },  // Base Salary
   { type: 'text', loaderWidth: 'w-24' },  // Overtime Hours
   { type: 'text', loaderWidth: 'w-24' },  // Overtime Rate
-  { type: 'text', loaderWidth: 'w-24' },  // Status
   { type: 'text', loaderWidth: 'w-28' },  // Creation Date
+  { type: 'text', loaderWidth: 'w-24' },  // Status
 ]);
 
 const reloadData = async () => {
