@@ -1,6 +1,9 @@
 <template>
   <div>
-    <div class="max-w-3xl mx-auto p-4 border border-gray-200 rounded-lg shadow mt-7">
+    <!-- employee-profile-skeleton-loader component -->
+    <employee-profile-skeleton-loader v-if="loading || !minLoadingDone" />
+
+    <div class="max-w-3xl mx-auto p-4 border border-gray-200 rounded-lg shadow mt-7" v-else-if="employee">
       <div class="flex justify-center">
         <div class="relative w-36 h-36">
           <span class="sr-only">user photo</span>
@@ -9,7 +12,7 @@
         </div>
       </div>
 
-      <div v-if="employee">
+      <div>
         <div class="p-2 text-center">
           <h1 class="text-2xl font-bold capitalize text-gray-800">
             {{ employee.firstName }} {{ employee.lastName }}
@@ -97,9 +100,11 @@ const { formatDate } = useDateFormat();
 const { computedTeamName } = useTeamName();
 const employee = ref<Member | null>(null);
 const loading = ref(true);
+const minLoadingDone = ref(false);
 
 onMounted(async () => {
   try {
+    minLoadingDone.value = true;
     if (teamsStore.teams.length === 0) {
       teamsStore.fetchAll();
     }
@@ -113,6 +118,9 @@ onMounted(async () => {
     } else {
       employee.value = null;
     }
+    setTimeout(() => {
+      minLoadingDone.value = true;
+    }, 1000);
   } catch (error) {
     employee.value = null;
   } finally {
