@@ -73,7 +73,7 @@
 const { t } = useI18n()
 const { triggerToast } = useToast()
 const { getTeamName } = useTeamName()
-const loading = ref(false)
+const { isLoading: loading, startLoading } = useLoading(3000)
 
 const props = defineProps({
   modelValue: {
@@ -104,7 +104,7 @@ const formValues = reactive({
 
 const handleSubmit = async () => {
   try {
-    loading.value = true
+    startLoading()
     await managerStore.createManager({
       firstName: formValues.firstName,
       lastName: formValues.lastName,

@@ -33,10 +33,11 @@
 <script lang="ts" setup>
 const { t } = useI18n()
 const email = ref('');
-const loading = ref(false);
+const { isLoading: loading, startLoading } = useLoading(3000)
 
 const handleResetPassword = () => {
   console.log('reset password')
+  startLoading()
 }
 
 definePageMeta({

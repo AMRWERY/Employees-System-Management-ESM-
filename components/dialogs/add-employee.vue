@@ -88,7 +88,7 @@ const managerssStore = useManagerStore();
 const selectedTeam = ref('')
 const selectedManager = ref('')
 const { triggerToast } = useToast()
-const loading = ref(false)
+const { isLoading: loading, startLoading } = useLoading(3000)
 
 const props = defineProps({
   modelValue: {
@@ -133,7 +133,7 @@ const formValues = reactive({
 
 const handleSubmit = async () => {
   try {
-    loading.value = true
+    startLoading()
     // console.log('Selected Team:', selectedTeam.value);
     await employeesStore.createEmployee({
       firstName: formValues.firstName,

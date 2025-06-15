@@ -100,9 +100,9 @@ const firstName = ref('');
 const lastName = ref('');
 const email = ref('');
 const password = ref('');
-const loading = ref(false);
 const errorMessage = ref('');
 const { triggerToast } = useToast();
+const { isLoading: loading, startLoading } = useLoading(3000)
 
 const { value: termsAccepted, errorMessage: termsError } = useField<boolean>(
   'terms',
@@ -117,7 +117,7 @@ const handleSignup = async () => {
     errorMessage.value = t('toast.all_fields_are_required')
     return
   }
-  loading.value = true;
+  startLoading()
   try {
     await authStore.registerUser(
       email.value,

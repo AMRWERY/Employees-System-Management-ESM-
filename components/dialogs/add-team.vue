@@ -46,6 +46,7 @@
 const { t } = useI18n()
 const teamStore = useTeamStore();
 const { triggerToast } = useToast()
+const { isLoading: isSaving, startLoading } = useLoading(3000)
 
 defineProps({
   modelValue: {
@@ -55,8 +56,6 @@ defineProps({
 });
 
 const emit = defineEmits(['update:modelValue', 'save']);
-
-const isSaving = ref(false);
 
 const newTeam = ref({
   name: '',
@@ -72,7 +71,7 @@ const resetForm = () => {
 
 const handleSave = async () => {
   try {
-    isSaving.value = true;
+    startLoading()
     const startTime = Date.now();
     await teamStore.createTeam({
       name: newTeam.value.name,

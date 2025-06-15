@@ -103,6 +103,7 @@
           </div>
 
           <div class="border-t border-gray-300 pt-3 flex justify-end gap-4">
+            <!-- base-button component -->
             <base-button :default-icon="false" type="submit" :loading="loading" @click="handleSubmit">
               <!-- Using VeeValidate, submit is handled by Form component, button type="button" -->
               <icon name="svg-spinners:90-ring-with-bg" v-if="loading" />
@@ -123,7 +124,7 @@ const { t } = useI18n();
 const { triggerToast } = useToast();
 const { getTeamName } = useTeamName()
 const teamsStore = useTeamStore()
-const loading = ref(false);
+const { isLoading: loading, startLoading } = useLoading(3000)
 
 const props = defineProps({
   modelValue: {
@@ -255,7 +256,7 @@ const handleEmployeeSelected = (selectedEmployee: Employee | undefined) => {
 };
 
 const handleSubmit = async () => {
-  loading.value = true;
+  startLoading()
   try {
     // Emit only the PayrollInputData
     const dataToSave: PayrollInputData = {

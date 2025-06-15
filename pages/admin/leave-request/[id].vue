@@ -91,7 +91,8 @@
         </div>
 
         <div class="!mt-7 flex items-center gap-4 justify-end">
-          <button type="button" @click="handleAccept" v-if="hasPermission('leave-management', 'approve')"
+          <button type="button" @click="handleAccept"
+            v-if="hasPermission('leave-management', 'approve') && leaveRequest?.status !== 'approved' && leaveRequest?.status !== 'rejected'"
             :disabled="isAcceptLoading"
             class="px-3.5 py-2 cursor-pointer rounded-lg flex items-center justify-center text-white text-sm font-medium border-none outline-none bg-blue-600 hover:bg-blue-700 active:bg-blue-600">
             <icon name="svg-spinners:90-ring-with-bg" v-if="isAcceptLoading" />
@@ -100,7 +101,8 @@
               <icon name="material-symbols:check-small-rounded" class="ms-2" />
             </span>
           </button>
-          <button type="button" @click="handleReject" v-if="hasPermission('leave-management', 'cancel')"
+          <button type="button" @click="handleReject"
+            v-if="hasPermission('leave-management', 'cancel') && leaveRequest?.status !== 'approved' && leaveRequest?.status !== 'rejected'"
             :disabled="isRejectLoading"
             class="px-3.5 py-2 cursor-pointer rounded-lg flex items-center justify-center text-white text-sm font-medium border-none outline-none bg-red-600 hover:bg-red-700 active:bg-red-600">
             <icon name="svg-spinners:90-ring-with-bg" v-if="isRejectLoading" />
@@ -118,11 +120,15 @@
 <script lang="ts" setup>
 import type { LeaveRequest } from '@/types/leaveRequest'
 
+const { t } = useI18n()
 const route = useRoute()
 const leaveStore = useLeaveRequestsStore()
-const { triggerToast } = useToast()
-
 const leaveRequest = ref<LeaveRequest | null>(null)
+const { triggerToast } = useToast()
+const { formatDate } = useDateFormat();
+const { hasPermission } = usePermissions()
+const { isLoading: isAcceptLoading, startLoading: startAcceptLoading } = useLoading(3000)
+const { isLoading: isRejectLoading, startLoading: startRejectLoading } = useLoading(3000)
 
 onMounted(async () => {
   try {
@@ -147,12 +153,6 @@ const statusClasses = {
   cancelled: 'text-gray-600 bg-gray-100 hover:bg-gray-200'
 }
 
-const { formatDate } = useDateFormat();
-
-const { hasPermission } = usePermissions()
-
-const { t } = useI18n()
-
 const showRejectReason = ref(false)
 const rejectionReason = ref('')
 const rejectionError = ref(false)
@@ -163,12 +163,9 @@ const cancelRejection = () => {
   rejectionError.value = false
 }
 
-const isAcceptLoading = ref(false);
-const isRejectLoading = ref(false);
-
 const handleAccept = async () => {
   try {
-    isAcceptLoading.value = true;
+    startAcceptLoading()
     await new Promise((resolve) => setTimeout(resolve, 3000));
     await leaveStore.approveRequest(route.params.id as string);
     leaveRequest.value!.status = 'approved';
@@ -195,6 +192,7 @@ const confirmRejection = () => {
     return;
   }
   showRejectReason.value = false;
+  handleReject()
 };
 
 const handleReject = async () => {
@@ -203,7 +201,7 @@ const handleReject = async () => {
     return;
   }
   try {
-    isRejectLoading.value = true;
+    startRejectLoading()
     await new Promise((resolve) => setTimeout(resolve, 3000));
     const requestId = route.params.id as string;
     await leaveStore.rejectRequest(requestId, rejectionReason.value);

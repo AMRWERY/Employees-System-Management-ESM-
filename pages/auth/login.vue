@@ -69,16 +69,16 @@ const { t } = useI18n()
 const authStore = useAuthStore()
 const email = ref('');
 const password = ref('');
-const loading = ref(false);
 const errorMessage = ref('');
 const { triggerToast } = useToast();
+const { isLoading: loading, startLoading } = useLoading(3000)
 
 const handleLogin = async () => {
   if (!email.value || !password.value) {
     errorMessage.value = t('toast.all_fields_are_required')
     return
   }
-  loading.value = true;
+  startLoading()
   try {
     await authStore.loginUser(email.value, password.value);
     triggerToast({
