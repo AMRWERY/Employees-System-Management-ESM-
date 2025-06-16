@@ -24,8 +24,8 @@
 </template>
 
 <script lang="ts" setup>
-const route = useRoute();
 const { t } = useI18n();
+const route = useRoute();
 
 const breadcrumbLabel = computed(() => {
   if (route.meta?.breadcrumb) {

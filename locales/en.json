@@ -325,7 +325,8 @@
     "download_error": "Download error",
     "marked_as_failed_successfully": "Marked as failed successfully",
     "failed_to_mark_failed": "Failed to mark failed",
-    "could_not_find_full_details_for_employee": "Could not find full details for employee"
+    "could_not_find_full_details_for_employee": "Could not find full details for employee",
+    "failed_to_send_reset_email": "Failed to send reset email"
   },
   "status": {
     "all": "All",

@@ -12,7 +12,7 @@
               <div class="grid gap-y-4">
                 <div>
                   <dynamic-inputs :label="t('form.email')" :placeholder="t('form.enter_your_email')" type="email"
-                    name="email" :rules="'required|email'" :required="true" v-model="email" />
+                    :name="t('form.email')" :rules="'required|email'" :required="true" v-model="email" />
                 </div>
 
                 <!-- base-button component -->
@@ -32,13 +32,39 @@
 
 <script lang="ts" setup>
 const { t } = useI18n()
+const authStore = useAuthStore();
+const { triggerToast } = useToast();
 const email = ref('');
 const { isLoading: loading, startLoading } = useLoading(3000)
+const success = ref(false);
 
-const handleResetPassword = () => {
-  console.log('reset password')
-  startLoading()
-}
+const handleResetPassword = async () => {
+  if (!email.value) return
+  try {
+    startLoading()
+    const message = await authStore.resetPassword(email.value);
+    success.value = true;
+    triggerToast({
+      message,
+      type: 'success',
+      icon: 'mdi:check-circle',
+    });
+    setTimeout(() => {
+      navigateTo('/auth/login')
+    }, 3000)
+    resetForm()
+  } catch (error) {
+    triggerToast({
+      message: t('toast.failed_to_send_reset_email'),
+      type: 'error',
+      icon: 'material-symbols:error-outline-rounded',
+    });
+  }
+};
+
+const resetForm = () => {
+  email.value = '';
+};
 
 definePageMeta({
   layout: 'auth'

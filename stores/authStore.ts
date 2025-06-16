@@ -20,6 +20,7 @@ import {
   where,
   getDocs,
   serverTimestamp,
+  // deleteDoc,
 } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import type { UserData } from "@/types/auth";
@@ -32,7 +33,7 @@ export const useAuthStore = defineStore("auth", {
     isOverlayVisible: false,
     loading: false,
     welcomeType: null as "signup" | "login" | null,
-    // showWelcomeToast: false
+    // showWelcomeToast: false,
   }),
 
   actions: {
@@ -84,6 +85,7 @@ export const useAuthStore = defineStore("auth", {
         : errorMessage;
       this.loading = false;
       this.isOverlayVisible = false;
+      console.error(`Error: ${this.error}`, error); // Log for debugging
       return this.error;
     },
 
@@ -144,40 +146,6 @@ export const useAuthStore = defineStore("auth", {
         createdAt: serverTimestamp(),
       });
     },
-
-    // async init() {
-    //   try {
-    //     this.loading = true;
-    //     await setPersistence(auth, browserSessionPersistence);
-    //     // Use auth state observer instead of currentUser
-    //     return new Promise<void>((resolve) => {
-    //       const unsubscribe = auth.onAuthStateChanged(async (user) => {
-    //         unsubscribe();
-    //         if (user) {
-    //           await this.fetchUserData(user.uid);
-    //           sessionStorage.setItem(
-    //             "user",
-    //             JSON.stringify({
-    //               uid: user.uid,
-    //               email: user.email,
-    //               firstName: this.user?.firstName,
-    //               lastName: this.user?.lastName,
-    //               role: this.role,
-    //               roledId: this.user?.roledId,
-    //               permissions: this.user?.permissions,
-    //               employeeId: this.user?.employeeId,
-    //             })
-    //           );
-    //         }
-    //         resolve();
-    //       });
-    //     });
-    //   } catch (error) {
-    //     this.handleError(error, "Failed to initialize authentication");
-    //   } finally {
-    //     this.loading = false;
-    //   }
-    // },
 
     async fetchUserData(uid: string) {
       try {
@@ -424,15 +392,17 @@ export const useAuthStore = defineStore("auth", {
     },
 
     async resetPassword(email: string) {
+      email = email.toLowerCase();
       this.loading = true;
       try {
         await sendPasswordResetEmail(auth, email);
         this.error = null;
-        this.loading = false;
-        return "Password reset email sent successfully!";
+        return "Password reset email sent successfully! Please check your email to reset your password.";
       } catch (error) {
         this.handleError(error, "Failed to send password reset email");
         throw error;
+      } finally {
+        this.loading = false;
       }
     },
 

@@ -325,7 +325,8 @@
     "download_error": "فشل تحميل الملف",
     "marked_as_failed_successfully": "تم وضع علامة على الفشل بنجاح",
     "failed_to_mark_failed": "فشل في وضع علامة فشل",
-    "could_not_find_full_details_for_employee": "لم نتمكن من العثور على تفاصيل كاملة للموظف"
+    "could_not_find_full_details_for_employee": "لم نتمكن من العثور على تفاصيل كاملة للموظف",
+    "failed_to_send_reset_email": "فشل في إرسال بريد إلكتروني لإعادة التعيين"
   },
   "status": {
     "all": "الكل",
