@@ -151,6 +151,7 @@ export const usePayrollStore = defineStore("payroll", {
           overtime_rate: data.overtime_rate || 0,
           bonuses: data.bonuses || 0,
           deductions: data.deductions || 0,
+          deductions_reason: data.deductions_reason || null,
           tax_percent: data.tax_percent || 0,
           netSalary: data.netSalary || 0,
           status: data.status || PayrollAllStatus.Pending,
@@ -224,6 +225,7 @@ export const usePayrollStore = defineStore("payroll", {
           overtime_rate: payrollData.overtime_rate,
           bonuses: payrollData.bonuses,
           deductions: payrollData.deductions,
+          deductions_reason: payrollData.deductions_reason || null,
           tax_percent: payrollData.tax_percent,
           created_by: payrollData.created_by,
           netSalary,
@@ -351,6 +353,7 @@ export const usePayrollStore = defineStore("payroll", {
               "overtime_rate",
               "bonuses",
               "deductions",
+              "deductions_reason",
               "tax_percent",
             ].includes(k)
           )
@@ -451,7 +454,6 @@ export const usePayrollStore = defineStore("payroll", {
           failureReason: null, // Clear any previous failure reason
         };
         await updateDoc(payrollRef, updatedPayrollFields);
-
         // 2. Update the embedded summary in the employee's document
         if (currentPayrollData.uid) {
           // currentPayrollData.uid is the "ems-XXXX" employeeId

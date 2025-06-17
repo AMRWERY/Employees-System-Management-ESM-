@@ -27,8 +27,8 @@
 
                 <div class="sm:col-span-1">
                   <dynamic-inputs :label="t('form.employee_name')" :placeholder="t('form.enter_employee_name')"
-                    type="text" name="name" rules="required|alpha_spaces" :required="true" :disabled="isEditing"
-                    v-model="formValues.employeeName" />
+                    type="text" :name="t('form.employee_name')" rules="required|alpha_spaces" :required="true"
+                    :disabled="isEditing" v-model="formValues.employeeName" />
                 </div>
 
                 <div class="sm:col-span-1">
@@ -38,7 +38,6 @@
                     <option value="" disabled>{{ t('form.select_department') }}</option>
                     <option v-for="team in availableTeamsForDropdown" :key="team.id" :value="team.id">
                       {{ team.displayName }}
-                      <!-- {{ team.name }} -->
                     </option>
                   </select>
                 </div>
@@ -84,19 +83,25 @@
                 </div>
 
                 <div class="sm:col-span-1">
-                  <dynamic-inputs :label="t('form.deductions')" :placeholder="t('form.enter_amount')" type="number"
-                    :name="t('form.deductions')" rules="required|min_value:0" v-model="formValues.deductions" />
-                </div>
-
-                <div class="sm:col-span-1">
                   <dynamic-inputs :label="t('form.tax_percent')" :placeholder="t('form.enter_percentage')" type="number"
                     :name="t('form.tax_percent')" rules="required|min_value:0|max_value:100"
                     v-model="formValues.tax_percent" />
                 </div>
 
+                <div class="sm:col-span-1">
+                  <dynamic-inputs :label="t('form.deductions')" :placeholder="t('form.enter_amount')" type="number"
+                    :name="t('form.deductions')" rules="required|min_value:0" v-model="formValues.deductions" />
+                </div>
+
+                <div class="col-span-full" v-if="formValues.deductions">
+                  <dynamic-inputs :label="t('form.deductions_reason')"
+                    :placeholder="t('form.enter_deductions_reason_here')" type="textarea" :required="true"
+                    :name="t('form.deductions_reason')" rules="required" v-model="formValues.deductions_reason" />
+                </div>
+
                 <div class="col-span-full">
                   <dynamic-inputs :label="t('form.notes')" :placeholder="t('form.enter_your_notes')" type="textarea"
-                    name="notes" v-model="formValues.notes" />
+                    :name="t('form.notes')" v-model="formValues.notes" />
                 </div>
               </div>
             </ClientOnly>
@@ -105,7 +110,6 @@
           <div class="border-t border-gray-300 pt-3 flex justify-end gap-4">
             <!-- base-button component -->
             <base-button :default-icon="false" type="submit" :loading="loading" @click="handleSubmit">
-              <!-- Using VeeValidate, submit is handled by Form component, button type="button" -->
               <icon name="svg-spinners:90-ring-with-bg" v-if="loading" />
               <span v-else>{{ isEditing ? t('btn.save_changes') : t('btn.add_record') }}</span>
             </base-button>
@@ -173,6 +177,7 @@ function getInitialFormValues(): PayrollInputData {
     overtime_rate: 0,
     bonuses: 0,
     deductions: 0,
+    deductions_reason: '',
     tax_percent: 0,
     created_by: currentUserRole.value,
     notes: '',
@@ -199,6 +204,7 @@ watch(() => props.modelValue, (newVal) => {
       formValues.overtime_rate = props.payrollData.overtime_rate;
       formValues.bonuses = props.payrollData.bonuses;
       formValues.deductions = props.payrollData.deductions;
+      formValues.deductions_reason = props.payrollData.deductions_reason;
       formValues.tax_percent = props.payrollData.tax_percent;
       formValues.created_by = props.payrollData.created_by;
       formValues.notes = props.payrollData.notes || '';
@@ -271,6 +277,7 @@ const handleSubmit = async () => {
       overtime_rate: formValues.overtime_rate,
       bonuses: formValues.bonuses,
       deductions: formValues.deductions,
+      deductions_reason: formValues.deductions_reason,
       tax_percent: formValues.tax_percent,
       created_by: formValues.created_by,
       notes: formValues.notes,
