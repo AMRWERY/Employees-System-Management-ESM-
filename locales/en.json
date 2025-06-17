@@ -83,11 +83,12 @@
     "details": "Details",
     "employee_details": "Employee details",
     "overtime_hours": "Overtime hours",
-    "overtime_rate":"Overtime rate",
+    "overtime_rate": "Overtime rate",
     "creation_date": "Creation Date",
     "payrolls": "Payrolls history",
     "employee_payrolls": "Employee payrolls history",
-    "filter_by_status": "Filter by Status"
+    "filter_by_status": "Filter by Status",
+    "deductions": "Deductions percentage"
   },
   "btn": {
     "go_back_home": "Go back Home",
@@ -116,7 +117,8 @@
     "add_record": "Add record",
     "save_changes": "Save changes",
     "delete": "Delete",
-    "submit": "Submit"
+    "submit": "Submit",
+    "save_birthdate": "Save birthdate"
   },
   "form": {
     "sign_in": "Sign in",
@@ -235,7 +237,14 @@
     "failure_reason": "Reason for Failure",
     "enter_failure_reason_placeholder": "Enter reason...",
     "deductions_reason": "Deduction reason",
-    "enter_deductions_reason_here": "Enter deductions reason here"
+    "enter_deductions_reason_here": "Enter deductions reason here",
+    "enter_base_salary": "Enter employee base salary",
+    "net_salary":"Net salary",
+    "enter_net_salary": "Enter employee net salary",
+    "middle_name": "Middle name",
+    "enter_middle_name": "Enter middle name",
+    "enter_your_middle_name": "Enter your middle name",
+    "birth_date": "Birthdate"
   },
   "head": {
     "sign_in": "Sign in",
@@ -328,7 +337,9 @@
     "marked_as_failed_successfully": "Marked as failed successfully",
     "failed_to_mark_failed": "Failed to mark failed",
     "could_not_find_full_details_for_employee": "Could not find full details for employee",
-    "failed_to_send_reset_email": "Failed to send reset email"
+    "failed_to_send_reset_email": "Failed to send reset email",
+    "birthdate_updated": "Birthdate updated",
+    "birthdate_update_failed": "Birthdate update failed"
   },
   "status": {
     "all": "All",

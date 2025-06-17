@@ -15,7 +15,6 @@ export interface Payroll {
   employeeName: string;
   department_id: string;
   pay_period: string; // YYYY-MM
-  base_salary: number;
   working_days: number;
   days_present: number;
   overtime_hours: number;
@@ -24,6 +23,7 @@ export interface Payroll {
   deductions: number;
   deductions_reason: string;
   tax_percent: number;
+  base_salary: number;
   netSalary: number; // Calculated
   status: PayrollAllStatus;
   // paidOn: AppTimestamp | null;
@@ -78,6 +78,7 @@ export interface PayrollState {
 export interface PayrollSummary {
   payrollDocId: string; // The ID of the document in 'ems-payrolls'
   pay_period: string;
+  base_salary: number;
   netSalary: number;
   status: PayrollAllStatus;
   created_at: AppTimestamp; // Or Date if you convert it before embedding

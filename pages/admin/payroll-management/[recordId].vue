@@ -67,14 +67,20 @@
               </p>
             </div>
 
-            <div class="flex items-center gap-2">
-              <p class="text-sm text-gray-500">{{ t('dashboard.status') }}</p>
-              <span :class="employee.status === 'blocked'
-                ? 'bg-red-100 text-red-800'
-                : 'bg-green-100 text-green-800'" class="px-3 py-1 rounded-full text-sm font-medium">
-                {{ employee.status === 'blocked' ? t('status.blocked') : t('status.active') }}
-              </span>
+            <div>
+              <p class="text-sm text-gray-500">{{ t('dashboard.net_salary') }}</p>
+              <p class="text-gray-900 font-medium capitalize">{{ formatCurrency(employee.payrolls[0]?.netSalary) }}
+              </p>
             </div>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <p class="text-sm text-gray-500">{{ t('dashboard.status') }}</p>
+            <span :class="employee.status === 'blocked'
+              ? 'bg-red-100 text-red-800'
+              : 'bg-green-100 text-green-800'" class="px-3 py-1 rounded-full text-sm font-medium">
+              {{ employee.status === 'blocked' ? t('status.blocked') : t('status.active') }}
+            </span>
           </div>
         </div>
       </div>
@@ -250,14 +256,14 @@ const tableColumns = computed((): Column<Payroll>[] => [
     format: (p: Payroll) => p.pay_period || '-',
   },
   {
-    key: 'netSalary',
-    label: t('dashboard.net_salary'),
-    format: (p: Payroll) => formatCurrency(p.netSalary) || '-',
-  },
-  {
     key: 'base_salary',
     label: t('dashboard.base_salary',),
     format: (p: Payroll) => formatCurrency(p.base_salary) || '-',
+  },
+  {
+    key: 'netSalary',
+    label: t('dashboard.net_salary'),
+    format: (p: Payroll) => formatCurrency(p.netSalary) || '-',
   },
   {
     key: 'overtime_hours',
@@ -281,6 +287,16 @@ const tableColumns = computed((): Column<Payroll>[] => [
     },
   },
   {
+    key: 'deductions',
+    label: t('dashboard.deductions'),
+    format: (p: Payroll) => {
+      if (typeof p.deductions === 'number') {
+        return n(p.deductions / 100, 'percent');
+      }
+      return '-';
+    },
+  },
+  {
     key: 'created_at',
     label: t('dashboard.creation_date'),
     format: (p: Payroll) => {
@@ -298,10 +314,11 @@ const tableColumns = computed((): Column<Payroll>[] => [
 const skeletonHeaders = ref<TableHeader[]>([
   { type: 'text', loaderWidth: 'w-10' },  // Index
   { type: 'text', loaderWidth: 'w-24' },  // Pay Period
-  { type: 'text', loaderWidth: 'w-28' },  // Net Salary
   { type: 'text', loaderWidth: 'w-28' },  // Base Salary
+  { type: 'text', loaderWidth: 'w-28' },  // Net Salary
   { type: 'text', loaderWidth: 'w-24' },  // Overtime Hours
   { type: 'text', loaderWidth: 'w-24' },  // Overtime Rate
+  { type: 'text', loaderWidth: 'w-24' },  // Deductions
   { type: 'text', loaderWidth: 'w-28' },  // Creation Date
   { type: 'text', loaderWidth: 'w-24' },  // Status
 ]);

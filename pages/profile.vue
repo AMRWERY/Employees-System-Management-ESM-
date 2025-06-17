@@ -33,7 +33,7 @@
         <div
           class="xl:w-[80%] lg:w-[90%] md:w-[94%] sm:w-[96%] w-[92%] mx-auto flex flex-col gap-4 justify-center items-center relative xl:-top-[6rem] lg:-top-[6rem] md:-top-[4rem] sm:-top-[3rem] -top-[2.2rem]">
           <h1 class="text-center text-gray-800 text-2xl capitalize">{{ form.firstName }} {{
-            form.lastName }}</h1>
+            form.middleName }}</h1>
           <p class="text-center text-gray-800 text-lg capitalize -mt-2 bg-gray-100 p-1.5 shadow-md rounded-lg">{{
             form.position || form.role }}</p>
           <!-- Profile Form -->
@@ -45,6 +45,11 @@
                   <div class="sm:col-span-3">
                     <dynamic-inputs :label="t('form.first_name')" :name="t('form.first_name')" :disabled="true" readonly
                       v-model="form.firstName" />
+                  </div>
+
+                  <div class="sm:col-span-3">
+                    <dynamic-inputs :label="t('form.middle_name')" :name="t('form.middle_name')" :disabled="true"
+                      readonly v-model="form.middleName" />
                   </div>
 
                   <div class="sm:col-span-3">
@@ -68,6 +73,11 @@
                   </div>
 
                   <div class="sm:col-span-3">
+                    <dynamic-inputs :label="t('form.base_salary')" :name="t('form.base_salary')" :disabled="true"
+                      readonly v-model="form.base_salary" />
+                  </div>
+
+                  <div class="sm:col-span-3">
                     <dynamic-inputs :label="t('form.created_at')" :name="t('form.created_at')" :disabled="true" readonly
                       v-model="form.createdAt" />
                   </div>
@@ -80,6 +90,23 @@
                   <div class="sm:col-span-3" v-if="form.role !== 'admin'">
                     <dynamic-inputs :label="t('form.department')" :name="t('form.department')" :disabled="true" readonly
                       :model-value="teamName" />
+                  </div>
+
+                  <div class="sm:col-span-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                      {{ t('form.birth_date') }}
+                    </label>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <!-- date-picker component -->
+                      <date-picker v-model="form.birthDate" class="w-full" />
+
+                      <!-- base-button component -->
+                      <base-button @click="saveBirthdate" :disabled="isSavingBirthdate" type="submit"
+                        :default-icon="false" class="w-full h-full flex items-center justify-center">
+                        <icon v-if="isSavingBirthdate" name="svg-spinners:90-ring-with-bg" class="text-lg" />
+                        <span v-else>{{ t('btn.save_birthdate') }}</span>
+                      </base-button>
+                    </div>
                   </div>
 
                   <div class="sm:col-span-3">
@@ -133,9 +160,11 @@ const managersStore = useManagerStore()
 const { triggerToast } = useToast();
 const { formatDate } = useDateFormat();
 const { getTeamName } = useTeamName()
+const isSavingBirthdate = ref(false);
 
 const form = reactive({
   firstName: '',
+  middleName: '',
   lastName: '',
   email: '',
   employeeId: '',
@@ -145,8 +174,10 @@ const form = reactive({
   teamId: '' as string,
   managerId: '' as string,
   status: '' as 'active' | 'blocked',
+  base_salary: 0 as number,
   newPassword: '',
-  confirmPassword: ''
+  confirmPassword: '',
+  birthDate: '' as string | null,
 })
 
 const isLoading = computed(() => profileStore.passwordUpdateLoading)
@@ -235,7 +266,7 @@ const removeImagePreview = async () => {
 }
 
 onMounted(async () => {
-  profileStore.initializeProfileImage()
+  profileStore.initializeProfileImage();
   if (managersStore.managers.length === 0) {
     await managersStore.fetchManagers();
   }
@@ -244,31 +275,36 @@ onMounted(async () => {
   }
   const loadEmployeeData = async () => {
     try {
-      const userId = authStore.user?.uid
-      if (!userId) return
-      const employee = await teamsStore.fetchEmployeeById(userId)
-      if (!employee) return
-      // Update all form fields from employee data
-      form.firstName = employee.firstName
-      form.lastName = employee.lastName
-      form.email = employee.email
-      form.employeeId = employee.employeeId
-      form.position = employee.position
-      form.createdAt = employee.createdAt ? formatDate(employee.createdAt) : ''
-      form.role = employee.role
-      form.teamId = employee.teamId || ''
-      form.managerId = employee.managerId || ''
-      form.status = employee.status || 'active'
+      const userId = authStore.user?.uid;
+      if (!userId) return;
+      const employee = await teamsStore.fetchEmployeeById(userId);
+      if (!employee) return;
+      // Get sessionStorage user data
+      const sessionUser = JSON.parse(sessionStorage.getItem("user") || "{}");
+      // Update all form fields from employee data with fallbacks
+      form.firstName = employee.firstName || authStore.user?.firstName || sessionUser.firstName || "";
+      form.middleName = employee.middleName || authStore.user?.middleName || sessionUser.middleName || "";
+      form.lastName = employee.lastName || authStore.user?.lastName || sessionUser.lastName || "";
+      form.email = employee.email || authStore.user?.email || sessionUser.email || "";
+      form.employeeId = employee.employeeId || authStore.user?.employeeId || sessionUser.employeeId || "";
+      form.position = employee.position || "";
+      form.createdAt = employee.createdAt ? formatDate(employee.createdAt) : "";
+      form.role = employee.role || authStore.user?.role || sessionUser.role || "";
+      form.teamId = employee.teamId || authStore.user?.teamId || sessionUser.teamId || "";
+      form.managerId = employee.managerId || authStore.user?.managerId || sessionUser.managerId || "";
+      form.status = employee.status || authStore.user?.status || sessionUser.status || "active";
+      form.base_salary = employee.base_salary || authStore.user?.base_salary || sessionUser.base_salary || 0;
+      form.birthDate = employee.birthDate || authStore.user?.birthDate || sessionUser.birthDate || null;
     } catch (error) {
       triggerToast({
-        message: t('toast.failed_fetch_profile'),
-        type: 'error',
-        icon: 'material-symbols:error-rounded'
-      })
+        message: t("toast.failed_fetch_profile"),
+        type: "error",
+        icon: "material-symbols:error-rounded",
+      });
     }
-  }
-  await loadEmployeeData()
-})
+  };
+  await loadEmployeeData();
+});
 
 const teamName = computed(() => getTeamName(form.teamId))
 
@@ -282,6 +318,26 @@ const translatedStatus = computed(() => {
   if (!form.status) return ''
   return t(`status.${form.status}`)
 })
+
+const saveBirthdate = async () => {
+  isSavingBirthdate.value = true;
+  try {
+    await authStore.saveProfile(null, form.birthDate);
+    triggerToast({
+      message: t('toast.birthdate_updated'),
+      type: 'success',
+      icon: 'material-symbols:check-circle'
+    });
+  } catch (error) {
+    triggerToast({
+      message: t('toast.birthdate_update_failed'),
+      type: 'error',
+      icon: 'material-symbols:error-rounded'
+    });
+  } finally {
+    isSavingBirthdate.value = false;
+  }
+};
 
 useHead({
   titleTemplate: () => t('head.profile'),

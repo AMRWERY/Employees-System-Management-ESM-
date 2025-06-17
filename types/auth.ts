@@ -7,6 +7,7 @@ export type UserData = {
   uid: string;
   email: string | null;
   firstName?: string;
+  middleName?: string;
   lastName?: string;
   role?: string;
   profileImg?: string | null;
@@ -20,8 +21,10 @@ export type UserData = {
   roledId?: string;
   permissions?: Record<string, any>;
   employeeId?: string;
-  managerId? :string;
-  teamId?: string
+  managerId?: string;
+  teamId?: string;
+  base_salary?: number;
+  // netSalary: number;
 };
 
 export interface AuthState {
