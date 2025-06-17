@@ -233,7 +233,9 @@
     "search_by_email_or_name": "Search by email or name",
     "search_by_name": "Search by department / team name",
     "failure_reason": "Reason for Failure",
-    "enter_failure_reason_placeholder": "Enter reason..."
+    "enter_failure_reason_placeholder": "Enter reason...",
+    "deductions_reason": "Deduction reason",
+    "enter_deductions_reason_here": "Enter deductions reason here"
   },
   "head": {
     "sign_in": "Sign in",

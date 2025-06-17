@@ -233,7 +233,9 @@
     "search_by_email_or_name": "ابحث عن طريق الأيميل أو الاسم",
     "search_by_name": "البحث حسب اسم القسم / الفريق",
     "failure_reason": "سبب الفشل",
-    "enter_failure_reason_placeholder": "أدخل السبب..."
+    "enter_failure_reason_placeholder": "أدخل السبب...",
+    "deductions_reason": "سبب الخصم",
+    "enter_deductions_reason_here": "أدخل سبب الخصم هنا"
   },
   "head": {
     "sign_in": "تسجيل الدخول",

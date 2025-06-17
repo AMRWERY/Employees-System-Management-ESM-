@@ -22,6 +22,7 @@ export interface Payroll {
   overtime_rate: number;
   bonuses: number;
   deductions: number;
+  deductions_reason: string;
   tax_percent: number;
   netSalary: number; // Calculated
   status: PayrollAllStatus;
@@ -50,6 +51,7 @@ export interface PayrollInputData {
   overtime_rate: number;
   bonuses: number;
   deductions: number;
+  deductions_reason: string;
   tax_percent: number;
   created_by: string; // Typically current admin user's ID
   notes?: string;
