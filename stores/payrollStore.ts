@@ -253,6 +253,7 @@ export const usePayrollStore = defineStore("payroll", {
         const payrollSummary: PayrollSummary = {
           payrollDocId: docRef.id,
           pay_period: payrollData.pay_period,
+          base_salary: netSalary,
           netSalary: netSalary,
           status: PayrollAllStatus.Pending,
           created_at: Timestamp.now(),

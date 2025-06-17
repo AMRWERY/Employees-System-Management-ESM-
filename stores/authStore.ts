@@ -25,6 +25,24 @@ import {
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import type { UserData } from "@/types/auth";
 
+// async function updateExistingUsers() {
+//   const usersRef = collection(db, "ems-users");
+//   const snapshot = await getDocs(usersRef);
+//   for (const userDoc of snapshot.docs) {
+//     const userData = userDoc.data();
+//     if (
+//       userData.middleName === undefined ||
+//       userData.base_salary === undefined
+//     ) {
+//       await updateDoc(doc(db, "ems-users", userDoc.id), {
+//         middleName: userData.middleName || "",
+//         base_salary: userData.base_salary || 0,
+//       });
+//       console.log(`Updated user ${userDoc.id} with middleName and base_salary`);
+//     }
+//   }
+// }
+
 export const useAuthStore = defineStore("auth", {
   state: () => ({
     user: null as UserData | null,
@@ -85,7 +103,7 @@ export const useAuthStore = defineStore("auth", {
         : errorMessage;
       this.loading = false;
       this.isOverlayVisible = false;
-      console.error(`Error: ${this.error}`, error); // Log for debugging
+      // console.error(`Error: ${this.error}`, error);
       return this.error;
     },
 
@@ -118,13 +136,17 @@ export const useAuthStore = defineStore("auth", {
                   uid: user.uid,
                   email: user.email,
                   firstName: this.user?.firstName,
+                  middleName: this.user?.middleName,
                   lastName: this.user?.lastName,
+                  birthDate: this.user?.birthDate,
                   role: this.role,
                   roledId: this.user?.roledId,
                   permissions: this.user?.permissions,
                   employeeId: this.user?.employeeId,
                   managerId: this.user?.managerId,
                   teamId: this.user?.teamId,
+                  base_salary: this.user?.base_salary,
+                  // netSalary: this.user?.netSalary,
                 })
               );
             }
@@ -144,6 +166,7 @@ export const useAuthStore = defineStore("auth", {
         email: user.email,
         role: "employee",
         createdAt: serverTimestamp(),
+        birthDate: null,
       });
     },
 
@@ -181,8 +204,10 @@ export const useAuthStore = defineStore("auth", {
       email: string,
       password: string,
       firstName: string,
+      middleName: string,
       lastName: string,
-      role = "employee"
+      role = "employee",
+      base_salary = 0
     ) {
       this.isOverlayVisible = true;
       this.loading = true;
@@ -208,6 +233,7 @@ export const useAuthStore = defineStore("auth", {
           uid: user.uid,
           email: user.email,
           firstName: firstName,
+          middleName: middleName,
           lastName: lastName,
           employeeId: employeeId,
           role: role || "employee",
@@ -215,6 +241,7 @@ export const useAuthStore = defineStore("auth", {
           createdAt: new Date(),
           roledId: roleDoc.id,
           permissions: roleData.permissions,
+          base_salary: base_salary,
         };
         await setDoc(doc(db, "ems-users", user.uid), {
           ...userData,
@@ -262,14 +289,16 @@ export const useAuthStore = defineStore("auth", {
           const saveUserData = {
             uid: userData.uid,
             email: userData.email,
-            firstName: userData.firstName,
-            lastName: userData.lastName,
+            firstName: userData.firstName || "",
+            middleName: userData.middleName || "",
+            lastName: userData.lastName || "",
             role: userData.role,
             status: userData.status,
             loginType: userData.loginType,
             roledId: userData.roledId,
             permissions: userData.permissions,
             employeeId: userData.employeeId,
+            base_salary: userData.base_salary || 0,
           };
           sessionStorage.setItem("user", JSON.stringify(saveUserData));
         } else {
@@ -312,7 +341,7 @@ export const useAuthStore = defineStore("auth", {
       }
     },
 
-    saveProfile(file: File | null) {
+    async saveProfile(file: File | null, birthDate?: string | null) {
       return new Promise((resolve, reject) => {
         if (!this.user) {
           this.handleError({ message: "User not authenticated" });
@@ -323,6 +352,7 @@ export const useAuthStore = defineStore("auth", {
         const storage = getStorage();
         const userDocRef = doc(db, "ems-users", this.user.uid);
         let profileImgUrl = this.user.profileImg || null;
+        // Add birthDate to update payload
         const updateProfile = () => {
           if (!this.user) {
             this.loading = false;
@@ -330,31 +360,32 @@ export const useAuthStore = defineStore("auth", {
             return;
           }
           const updatedProfile: Partial<UserData> = {
-            firstName: this.user.firstName || "",
-            lastName: this.user.lastName || "",
-            email: this.user.email || "",
-            phone: this.user.phone || null,
-            birthDate: this.user.birthDate || null,
-            profileImg: profileImgUrl,
-            address: this.user.address || "",
-            apartment: this.user.apartment || "",
-            selectedCity: this.user.selectedCity || "",
+            // ...existing properties
+            birthDate:
+              birthDate !== undefined ? birthDate : this.user.birthDate || null,
           };
+          // Rest of the update logic remains the same
           updateDoc(userDocRef, updatedProfile)
             .then(() => {
+              // Update local state including birthDate
               if (this.user) {
                 this.user = {
                   ...this.user,
                   ...updatedProfile,
+                  birthDate:
+                    birthDate !== undefined ? birthDate : this.user.birthDate,
                 };
+                // Update sessionStorage with birthDate
                 const sessionUserData = JSON.parse(
-                  localStorage.getItem("user") || "{}"
+                  sessionStorage.getItem("user") || "{}"
                 );
-                localStorage.setItem(
+                sessionStorage.setItem(
                   "user",
                   JSON.stringify({
                     ...sessionUserData,
                     ...updatedProfile,
+                    birthDate:
+                      birthDate !== undefined ? birthDate : this.user.birthDate,
                     profileImg: profileImgUrl,
                   })
                 );
@@ -369,6 +400,7 @@ export const useAuthStore = defineStore("auth", {
               reject(error);
             });
         };
+        // File upload logic remains the same
         if (file) {
           const storageRef = ref(
             storage,

@@ -1,7 +1,7 @@
 <template>
   <div>
     <div v-if="modelValue" id="add-employee-modal">
-      <div @click.self="$emit('update:modelValue', false)"
+      <div
         class="fixed inset-0 p-4 flex flex-wrap justify-end items-end w-full h-full z-[1000] before:fixed before:inset-0 before:w-full before:h-full before:bg-[rgba(0,0,0,0.5)] overflow-auto">
         <div class="w-full max-w-lg bg-white shadow-lg rounded-lg p-6 relative">
           <div class="flex items-center pb-3 border-b border-gray-300">
@@ -21,6 +21,12 @@
                 </div>
 
                 <div class="col-span-full">
+                  <dynamic-inputs :label="t('form.middle_name')" :placeholder="t('form.enter_middle_name')" type="text"
+                    :name="t('form.middle_name')" :rules="'required|alpha_spaces'" :required="true"
+                    v-model="formValues.middleName" />
+                </div>
+
+                <div class="col-span-full">
                   <dynamic-inputs :label="t('form.last_name')" :placeholder="t('form.enter_last_name')" type="text"
                     :name="t('form.last_name')" :rules="'required|alpha_spaces'" :required="true"
                     v-model="formValues.lastName" />
@@ -30,6 +36,16 @@
                   <dynamic-inputs :label="t('form.email')" :placeholder="t('form.enter_email')" type="email"
                     :name="t('form.email')" :rules="'required|email'" :required="true" v-model="formValues.email" />
                 </div>
+
+                <div class="col-span-full">
+                  <dynamic-inputs :label="t('form.base_salary')" :placeholder="t('form.enter_base_salary')" type="number"
+                    :name="t('form.base_salary')" :rules="'required'" :required="true" v-model="formValues.base_salary" />
+                </div>
+
+                <!-- <div class="col-span-full">
+                  <dynamic-inputs :label="t('form.net_salary')" :placeholder="t('form.enter_net_salary')" type="number"
+                    :name="t('form.net_salary')" :rules="'required'" :required="true" v-model="formValues.netSalary" />
+                </div> -->
 
                 <div class="col-span-full">
                   <dynamic-inputs :label="t('form.password')" :placeholder="t('form.enter_password')" type="password"
@@ -125,10 +141,13 @@ watch(selectedTeam, (newTeamId) => {
 
 const formValues = reactive({
   firstName: '',
+  middleName: '',
   lastName: '',
   email: '',
   password: '',
   position: '',
+  base_salary: 0,
+  // netSalary: 0,
 });
 
 const handleSubmit = async () => {
@@ -137,12 +156,15 @@ const handleSubmit = async () => {
     // console.log('Selected Team:', selectedTeam.value);
     await employeesStore.createEmployee({
       firstName: formValues.firstName,
+      middleName: formValues.middleName,
       lastName: formValues.lastName,
       email: formValues.email,
       password: formValues.password,
       position: formValues.position,
       teamId: selectedTeam.value,
       managerId: selectedManager.value,
+      base_salary: formValues.base_salary,
+      // netSalary: formValues.netSalary,
     });
     emit('update:modelValue', false);
     emit('save');
@@ -165,11 +187,14 @@ const handleSubmit = async () => {
 
 const resetForm = () => {
   formValues.firstName = '';
+  formValues.middleName = '';
   formValues.lastName = '';
   formValues.email = '';
   formValues.password = '';
   formValues.position = '';
   selectedTeam.value = '';
   selectedManager.value = '';
+  formValues.base_salary = 0;
+  // formValues.netSalary = 0;
 };
 </script>

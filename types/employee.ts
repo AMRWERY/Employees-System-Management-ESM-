@@ -5,6 +5,7 @@ export interface Employee {
   uid?: string;
   email: string;
   firstName?: string;
+  middleName?: string;
   lastName?: string;
   employeeId?: string;
   departmentId?: string;
@@ -19,6 +20,8 @@ export interface Employee {
   createdAt?: Date;
   profileImg?: string | null;
   payrolls?: PayrollSummary[];
+  base_salary: number;
+  // netSalary: number;
   [key: string]: any;
 }
 

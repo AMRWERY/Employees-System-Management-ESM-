@@ -13,7 +13,11 @@ import {
 } from "firebase/firestore";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import type { DocumentData, QueryDocumentSnapshot } from "firebase/firestore";
-import type { Employee, EmployeeState, EmployeeWithPayrolls } from "@/types/employee";
+import type {
+  Employee,
+  EmployeeState,
+  EmployeeWithPayrolls,
+} from "@/types/employee";
 import type { Payroll } from "@/types/payroll";
 
 export const useEmployeesStore = defineStore("employees", {
@@ -44,6 +48,7 @@ export const useEmployeesStore = defineStore("employees", {
               id: doc.id,
               email: data.email || "",
               firstName: data.firstName,
+              middleName: data.middleName,
               lastName: data.lastName,
               employeeId: data.employeeId,
               role: data.role,
@@ -62,6 +67,8 @@ export const useEmployeesStore = defineStore("employees", {
               profileImg: data.profileImg,
               createdAt: data.createdAt?.toDate(),
               payrolls: data.payrolls || [],
+              base_salary: data.base_salary,
+              // netSalary: data.netSalary,
               ...data,
             } satisfies Employee;
           }
@@ -88,6 +95,7 @@ export const useEmployeesStore = defineStore("employees", {
           id: employeeDoc.id,
           email: data.email || "",
           firstName: data.firstName,
+          middleName: data.middleName,
           lastName: data.lastName,
           employeeId: data.employeeId,
           role: data.role,
@@ -104,6 +112,8 @@ export const useEmployeesStore = defineStore("employees", {
           profileImg: data.profileImg,
           createdAt: data.createdAt?.toDate(),
           payrolls: data.payrolls || [],
+          base_salary: data.base_salary,
+          // netSalary: data.netSalary,
           ...data,
         } satisfies Employee;
       } catch (error) {
@@ -129,6 +139,7 @@ export const useEmployeesStore = defineStore("employees", {
           uid: employeeData.uid || employeeDocSnap.id,
           email: employeeData.email || "",
           firstName: employeeData.firstName || "",
+          middleName: employeeData.middleName || "",
           lastName: employeeData.lastName || "",
           employeeId: employeeData.employeeId,
           departmentId: employeeData.departmentId,
@@ -146,6 +157,8 @@ export const useEmployeesStore = defineStore("employees", {
           profileImg: employeeData.profileImg,
           createdAt: employeeData.createdAt?.toDate(),
           payrolls: employeeData.payrolls || [],
+          base_salary: employeeData.base_salary,
+          // netSalary: employeeData.netSalary,
         };
         let fetchedPayrolls: Payroll[] = [];
         if (employeeBase.employeeId) {
@@ -175,12 +188,15 @@ export const useEmployeesStore = defineStore("employees", {
 
     async createEmployee(employeeData: {
       firstName: string;
+      middleName: string;
       lastName: string;
       email: string;
       password: string;
       teamId?: string;
       position?: string;
       managerId?: string;
+      base_salary: number;
+      // netSalary: number;
     }) {
       // Save original user before creating the new employee
       const originalUser = auth.currentUser;
@@ -209,6 +225,7 @@ export const useEmployeesStore = defineStore("employees", {
             uid: userCredential.user.uid,
             employeeId: employeeId,
             firstName: employeeData.firstName,
+            middleName: employeeData.middleName,
             lastName: employeeData.lastName,
             email: employeeData.email,
             position: employeeData.position || "Employee",
@@ -223,6 +240,8 @@ export const useEmployeesStore = defineStore("employees", {
             managerId: employeeData.managerId || null,
             profileImg: null,
             payrolls: [],
+            base_salary: employeeData.base_salary,
+            // netSalary: employeeData.netSalary,
           };
         await setDoc(doc(db, "ems-users", userCredential.user.uid), userData);
         if (employeeData.teamId) {

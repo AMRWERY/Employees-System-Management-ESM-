@@ -12,6 +12,7 @@ export interface Member {
   id: string;
   employeeId: string;
   firstName: string;
+  middleName: string;
   lastName: string;
   email: string;
   position: string;
@@ -22,6 +23,8 @@ export interface Member {
   createdAt?: Date;
   role: string;
   profileImg: string;
+  base_salary: number;
+  birthDate: string;
   status?: "blocked" | "active";
 }
 

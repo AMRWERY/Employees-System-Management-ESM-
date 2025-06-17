@@ -83,11 +83,12 @@
     "details": "تفاصيل",
     "employee_details": "تفاصيل الموظف",
     "overtime_hours": "ساعات العمل الإضافية",
-    "overtime_rate":"معدل العمل الإضافي",
+    "overtime_rate": "معدل العمل الإضافي",
     "creation_date": "تاريخ الإنشاء",
     "payrolls": "سجل رواتب",
     "employee_payrolls": "سجل رواتب الموظف",
-    "filter_by_status": "تصفية حسب الحالة"
+    "filter_by_status": "تصفية حسب الحالة",
+    "deductions": "نسبه الخصومات"
   },
   "btn": {
     "go_back_home": "العودة إلى الصفحه الرئيسيه",
@@ -116,7 +117,8 @@
     "add_record": "إضافة سجل",
     "save_changes": "حفظ التغييرات",
     "delete": "حذف",
-    "submit": "حفظ"
+    "submit": "حفظ",
+    "save_birthdate": "احفظ تاريخ الميلاد"
   },
   "form": {
     "sign_in": "تسجيل الدخول",
@@ -147,8 +149,8 @@
     "forgot_password": "هل نسيت كلمة السر",
     "first_name": "الاسم الأول",
     "enter_your_first_name": "أدخل اسمك الأول",
-    "last_name": "اسم الأخير",
-    "enter_your_last_name": "أدخل اسمك الأخير",
+    "last_name": "اسم العائله",
+    "enter_your_last_name": "أدخل اسمك العائله",
     "field_required": "هذا الحقل مطلوب",
     "email_invalid": "البريد الإلكتروني غير صالح",
     "passwords_must_match": "يجب أن تتطابق كلمات المرور",
@@ -184,7 +186,7 @@
     "medical": "إجازة طبية",
     "search_by_email": "ابحث عن طريق البريد الإلكتروني",
     "enter_first_name": "أدخل الاسم الأول",
-    "enter_last_name": "أدخل الاسم الأخير",
+    "enter_last_name": "أدخل الاسم العائله",
     "enter_email": "أدخل البريد الإلكتروني",
     "enter_password": "أدخل كلمة المرور",
     "teams": "الفرق / الأقسام",
@@ -235,7 +237,14 @@
     "failure_reason": "سبب الفشل",
     "enter_failure_reason_placeholder": "أدخل السبب...",
     "deductions_reason": "سبب الخصم",
-    "enter_deductions_reason_here": "أدخل سبب الخصم هنا"
+    "enter_deductions_reason_here": "أدخل سبب الخصم هنا",
+    "enter_base_salary": "أدخل الراتب الأساسي للموظف",
+    "net_salary":"الراتب الصافي",
+    "enter_net_salary": "أدخل صافي راتب الموظف",
+    "middle_name": "الاسم الأخير",
+    "enter_middle_name": "أدخل الاسم الأخير",
+    "enter_your_middle_name": "أدخل اسمك الأخير",
+    "birth_date": "تاريخ الميلاد"
   },
   "head": {
     "sign_in": "تسجيل الدخول",
@@ -328,7 +337,9 @@
     "marked_as_failed_successfully": "تم وضع علامة على الفشل بنجاح",
     "failed_to_mark_failed": "فشل في وضع علامة فشل",
     "could_not_find_full_details_for_employee": "لم نتمكن من العثور على تفاصيل كاملة للموظف",
-    "failed_to_send_reset_email": "فشل في إرسال بريد إلكتروني لإعادة التعيين"
+    "failed_to_send_reset_email": "فشل في إرسال بريد إلكتروني لإعادة التعيين",
+    "birthdate_updated": "تم تحديث تاريخ الميلاد",
+    "birthdate_update_failed": "فشل تحديث تاريخ الميلاد"
   },
   "status": {
     "all": "الكل",
