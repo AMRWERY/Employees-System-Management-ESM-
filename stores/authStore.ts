@@ -25,24 +25,6 @@ import {
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import type { UserData } from "@/types/auth";
 
-// async function updateExistingUsers() {
-//   const usersRef = collection(db, "ems-users");
-//   const snapshot = await getDocs(usersRef);
-//   for (const userDoc of snapshot.docs) {
-//     const userData = userDoc.data();
-//     if (
-//       userData.middleName === undefined ||
-//       userData.base_salary === undefined
-//     ) {
-//       await updateDoc(doc(db, "ems-users", userDoc.id), {
-//         middleName: userData.middleName || "",
-//         base_salary: userData.base_salary || 0,
-//       });
-//       console.log(`Updated user ${userDoc.id} with middleName and base_salary`);
-//     }
-//   }
-// }
-
 export const useAuthStore = defineStore("auth", {
   state: () => ({
     user: null as UserData | null,

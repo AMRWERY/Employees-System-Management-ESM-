@@ -88,7 +88,10 @@
     "payrolls": "Payrolls history",
     "employee_payrolls": "Employee payrolls history",
     "filter_by_status": "Filter by Status",
-    "deductions": "Deductions percentage"
+    "deductions": "Deductions percentage",
+    "awesome": "Awesome!",
+    "birthday_mss_1": "We wish a happy birthday to",
+    "birthday_mss_2": "May your day be filled with joy and success!"
   },
   "btn": {
     "go_back_home": "Go back Home",
@@ -118,7 +121,8 @@
     "save_changes": "Save changes",
     "delete": "Delete",
     "submit": "Submit",
-    "save_birthdate": "Save birthdate"
+    "save_birthdate": "Save birthdate",
+    "close": "Close"
   },
   "form": {
     "sign_in": "Sign in",

@@ -88,7 +88,10 @@
     "payrolls": "سجل رواتب",
     "employee_payrolls": "سجل رواتب الموظف",
     "filter_by_status": "تصفية حسب الحالة",
-    "deductions": "نسبه الخصومات"
+    "deductions": "نسبه الخصومات",
+    "awesome": "مذهل!",
+    "birthday_mss_1": "نتمنى لك عيد ميلاد سعيدا",
+    "birthday_mss_2": "أتمنى أن يكون يومك مليئا بالفرح والنجاح!"
   },
   "btn": {
     "go_back_home": "العودة إلى الصفحه الرئيسيه",
@@ -118,7 +121,8 @@
     "save_changes": "حفظ التغييرات",
     "delete": "حذف",
     "submit": "حفظ",
-    "save_birthdate": "احفظ تاريخ الميلاد"
+    "save_birthdate": "احفظ تاريخ الميلاد",
+    "close": "غلق"
   },
   "form": {
     "sign_in": "تسجيل الدخول",
