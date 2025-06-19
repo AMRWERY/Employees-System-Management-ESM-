@@ -22,7 +22,12 @@
     "my_payslips_payroll": "My Payslips/Payroll",
     "managers": "Managers",
     "holiday_dates": "Holiday dates",
-    "task_management": "Task management"
+    "task_management": "Task management",
+    "payrolls": "Payrolls",
+    "compensations": "Compensations",
+    "reports": "Reports",
+    "payment_logs": "Payment logs",
+    "attendance_leave_review": "Attendance leave review"
   },
   "dashboard": {
     "you_re_currently": "You're currently",
@@ -92,7 +97,11 @@
     "deductions": "Deductions percentage",
     "awesome": "Awesome!",
     "birthday_mss_1": "We wish a happy birthday to",
-    "birthday_mss_2": "May your day be filled with joy and success!"
+    "birthday_mss_2": "May your day be filled with joy and success!",
+    "elapsed_time": "Elapsed Time:",
+    "tasks_board": "Tasks Board",
+    "add_task": "Add task",
+    "edit_task": "Edit task"
   },
   "btn": {
     "go_back_home": "Go back Home",
@@ -123,7 +132,16 @@
     "delete": "Delete",
     "submit": "Submit",
     "save_birthdate": "Save birthdate",
-    "close": "Close"
+    "close": "Close",
+    "done": "Mark as Done",
+    "start_time": "Start Time",
+    "end_time": "End Time",
+    "resume": "Resume",
+    "pause": "Pause",
+    "move_to_in_progress": "Move to In Progress",
+    "add_task": "Add task",
+    "edit": "Edit",
+    "update": "Update"
   },
   "form": {
     "sign_in": "Sign in",
@@ -244,7 +262,7 @@
     "deductions_reason": "Deduction reason",
     "enter_deductions_reason_here": "Enter deductions reason here",
     "enter_base_salary": "Enter employee base salary",
-    "net_salary":"Net salary",
+    "net_salary": "Net salary",
     "enter_net_salary": "Enter employee net salary",
     "middle_name": "Middle name",
     "enter_middle_name": "Enter middle name",
@@ -267,7 +285,8 @@
     "admin_leave_request_id": "Leave request details",
     "managers": "Managers",
     "holiday_dates": "Holiday dates",
-    "payroll_management": "Payroll management"
+    "payroll_management": "Payroll management",
+    "task_management": "Task management"
   },
   "error_page": {
     "you_are_all_alone_here": "You are all alone here 😁"
@@ -383,7 +402,8 @@
     "employee_leave_request_id": "Leave request details",
     "holiday_dates": "Holiday dates",
     "admin_payroll_management": "Payroll management",
-    "admin_payroll_management_recordid": "Employee details"
+    "admin_payroll_management_recordid": "Employee details",
+    "task_management": "Task management"
   },
   "days": {
     "mon": "Mon",

@@ -1,11 +1,26 @@
 <template>
     <div>
         <!-- task-details component -->
-        <task-details v-if="isModalOpen" :task="selectedTask" @close="closeModal" @update-status="updateTaskStatus" />
+        <task-details v-if="isModalOpen" :task="selectedTask" @close="closeModal" @update-status="updateTaskStatus"
+            @update-time="updateTaskTime" @edit-task="handleEditFromDetails" />
 
-        <div class="min-h-screen p-2">
-            <h1 class="text-2xl font-bold mb-6 text-center">Kanban Task Board</h1>
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+        <div>
+            <div class="flex items-center justify-between my-6 flex-nowrap">
+                <h1 class="text-2xl font-bold mb-6">{{ t('dashboard.tasks_board') }}</h1>
+                <div class="flex items-center justify-center gap-4 ms-auto">
+
+                    <!-- base-button component -->
+                    <base-button :default-icon="false" @click="openAddDialog">
+                        {{ t('btn.add_task') }}
+                    </base-button>
+
+                    <!-- add-edit-task component -->
+                    <add-edit-task :visible="showAddDialog" :task="taskToEdit" @close="closeAddDialog"
+                        @submit="handleTaskSubmit" />
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 border-gray-200 border p-4 rounded-lg">
                 <div v-for="status in statuses" :key="status" class="bg-white rounded p-2 shadow-lg">
                     <h2 class="text-lg font-semibold mb-4 text-center border-b pb-3">{{ statusLabels[status] }}</h2>
                     <div class="h-[400px] overflow-y-auto hide-scrollbar" :data-status="status" @dragover.prevent
@@ -41,14 +56,9 @@
 </template>
 
 <script lang="ts" setup>
-type Status = 'todo' | 'in-progress' | 'done'
+import type { Status, Task } from '@/types/task-management'
 
-interface Task {
-    id: number
-    title: string
-    description: string
-    status: Status
-}
+const { t } = useI18n()
 
 const statuses: Status[] = ['todo', 'in-progress', 'done']
 
@@ -59,12 +69,12 @@ const statusLabels: Record<Status, string> = {
 }
 
 const tasks = ref<Task[]>([
-    { id: 1, title: 'Design UI', description: 'Create the main layout', status: 'todo' },
-    { id: 2, title: 'Setup Vue Project', description: 'Initialize with Vite', status: 'in-progress' },
-    { id: 3, title: 'Write Docs', description: 'Document drag logic', status: 'done' },
-    { id: 4, title: 'Write Docs', description: 'Document drag logic', status: 'in-progress' },
-    { id: 5, title: 'Write Docs', description: 'Document drag logic', status: 'done' },
-    { id: 6, title: 'Write Docs', description: 'Document drag logic', status: 'done' },
+    { id: 1, title: 'Design UI', description: 'Create the main layout', status: 'todo', elapsedTime: 0 },
+    { id: 2, title: 'Setup Vue Project', description: 'Initialize with Vite', status: 'in-progress', elapsedTime: 0 },
+    { id: 3, title: 'Write Docs', description: 'Document drag logic', status: 'done', elapsedTime: 0 },
+    { id: 4, title: 'Write Docs', description: 'Document drag logic', status: 'in-progress', elapsedTime: 0 },
+    { id: 5, title: 'Write Docs', description: 'Document drag logic', status: 'done', elapsedTime: 0 },
+    { id: 6, title: 'Write Docs', description: 'Document drag logic', status: 'done', elapsedTime: 0 },
 ])
 
 const draggedTask = ref<Task | null>(null)
@@ -129,6 +139,50 @@ const updateTaskStatus = ({ id, status }: { id: number; status: Status }) => {
     if (task) task.status = status
     closeModal()
 }
+
+const updateTaskTime = ({ id, elapsedTime }: { id: number; elapsedTime: number }) => {
+    const task = tasks.value.find(t => t.id === id)
+    if (task) {
+        task.elapsedTime = elapsedTime
+    }
+}
+
+const showAddDialog = ref(false);
+const taskToEdit = ref<Task | null>(null)
+
+const openAddDialog = () => {
+    taskToEdit.value = null
+    showAddDialog.value = true
+}
+
+const openEditDialog = (task: Task) => {
+    taskToEdit.value = { ...task }
+    showAddDialog.value = true
+}
+
+const closeAddDialog = () => {
+    showAddDialog.value = false
+    taskToEdit.value = null
+}
+
+const handleTaskSubmit = (newTask: Task) => {
+    const index = tasks.value.findIndex(t => t.id === newTask.id)
+    if (index !== -1) {
+        tasks.value[index] = newTask
+    } else {
+        tasks.value.push({ ...newTask, id: Date.now() })
+    }
+    closeAddDialog()
+}
+
+const handleEditFromDetails = (task: Task) => {
+    isModalOpen.value = false
+    openEditDialog(task)
+}
+
+useHead({
+    titleTemplate: () => t('head.task_management'),
+});
 </script>
 
 <style scoped>

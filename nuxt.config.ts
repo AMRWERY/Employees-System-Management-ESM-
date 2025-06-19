@@ -11,6 +11,14 @@ export default defineNuxtConfig({
     "@nuxtjs/i18n",
     "@vee-validate/nuxt",
   ],
+  imports: {
+    presets: [
+      {
+        from: "@vueuse/core",
+        imports: ["promiseTimeout", "useTimeoutPoll"],
+      },
+    ],
+  },
   tailwindcss: {
     cssPath: ["~/css/tailwind.css", { injectPosition: "first" }],
     viewer: true,
@@ -44,7 +52,11 @@ export default defineNuxtConfig({
       strict: false, // Allow trailing slashes
     },
   },
-  plugins: ["~/plugins/locale.client.ts", "~/plugins/auth.client.ts", "~/plugins/log-routes.client.ts"],
+  plugins: [
+    "~/plugins/locale.client.ts",
+    "~/plugins/auth.client.ts",
+    "~/plugins/log-routes.client.ts",
+  ],
   css: ["~/assets/css/main.css"],
   components: [
     {

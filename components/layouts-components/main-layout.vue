@@ -72,6 +72,9 @@
 
             <!-- employee-sidebar-tabs component -->
             <employee-sidebar-tabs />
+
+            <!-- accountant-sidebar-tabs component -->
+            <accountant-sidebar-tabs />
           </ul>
         </div>
 
