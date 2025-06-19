@@ -98,7 +98,10 @@
     "awesome": "Awesome!",
     "birthday_mss_1": "We wish a happy birthday to",
     "birthday_mss_2": "May your day be filled with joy and success!",
-    "elapsed_time": "Elapsed Time:"
+    "elapsed_time": "Elapsed Time:",
+    "tasks_board": "Tasks Board",
+    "add_task": "Add task",
+    "edit_task": "Edit task"
   },
   "btn": {
     "go_back_home": "Go back Home",
@@ -135,7 +138,10 @@
     "end_time": "End Time",
     "resume": "Resume",
     "pause": "Pause",
-    "move_to_in_progress": "Move to In Progress"
+    "move_to_in_progress": "Move to In Progress",
+    "add_task": "Add task",
+    "edit": "Edit",
+    "update": "Update"
   },
   "form": {
     "sign_in": "Sign in",

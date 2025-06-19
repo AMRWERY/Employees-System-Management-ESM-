@@ -109,5 +109,4 @@ const toggleDropdown = (name: DropdownNames) => {
 }
 
 const { hasAnyRole } = useUserRoles()
-console.log(hasAnyRole)
 </script>
