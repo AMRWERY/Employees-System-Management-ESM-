@@ -135,10 +135,10 @@
     "close": "غلق",
     "done": "منتهي",
     "start_time": "بدأ الوقت",
-    "end_time": "انتهاء الوقت",
+    "end_time": "انتهاء المهمة",
     "resume": "أستكمال",
     "pause": "وقف",
-    "move_to_in_progress": "الانتقال إلى قيد التقدم",
+    "back_to_in_progress": "الرجوع إلى قيد التقدم",
     "add_task": "إضافة مهمة",
     "edit": "تعديل",
     "update": "تحديث"
@@ -267,7 +267,13 @@
     "middle_name": "الاسم الأخير",
     "enter_middle_name": "أدخل الاسم الأخير",
     "enter_your_middle_name": "أدخل اسمك الأخير",
-    "birth_date": "تاريخ الميلاد"
+    "birth_date": "تاريخ الميلاد",
+    "title": "العنوان",
+    "enter_task_title": "أدخل عنوان المهمة",
+    "enter_task_desc_here": "أدخل وصف المهمة هنا",
+    "assign_to": "تعيين إلى",
+    "priority": "الاولويه",
+    "select_priority": "تحديد الأولوية"
   },
   "head": {
     "sign_in": "تسجيل الدخول",
@@ -363,7 +369,11 @@
     "could_not_find_full_details_for_employee": "لم نتمكن من العثور على تفاصيل كاملة للموظف",
     "failed_to_send_reset_email": "فشل في إرسال بريد إلكتروني لإعادة التعيين",
     "birthdate_updated": "تم تحديث تاريخ الميلاد",
-    "birthdate_update_failed": "فشل تحديث تاريخ الميلاد"
+    "birthdate_update_failed": "فشل تحديث تاريخ الميلاد",
+    "task_updated_successfully": "تم تحديث المهمة بنجاح",
+    "task_added_successfully": "تمت إضافة المهمة بنجاح",
+    "failed_to_task_update": "فشل تحديث المهمة",
+    "failed_to_task_add": "فشل في إضافة المهمة"
   },
   "status": {
     "all": "الكل",
@@ -374,7 +384,10 @@
     "blocked": "محظور",
     "active": "نشط",
     "paid": "مدفوع",
-    "failed": "فشل"
+    "failed": "فشل",
+    "todo": "قيد التنفيذ",
+    "in-progress": "جارٍ العمل",
+    "done": "تم الانتهاء"
   },
   "no_data": {
     "no_leave_requests_found": "لم يتم العثور على طلبات إجازة",
@@ -449,5 +462,10 @@
   "pagination": {
     "previous": "السابق",
     "next": "التالي"
+  },
+  "priorities": {
+    "high": "عالي",
+    "medium": "متوسط",
+    "low": "منخفض"
   }
 }

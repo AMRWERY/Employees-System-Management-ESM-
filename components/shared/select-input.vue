@@ -1,6 +1,9 @@
 <template>
   <div>
-    <div class="relative w-max mx-auto">
+    <label v-if="label" class="block text-sm font-medium text-gray-700 mb-1">
+      {{ label }}
+    </label>
+    <div class="relative w-full">
       <button type="button" ref="toggleButton" @click.stop="open = !open"
         class="px-5 py-2.5 border border-gray-300 text-slate-900 text-sm font-medium outline-none bg-white hover:bg-gray-50 flex items-center justify-between min-w-[190px] w-full">
         <span>{{ currentLabel }}</span>
@@ -36,6 +39,10 @@ const props = defineProps({
     type: String,
     default: "Select an option",
   },
+  label: {
+    type: String,
+    default: "",
+  }
 });
 
 const emit = defineEmits(["update:modelValue"]);

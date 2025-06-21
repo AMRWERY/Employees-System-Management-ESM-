@@ -135,10 +135,10 @@
     "close": "Close",
     "done": "Mark as Done",
     "start_time": "Start Time",
-    "end_time": "End Time",
+    "end_time": "End Task",
     "resume": "Resume",
     "pause": "Pause",
-    "move_to_in_progress": "Move to In Progress",
+    "back_to_in_progress": "Back to In Progress",
     "add_task": "Add task",
     "edit": "Edit",
     "update": "Update"
@@ -267,7 +267,13 @@
     "middle_name": "Middle name",
     "enter_middle_name": "Enter middle name",
     "enter_your_middle_name": "Enter your middle name",
-    "birth_date": "Birthdate"
+    "birth_date": "Birthdate",
+    "title": "Title",
+    "enter_task_title": "Enter task title",
+    "enter_task_desc_here": "Enter task description here",
+    "assign_to": "Assign to",
+    "priority": "Priority",
+    "select_priority": "Select priority"
   },
   "head": {
     "sign_in": "Sign in",
@@ -363,7 +369,11 @@
     "could_not_find_full_details_for_employee": "Could not find full details for employee",
     "failed_to_send_reset_email": "Failed to send reset email",
     "birthdate_updated": "Birthdate updated",
-    "birthdate_update_failed": "Birthdate update failed"
+    "birthdate_update_failed": "Birthdate update failed",
+    "task_updated_successfully": "Task updated successfully",
+    "task_added_successfully": "Task added successfully",
+    "failed_to_task_update": "Failed to update task",
+    "failed_to_task_add": "Failed to add task"
   },
   "status": {
     "all": "All",
@@ -374,7 +384,10 @@
     "blocked": "Blocked",
     "active": "Active",
     "paid": "Paid",
-    "failed": "Failed"
+    "failed": "Failed",
+    "todo": "To Do",
+    "in-progress": "In Progress",
+    "done": "Done"
   },
   "no_data": {
     "no_leave_requests_found": "No leave requests found",
@@ -449,5 +462,10 @@
   "pagination": {
     "previous": "Previous",
     "next": "Next"
+  },
+  "priorities": {
+    "high": "High",
+    "medium": "Medium",
+    "low": "Low"
   }
 }
