@@ -26,10 +26,10 @@
                 <span>{{ t(`status.${task.status}`) }}</span>
               </div>
 
-              <!-- <div v-if="task?.assignedTo" class="space-s-1.5">
+              <div v-if="task?.assignedTo" class="space-s-1.5">
                 <strong class="text-slate-900">{{ t('form.assign_to') }}:</strong>
-                <span>{{ task.assignedTo }}</span>
-              </div> -->
+                <span>{{ assigneeName }}</span>
+              </div>
             </div>
 
             <div v-if="task?.status === 'in-progress' || task?.status === 'done'">
@@ -122,6 +122,8 @@
 import type { Task } from '@/types/task-management'
 
 const { t } = useI18n()
+const employeesStore = useEmployeesStore()
+const authStore = useAuthStore()
 
 const props = defineProps<{
   task: Task | null
@@ -259,4 +261,30 @@ watch(
   },
   { immediate: true, deep: true }
 )
+
+const formatName = (user: any) => {
+  if (!user) return ''
+  const parts = []
+  if (user.firstName) parts.push(user.firstName)
+  if (user.middleName) parts.push(user.middleName)
+  if (user.lastName) parts.push(user.lastName)
+  return parts.join(' ')
+}
+
+const assigneeName = computed(() => {
+  if (!props.task?.assignedTo) return ''
+  // Try to find the user
+  const user = employeesStore.allUsers.find(
+    u => u.id === props.task?.assignedTo
+  )
+  // If found, return formatted name
+  if (user) {
+    return formatName(user)
+  }
+  // Check if it's the current user
+  if (props.task?.assignedTo === authStore.user?.uid) {
+    return t('form.assign_to_me')
+  }
+  return
+})
 </script>

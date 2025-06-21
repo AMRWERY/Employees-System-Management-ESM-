@@ -26,10 +26,11 @@
                     v-model="description" />
                 </div>
 
-                <!-- <div class="col-span-full">
+                <div class="col-span-full">
                   <dynamic-inputs :label="t('form.assign_to')" type="select" :options="assiginOptions"
-                    :name="t('form.assign_to')" :rules="'required'" :required="true" />
-                </div> -->
+                    :name="t('form.assign_to')" :rules="'required'" :required="true"
+                    :placeholder="t('form.select_assignee')" v-model="assignedTo" />
+                </div>
 
                 <div class="col-span-full">
                   <dynamic-inputs :label="t('form.priority')" type="select" :options="priorityOptions"
@@ -57,6 +58,8 @@ import type { Task, Priority } from '@/types/task-management'
 
 const { t } = useI18n()
 const taskStore = useTaskManagementStore()
+const authStore = useAuthStore()
+const employeesStore = useEmployeesStore()
 const { triggerToast } = useToast()
 const { isLoading: loading, startLoading } = useLoading(3000)
 
@@ -67,7 +70,48 @@ const { task, visible } = defineProps<{
 
 const emit = defineEmits(['close', 'submit'])
 
-// const assiginOptions = ref([])
+onMounted(async () => {
+  await employeesStore.fetchAllUsers()
+})
+
+const formatName = (user: any) => {
+  if (!user) return ''
+
+  const parts = []
+  if (user.firstName) parts.push(user.firstName)
+  if (user.middleName) parts.push(user.middleName)
+  if (user.lastName) parts.push(user.lastName)
+  return parts.join(' ')
+}
+
+const assiginOptions = computed(() => {
+  const currentUserId = authStore.user?.uid
+  if (!currentUserId) return []
+  // Get all active users
+  const allActiveUsers = employeesStore.allUsers
+    .filter(user => user.status === 'active')
+  // Create options array
+  const options = []
+  // Add current user with special label
+  const currentUser = allActiveUsers.find(e => e.id === currentUserId)
+  if (currentUser) {
+    options.push({
+      label: `${formatName(currentUser)} (${t('form.assign_to_me')})`,
+      value: currentUser.id
+    })
+  }
+  // Add other users
+  const otherUsers = allActiveUsers
+    .filter(user => user.id !== currentUserId)
+    .map(user => ({
+      label: formatName(user),
+      value: user.id
+    }))
+    .sort((a, b) => a.label.localeCompare(b.label))
+  // Add other users to options
+  options.push(...otherUsers)
+  return options
+})
 
 const priorities: Priority[] = ['high', 'medium', 'low']
 
@@ -78,9 +122,11 @@ const priorityOptions = computed(() =>
   }))
 )
 
+
 const title = ref('')
 const description = ref('')
 const priority = ref<Priority | ''>('')
+const assignedTo = ref('')
 
 const handleSubmit = async () => {
   const authStore = useAuthStore()
@@ -94,7 +140,8 @@ const handleSubmit = async () => {
       priority: priority.value as Priority,
       status: task?.status || 'todo',
       elapsedTime: task?.elapsedTime ?? 0,
-      userId: authStore.user.uid
+      userId: authStore.user.uid,
+      assignedTo: assignedTo.value
     }
     if (task) {
       // Update
@@ -134,7 +181,8 @@ const handleSubmit = async () => {
 const resetForm = () => {
   title.value = ''
   description.value = ''
-  priority.value = ''
+  priority.value = '',
+    assignedTo.value = ''
 }
 
 watch(
@@ -144,6 +192,7 @@ watch(
       title.value = val.title
       description.value = val.description
       priority.value = (val.priority ?? '') as Priority | ''
+      assignedTo.value = val.assignedTo || ''
     }
   },
   { immediate: true }

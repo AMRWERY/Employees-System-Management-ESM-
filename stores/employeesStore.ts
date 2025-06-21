@@ -21,8 +21,9 @@ import type {
 import type { Payroll } from "@/types/payroll";
 
 export const useEmployeesStore = defineStore("employees", {
-  state: (): EmployeeState => ({
-    employees: [],
+  state: (): EmployeeState & { allUsers: Employee[] } => ({
+    // employees: [],
+    employees: [] as Employee[],
     paginatedEmployees: [],
     currentPage: 1,
     employeesPerPage: 8,
@@ -31,9 +32,45 @@ export const useEmployeesStore = defineStore("employees", {
     managerId: null,
     teamId: null,
     selectedEmployeeDetails: null,
+    allUsers: [] as Employee[],
   }),
 
   actions: {
+    async fetchAllUsers(): Promise<void> {
+      try {
+        // Fetch all users without role filter
+        const usersQuery = query(collection(db, "ems-users"));
+        const querySnapshot = await getDocs(usersQuery);
+        this.allUsers = querySnapshot.docs.map(
+          (doc: QueryDocumentSnapshot<DocumentData>) => {
+            const data = doc.data();
+            return {
+              id: doc.id,
+              email: data.email || "",
+              firstName: data.firstName,
+              middleName: data.middleName,
+              lastName: data.lastName,
+              employeeId: data.employeeId,
+              role: data.role,
+              permissions: data.permissions || {},
+              roledId: data.roledId || null,
+              position: data.position || "N/A",
+              status: data.status === "blocked" ? "blocked" : "active",
+              managerId: data.managerId,
+              teamId: data.teamId,
+              profileImg: data.profileImg,
+              createdAt: data.createdAt?.toDate(),
+              payrolls: data.payrolls || [],
+              base_salary: data.base_salary,
+            };
+          }
+        );
+      } catch (error) {
+        console.error("Error fetching all users:", error);
+        throw error;
+      }
+    },
+
     async fetchEmployees(): Promise<void> {
       const employeesQuery = query(
         collection(db, "ems-users"),

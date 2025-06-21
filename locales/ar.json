@@ -273,7 +273,9 @@
     "enter_task_desc_here": "أدخل وصف المهمة هنا",
     "assign_to": "تعيين إلى",
     "priority": "الاولويه",
-    "select_priority": "تحديد الأولوية"
+    "select_priority": "تحديد الأولوية",
+    "select_assignee": "حدد المعين له",
+    "assign_to_me": "تعيين لي"
   },
   "head": {
     "sign_in": "تسجيل الدخول",

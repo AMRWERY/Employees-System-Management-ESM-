@@ -273,7 +273,9 @@
     "enter_task_desc_here": "Enter task description here",
     "assign_to": "Assign to",
     "priority": "Priority",
-    "select_priority": "Select priority"
+    "select_priority": "Select priority",
+    "select_assignee": "Select assignee",
+    "assign_to_me": "Assign to me"
   },
   "head": {
     "sign_in": "Sign in",

@@ -10,5 +10,5 @@ export interface Task {
   status: Status;
   elapsedTime: number;
   priority: Priority;
-  // assignedTo?: string
+  assignedTo?: string;
 }
