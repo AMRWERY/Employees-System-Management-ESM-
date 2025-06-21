@@ -11,7 +11,26 @@
           </div>
 
           <div class="my-4 space-y-4">
-            <p class="text-slate-600 text-sm leading-relaxed">{{ task?.description }}</p>
+            <div class="border border-gray-150 rounded-lg shadow p-3 bg-gray-100">
+              <p class="text-slate-600 text-sm leading-relaxed">{{ task?.description }}</p>
+            </div>
+
+            <div class="space-y-1 text-sm text-slate-600">
+              <div v-if="task?.priority" class="space-s-1.5">
+                <strong class="text-slate-900">{{ t('form.priority') }}:</strong>
+                <span>{{ t(`priorities.${task.priority}`) }}</span>
+              </div>
+
+              <div v-if="task?.status" class="space-s-1.5">
+                <strong class="text-slate-900">{{ t('form.status') }}:</strong>
+                <span>{{ t(`status.${task.status}`) }}</span>
+              </div>
+
+              <div v-if="task?.assignedTo" class="space-s-1.5">
+                <strong class="text-slate-900">{{ t('form.assign_to') }}:</strong>
+                <span>{{ assigneeName }}</span>
+              </div>
+            </div>
 
             <div v-if="task?.status === 'in-progress' || task?.status === 'done'">
               <p>{{ t('dashboard.elapsed_time') }} {{ formattedTime }}</p>
@@ -25,45 +44,71 @@
           </div>
 
           <!-- actions buttons -->
-          <div v-if="task?.status !== 'todo'" class="flex flex-wrap gap-3 pt-2 border-t border-gray-200">
+          <div v-if="task?.status !== 'todo'" class="flex flex-wrap pt-2 border-t border-gray-200">
             <!-- In Progress -->
             <template v-if="task?.status === 'in-progress'">
               <!-- base-button component-->
-              <base-button :default-icon="false" type="button" :loading="loading.done"
-                :hover-color="'hover:bg-green-400'" variant="outline" @click="handleMarkAsDone">
-                <icon name="svg-spinners:90-ring-with-bg" v-if="loading.done" />
-                <span v-else>{{ t('btn.done') }}</span>
+              <base-button :default-icon="false" :no-border="true" type="button" :loading="loading.done"
+                :title="t('btn.done')" :hover-color="'hover:bg-green-400'" variant="outline" v-if="isEnded"
+                @click="handleMarkAsDone">
+                <icon name="svg-spinners:90-ring-with-bg" class="text-green-600 hover:text-green-700 h-6 w-6"
+                  v-if="loading.done" />
+                <div v-else>
+                  <icon name="mdi:checkbox-marked-circle-outline" class="text-green-600 hover:text-green-700 h-6 w-6" />
+                  <span class="sr-only">Mark as done</span>
+                </div>
               </base-button>
 
               <!-- base-button component-->
-              <base-button :default-icon="false" type="button" :loading="loading.start"
-                :hover-color="'hover:bg-blue-400'" variant="outline" v-if="!isStarted" @click="handleStartTimer">
-                <icon name="svg-spinners:90-ring-with-bg" v-if="loading.start" />
-                <span v-else>{{ t('btn.start_time') }}</span>
+              <base-button :default-icon="false" :no-border="true" type="button" :loading="loading.start"
+                :title="t('btn.start_time')" :hover-color="'hover:bg-blue-400'" variant="outline"
+                v-if="!isStarted && !isEnded" @click="handleStartTimer">
+                <icon name="svg-spinners:90-ring-with-bg" class="text-blue-600 hover:text-blue-700 h-6 w-6"
+                  v-if="loading.start" />
+                <div v-else>
+                  <icon name="icon-park-outline:stopwatch-start" class="text-blue-600 hover:text-blue-700 h-6 w-6" />
+                  <span class="sr-only">Start time</span>
+                </div>
               </base-button>
 
               <!-- base-button component-->
-              <base-button :default-icon="false" type="button" :loading="loading.end"
-                :hover-color="'hover:bg-purple-400'" variant="outline" v-else @click="handleEndTimer">
-                <icon name="svg-spinners:90-ring-with-bg" v-if="loading.end" />
-                <span v-else>{{ t('btn.end_time') }}</span>
+              <base-button :default-icon="false" :no-border="true" type="button" :loading="loading.end"
+                :title="t('btn.end_time')" :hover-color="'hover:bg-purple-400'" variant="outline"
+                v-if="isStarted || isPaused" @click="handleEndTimer">
+                <icon name="svg-spinners:90-ring-with-bg" class="text-red-600 hover:text-red-700 h-6 w-6"
+                  v-if="loading.end" />
+                <div v-else>
+                  <icon name="octicon:stopwatch-16" class="text-red-600 hover:text-red-700 h-6 w-6" />
+                  <span class="sr-only">End time</span>
+                </div>
               </base-button>
 
               <!-- base-button component-->
-              <base-button :default-icon="false" type="button" :loading="loading.pause"
-                :hover-color="'hover:bg-blue-400'" variant="outline" v-if="isStarted" @click="handleTogglePause">
-                <icon name="svg-spinners:90-ring-with-bg" v-if="loading.pause" />
-                <span v-else>{{ isPaused ? t('btn.resume') : t('btn.pause') }}</span>
+              <base-button :default-icon="false" :no-border="true" type="button" :loading="loading.pause"
+                :title="isPaused ? t('btn.resume') : t('btn.pause')" :hover-color="'hover:bg-blue-400'"
+                variant="outline" v-if="isStarted && !isEnded" @click="handleTogglePause">
+                <icon name="svg-spinners:90-ring-with-bg" class="text-indigo-600 hover:text-indigo-700 h-6 w-6"
+                  v-if="loading.pause" />
+                <div v-else>
+                  <icon :name="isPaused ? 'mdi:play-circle-outline' : 'mdi:pause-circle-outline'"
+                    class="text-indigo-600 hover:text-indigo-700 h-6 w-6" />
+                  <span class="sr-only">{{ isPaused ? 'Resume' : 'Pause' }}</span>
+                </div>
               </base-button>
             </template>
 
             <!-- Done -->
             <template v-else-if="task?.status === 'done'">
               <!-- base-button component-->
-              <base-button :default-icon="false" type="button" :loading="loading.inProgress"
-                :hover-color="'hover:bg-yellow-400'" variant="outline" @click="handleMoveToInProgress">
-                <icon name="svg-spinners:90-ring-with-bg" v-if="loading.inProgress" />
-                <span v-else>{{ t('btn.move_to_in_progress') }}</span>
+              <base-button :default-icon="false" :no-border="true" type="button" :loading="loading.inProgress"
+                :title="t('btn.back_to_in_progress')" :hover-color="'hover:bg-yellow-400'" variant="outline"
+                @click="handleMoveToInProgress">
+                <icon name="svg-spinners:90-ring-with-bg" class="text-purple-600 hover:text-purple-700 h-6 w-6"
+                  v-if="loading.inProgress" />
+                <div v-else>
+                  <icon name="mdi:close-octagon-outline" class="text-purple-600 hover:text-purple-700 h-6 w-6" />
+                  <span class="sr-only">back to in progress</span>
+                </div>
               </base-button>
             </template>
           </div>
@@ -74,16 +119,14 @@
 </template>
 
 <script lang="ts" setup>
+import type { Task } from '@/types/task-management'
+
 const { t } = useI18n()
+const employeesStore = useEmployeesStore()
+const authStore = useAuthStore()
 
 const props = defineProps<{
-  task: {
-    id: number
-    title: string
-    description: string
-    status: string
-    elapsedTime: number
-  } | null
+  task: Task | null
 }>()
 
 const emit = defineEmits(['close', 'update-status', 'update-time', 'edit-task'])
@@ -104,22 +147,28 @@ const setLoading = (key: keyof typeof loading.value, value: boolean) => {
 
 const count = shallowRef(0)
 
+const elapsedTime = ref(props.task?.elapsedTime || 0)
+
 async function fetchData() {
-  // await promiseTimeout(1000)
-  // count.value++
   await promiseTimeout(1000)
+  elapsedTime.value++
   if (props.task) {
-    emit('update-time', { id: props.task.id, elapsedTime: props.task.elapsedTime + 1 })
+    emit('update-time', { id: props.task.id, elapsedTime: elapsedTime.value })
   }
 }
 
-const { pause, resume } = useTimeoutPoll(fetchData, 1000)
+const { pause, resume } = useTimeoutPoll(
+  fetchData,
+  1000,
+  { immediate: false }
+)
 
 const isStarted = ref(false)
 const isPaused = ref(false)
+const isEnded = ref(false)
 
 const formattedTime = computed(() => {
-  const totalSeconds = props.task?.elapsedTime || 0
+  const totalSeconds = elapsedTime.value
   const hours = Math.floor(totalSeconds / 3600)
   const minutes = Math.floor((totalSeconds % 3600) / 60)
   const seconds = totalSeconds % 60
@@ -136,32 +185,49 @@ const handleMarkAsDone = async () => {
   setLoading('done', true)
   await promiseTimeout(loadingTimeOut)
   setLoading('done', false)
-  emit('update-status', { id: props.task.id, status: 'done' })
+  emit('update-status', {
+    id: props.task.id,
+    status: 'done',
+    elapsedTime: elapsedTime.value // Ensure latest time is saved
+  })
 }
 
 const handleMoveToInProgress = async () => {
   if (!props.task) return
   setLoading('inProgress', true)
+  elapsedTime.value = 0
+  isStarted.value = false
+  isPaused.value = false
+  isEnded.value = false
+  emit('update-time', { id: props.task.id, elapsedTime: 0 })
   await promiseTimeout(loadingTimeOut)
   setLoading('inProgress', false)
   emit('update-status', { id: props.task.id, status: 'in-progress' })
 }
 
 const handleStartTimer = async () => {
+  if (!props.task) return
   setLoading('start', true)
   await promiseTimeout(loadingTimeOut)
   setLoading('start', false)
   isStarted.value = true
   isPaused.value = false
+  isEnded.value = false
+  if (!props.task.elapsedTime || isEnded.value) {
+    elapsedTime.value = 0
+  }
   resume()
 }
 
 const handleEndTimer = async () => {
+  if (!props.task) return
   setLoading('end', true)
+  emit('update-time', { id: props.task.id, elapsedTime: elapsedTime.value })
   await promiseTimeout(loadingTimeOut)
   setLoading('end', false)
   isStarted.value = false
   isPaused.value = false
+  isEnded.value = true
   pause()
   count.value = 0
 }
@@ -181,12 +247,44 @@ const handleTogglePause = async () => {
 watch(
   () => props.task,
   (newTask) => {
-    if (newTask?.status === 'in-progress' && isStarted.value && !isPaused.value) {
-      resume()
-    } else {
-      pause()
+    if (newTask) {
+      elapsedTime.value = newTask.elapsedTime || 0
+      // Reset states when task changes
+      isStarted.value = false
+      isPaused.value = false
+      isEnded.value = false
+      // Only set started state if task has existing elapsed time
+      if (newTask.elapsedTime > 0) {
+        isStarted.value = true
+      }
     }
   },
-  { immediate: true }
+  { immediate: true, deep: true }
 )
+
+const formatName = (user: any) => {
+  if (!user) return ''
+  const parts = []
+  if (user.firstName) parts.push(user.firstName)
+  if (user.middleName) parts.push(user.middleName)
+  if (user.lastName) parts.push(user.lastName)
+  return parts.join(' ')
+}
+
+const assigneeName = computed(() => {
+  if (!props.task?.assignedTo) return ''
+  // Try to find the user
+  const user = employeesStore.allUsers.find(
+    u => u.id === props.task?.assignedTo
+  )
+  // If found, return formatted name
+  if (user) {
+    return formatName(user)
+  }
+  // Check if it's the current user
+  if (props.task?.assignedTo === authStore.user?.uid) {
+    return t('form.assign_to_me')
+  }
+  return
+})
 </script>

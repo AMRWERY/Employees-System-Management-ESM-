@@ -15,15 +15,26 @@
         </span>
         <!-- input -->
         <template v-if="type === 'textarea'">
-          <Field as="textarea" :name="name" :placeholder="placeholder" :id="id" :readonly="readonly"
+          <Field as="textarea" :name="name" :placeholder="placeholder" :id="id" :readonly="readonly" :options="options"
             v-model="internalValue" :rules="rules"
             class="w-full px-3 py-2 transition duration-300 border rounded-md shadow-sm placeholder:text-slate-400 text-slate-700 focus:outline-none focus:border-slate-400 hover:border-slate-300 focus:shadow"
             rows="4" />
         </template>
 
+        <template v-else-if="type === 'select'">
+          <Field as="select" :name="name" :placeholder="placeholder" :id="id" :readonly="readonly"
+            v-model="internalValue" :rules="rules"
+            class="w-full px-3 py-2 transition duration-300 border rounded-md shadow-sm placeholder:text-slate-400 text-slate-700 focus:outline-none focus:border-slate-400 hover:border-slate-300 focus:shadow">
+            <option value="" disabled>{{ placeholder }}</option>
+            <option v-for="option in options" :key="option.value" :value="option.value">
+              {{ option.label }}
+            </option>
+          </Field>
+        </template>
+
         <template v-else>
           <Field :type="showPassword ? 'text' : type" :name="name" :placeholder="placeholder" :id="id"
-            :readonly="readonly" v-model="internalValue" :rules="rules" :class="[
+            :options="options" :readonly="readonly" v-model="internalValue" :rules="rules" :class="[
               'w-full text-sm text-slate-800 px-4 py-3 rounded-md outline-none border focus:border-blue-600',
               errors[name] ? 'border-red-600' : 'border-slate-200'
             ]" />
@@ -46,6 +57,8 @@
 </template>
 
 <script lang="ts" setup>
+type SelectOption = { label: string; value: string | number };
+
 const props = defineProps({
   modelValue: {
     type: [String, Number],
@@ -91,6 +104,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  options: {
+    type: Array as PropType<SelectOption[]>,
+    default: () => [],
+  }
 });
 
 const emit = defineEmits(['update:modelValue']);

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <button :class="buttonClasses">
+    <button :class="buttonClasses" :title="title">
       <slot></slot>
       <slot name="icon">
         <icon v-if="defaultIcon" name="heroicons-solid:plus-sm" class="ms-2 w-5 h-5" />
@@ -19,6 +19,10 @@ const props = defineProps({
     type: Boolean,
     default: false
   },
+  title: {
+    type: String,
+    default: 'title'
+  },
   bgColor: {
     type: String,
     default: 'bg-[#3b5998]'
@@ -34,6 +38,10 @@ const props = defineProps({
   textColor: {
     type: String,
     default: 'text-current'
+  },
+  noBorder: {
+    type: Boolean,
+    default: false
   },
   variant: {
     type: String,
@@ -56,10 +64,12 @@ const buttonClasses = computed(() => {
   }
 
   const base = ['font-medium rounded-lg text-sm px-5 py-2.5 text-center flex items-center justify-center']
+
   const block = props.block ? 'w-full' : ''
+
   const variantClass =
     props.variant === 'outline'
-      ? ['border', props.borderColor, props.textColor, 'bg-transparent']
+      ? [!props.noBorder ? 'border' : '', props.borderColor, props.textColor, 'bg-transparent']
       : ['text-white', props.bgColor, props.hoverColor]
 
   return [...base, block, ...variantClass]

@@ -208,6 +208,7 @@ export const useTeamStore = defineStore("teams", {
         const employee = {
           id: employeeDoc.id,
           firstName: data.firstName,
+          middleName: data.middleName,
           lastName: data.lastName,
           email: data.email,
           position: data.position,
@@ -219,6 +220,8 @@ export const useTeamStore = defineStore("teams", {
           status: data.status,
           manager: data.manager,
           profileImg: data.profileImg,
+          base_salary: data.base_salary,
+          birthDate: data.birthDate,
           createdAt: data.createdAt?.toDate(),
           role: data.role,
         } as Member;

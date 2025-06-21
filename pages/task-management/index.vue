@@ -20,7 +20,7 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 border-gray-200 border p-4 rounded-lg">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 border-gray-200 border p-4 rounded-lg">
                 <div v-for="status in statuses" :key="status" class="bg-white rounded p-2 shadow-lg">
                     <h2 class="text-lg font-semibold mb-4 text-center border-b pb-3">{{ statusLabels[status] }}</h2>
                     <div class="h-[400px] overflow-y-auto hide-scrollbar" :data-status="status" @dragover.prevent
@@ -34,7 +34,7 @@
                                 <!-- Task content -->
                                 <div
                                     class="flex-shrink-0 w-11 h-11 bg-blue-200 rounded-full flex items-center justify-center">
-                                    <span class="text-sm text-blue-600 font-bold">{{ task.id }}</span>
+                                    <span class="text-sm text-blue-600 font-bold">{{ index + 1 }}</span>
                                 </div>
                                 <div class="ms-4 flex-grow">
                                     <div class="text-[15px] font-medium text-slate-900">{{ task.title }}</div>
@@ -59,23 +59,21 @@
 import type { Status, Task } from '@/types/task-management'
 
 const { t } = useI18n()
+const taskStore = useTaskManagementStore()
+
+onMounted(() => {
+    taskStore.fetchTasks()
+})
 
 const statuses: Status[] = ['todo', 'in-progress', 'done']
 
 const statusLabels: Record<Status, string> = {
-    'todo': 'To Do',
-    'in-progress': 'In Progress',
-    'done': 'Done'
+    'todo': t('status.todo'),
+    'in-progress': t('status.in-progress'),
+    'done': t('status.done')
 }
 
-const tasks = ref<Task[]>([
-    { id: 1, title: 'Design UI', description: 'Create the main layout', status: 'todo', elapsedTime: 0 },
-    { id: 2, title: 'Setup Vue Project', description: 'Initialize with Vite', status: 'in-progress', elapsedTime: 0 },
-    { id: 3, title: 'Write Docs', description: 'Document drag logic', status: 'done', elapsedTime: 0 },
-    { id: 4, title: 'Write Docs', description: 'Document drag logic', status: 'in-progress', elapsedTime: 0 },
-    { id: 5, title: 'Write Docs', description: 'Document drag logic', status: 'done', elapsedTime: 0 },
-    { id: 6, title: 'Write Docs', description: 'Document drag logic', status: 'done', elapsedTime: 0 },
-])
+const tasks = computed(() => taskStore.tasks)
 
 const draggedTask = ref<Task | null>(null)
 const dragOverIndex = ref<number | null>(null)
@@ -104,6 +102,7 @@ const handleDrop = (e: DragEvent, newStatus: Status) => {
         : tasks.value.length
     // Insert at new index
     tasks.value.splice(insertIndex, 0, movedTask)
+    taskStore.updateTask(movedTask.id, { status: newStatus })
     // Cleanup
     draggedTask.value = null
     dragOverIndex.value = null
@@ -134,17 +133,13 @@ const closeModal = () => {
     isModalOpen.value = false
 }
 
-const updateTaskStatus = ({ id, status }: { id: number; status: Status }) => {
-    const task = tasks.value.find(t => t.id === id)
-    if (task) task.status = status
+const updateTaskStatus = ({ id, status }: { id: string; status: Status }) => {
+    taskStore.updateTask(id, { status })
     closeModal()
 }
 
-const updateTaskTime = ({ id, elapsedTime }: { id: number; elapsedTime: number }) => {
-    const task = tasks.value.find(t => t.id === id)
-    if (task) {
-        task.elapsedTime = elapsedTime
-    }
+const updateTaskTime = ({ id, elapsedTime }: { id: string; elapsedTime: number }) => {
+    taskStore.updateTaskElapsedTime(id, elapsedTime)
 }
 
 const showAddDialog = ref(false);
@@ -165,12 +160,21 @@ const closeAddDialog = () => {
     taskToEdit.value = null
 }
 
-const handleTaskSubmit = (newTask: Task) => {
-    const index = tasks.value.findIndex(t => t.id === newTask.id)
-    if (index !== -1) {
-        tasks.value[index] = newTask
+const handleTaskSubmit = async (newTask: Task) => {
+    const authStore = useAuthStore()
+    const exists = taskStore.tasks.find(t => t.id === newTask.id)
+    if (exists) {
+        await taskStore.updateTask(newTask.id, newTask)
     } else {
-        tasks.value.push({ ...newTask, id: Date.now() })
+        if (!authStore.user) return
+        await taskStore.addTask({
+            title: newTask.title,
+            description: newTask.description,
+            priority: newTask.priority,
+            status: newTask.status,
+            elapsedTime: newTask.elapsedTime,
+            userId: authStore.user.uid
+        })
     }
     closeAddDialog()
 }
