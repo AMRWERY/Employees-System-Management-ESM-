@@ -37,6 +37,11 @@
                     :name="t('form.priority')" :rules="'required'" :required="true"
                     :placeholder="t('form.select_priority')" v-model="priority" />
                 </div>
+
+                <div class="col-span-full">
+                  <!-- text-editor component -->
+                  <!-- <text-editor v-model="content" /> -->
+                </div>
               </div>
             </ClientOnly>
           </div>
@@ -197,4 +202,6 @@ watch(
   },
   { immediate: true }
 )
+
+// const content = ref('')
 </script>
