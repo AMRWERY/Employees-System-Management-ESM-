@@ -1,9 +1,10 @@
 <template>
   <div>
-    <button :class="buttonClasses" :title="title">
+    <button :class="buttonClasses" :title="title" :type="type">
       <slot></slot>
       <slot name="icon">
         <icon v-if="defaultIcon" name="heroicons-solid:plus-sm" class="ms-2 w-5 h-5" />
+        <icon v-else-if="appendIcon" :name="appendIcon" class="ms-2 w-5 h-5" />
       </slot>
     </button>
   </div>
@@ -11,9 +12,17 @@
 
 <script lang="ts" setup>
 const props = defineProps({
+  type: {
+    type: String as PropType<'button' | 'submit' | 'reset'>,
+    default: 'button',
+  },
   defaultIcon: {
     type: Boolean,
     default: true
+  },
+  appendIcon: {
+    type: String,
+    default: '',
   },
   block: {
     type: Boolean,

@@ -101,7 +101,8 @@
     "elapsed_time": "Elapsed Time:",
     "tasks_board": "Tasks Board",
     "add_task": "Add task",
-    "edit_task": "Edit task"
+    "edit_task": "Edit task",
+    "description": "Description:"
   },
   "btn": {
     "go_back_home": "Go back Home",
@@ -141,7 +142,8 @@
     "back_to_in_progress": "Back to In Progress",
     "add_task": "Add task",
     "edit": "Edit",
-    "update": "Update"
+    "update": "Update",
+    "save_close": "Save & Close"
   },
   "form": {
     "sign_in": "Sign in",

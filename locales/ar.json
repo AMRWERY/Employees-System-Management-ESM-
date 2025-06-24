@@ -101,7 +101,8 @@
     "elapsed_time": "الوقت المنقضي:",
     "tasks_board": "لوحة المهام",
     "add_task": "إضافة مهمة",
-    "edit_task": "تعديل المهمه"
+    "edit_task": "تعديل المهمه",
+    "description": "الوصف:"
   },
   "btn": {
     "go_back_home": "العودة إلى الصفحه الرئيسيه",
@@ -141,7 +142,8 @@
     "back_to_in_progress": "الرجوع إلى قيد التقدم",
     "add_task": "إضافة مهمة",
     "edit": "تعديل",
-    "update": "تحديث"
+    "update": "تحديث",
+    "save_close": "حفظ & إغلاق"
   },
   "form": {
     "sign_in": "تسجيل الدخول",
