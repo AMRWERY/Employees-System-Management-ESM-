@@ -181,23 +181,41 @@ const setLoading = (key: keyof typeof loading.value, value: boolean) => {
   loading.value[key] = value;
 };
 
-const count = shallowRef(0);
-
-const elapsedTime = ref(props.task?.elapsedTime || 0);
-
-async function fetchData() {
-  await promiseTimeout(1000);
-  elapsedTime.value++;
-  if (props.task) {
-    emit("update-time", { id: props.task.id, elapsedTime: elapsedTime.value });
-  }
-}
-
-const { pause, resume } = useTimeoutPoll(fetchData, 1000, { immediate: false });
-
 const isStarted = ref(false);
 const isPaused = ref(false);
 const isEnded = ref(false);
+const elapsedTime = ref(props.task?.elapsedTime || 0);
+
+const timerKey = computed(() =>
+  props.task ? `timer_${props.task.id}` : ''
+);
+
+let timerInterval: NodeJS.Timeout | null = null;
+
+const startTimerInterval = () => {
+  if (timerInterval) clearInterval(timerInterval);
+  timerInterval = setInterval(() => {
+    elapsedTime.value++;
+    if (props.task) {
+      emit("update-time", { id: props.task.id, elapsedTime: elapsedTime.value });
+    }
+  }, 1000);
+};
+
+const saveTimerState = () => {
+  if (!timerKey.value) return;
+  localStorage.setItem(timerKey.value, JSON.stringify({
+    startTime: isStarted.value && !isPaused.value ? Date.now() : null,
+    isPaused: isPaused.value,
+    elapsed: elapsedTime.value
+  }));
+};
+
+const clearTimerState = () => {
+  if (timerKey.value) {
+    localStorage.removeItem(timerKey.value);
+  }
+};
 
 const formattedTime = computed(() => {
   const totalSeconds = elapsedTime.value;
@@ -208,25 +226,36 @@ const formattedTime = computed(() => {
   return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
 });
 
-const handleClose = async () => {
+const handleClose = () => {
+  saveTimerState();
   emit("close");
 };
 
 const handleMarkAsDone = async () => {
   if (!props.task) return;
   setLoading("done", true);
+  clearTimerState();
+  if (timerInterval) {
+    clearInterval(timerInterval);
+    timerInterval = null;
+  }
   await promiseTimeout(loadingTimeOut);
   setLoading("done", false);
   emit("update-status", {
     id: props.task.id,
     status: "done",
-    elapsedTime: elapsedTime.value, // Ensure latest time is saved
+    elapsedTime: elapsedTime.value,
   });
 };
 
 const handleMoveToInProgress = async () => {
   if (!props.task) return;
   setLoading("inProgress", true);
+  clearTimerState();
+  if (timerInterval) {
+    clearInterval(timerInterval);
+    timerInterval = null;
+  }
   elapsedTime.value = 0;
   isStarted.value = false;
   isPaused.value = false;
@@ -248,51 +277,83 @@ const handleStartTimer = async () => {
   if (!props.task.elapsedTime || isEnded.value) {
     elapsedTime.value = 0;
   }
-  resume();
+  startTimerInterval();
+  saveTimerState();
 };
 
 const handleEndTimer = async () => {
   if (!props.task) return;
   setLoading("end", true);
+  if (timerInterval) {
+    clearInterval(timerInterval);
+    timerInterval = null;
+  }
+  clearTimerState();
   emit("update-time", { id: props.task.id, elapsedTime: elapsedTime.value });
   await promiseTimeout(loadingTimeOut);
   setLoading("end", false);
   isStarted.value = false;
   isPaused.value = false;
   isEnded.value = true;
-  pause();
-  count.value = 0;
 };
 
 const handleTogglePause = async () => {
   setLoading("pause", true);
+  if (isPaused.value) {
+    isPaused.value = false;
+    startTimerInterval();
+  } else {
+    // Pausing
+    isPaused.value = true;
+    if (timerInterval) {
+      clearInterval(timerInterval);
+      timerInterval = null;
+    }
+    emit("update-time", { id: props.task?.id, elapsedTime: elapsedTime.value });
+  }
+
+  saveTimerState();
   await promiseTimeout(loadingTimeOut);
   setLoading("pause", false);
-  if (isPaused.value) {
-    resume();
-  } else {
-    pause();
-  }
-  isPaused.value = !isPaused.value;
 };
 
 watch(
   () => props.task,
   (newTask) => {
     if (newTask) {
+      if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+      }
       elapsedTime.value = newTask.elapsedTime || 0;
-      // Reset states when task changes
       isStarted.value = false;
       isPaused.value = false;
       isEnded.value = false;
-      // Only set started state if task has existing elapsed time
-      if (newTask.elapsedTime > 0) {
-        isStarted.value = true;
+      const saved = timerKey.value ? localStorage.getItem(timerKey.value) : null;
+      if (saved) {
+        const { startTime, isPaused: paused } = JSON.parse(saved);
+
+        if (startTime) {
+          const currentElapsed = Math.floor((Date.now() - startTime) / 1000);
+          elapsedTime.value += currentElapsed;
+          isStarted.value = true;
+          startTimerInterval();
+        } else if (paused) {
+          // Timer was paused
+          isStarted.value = true;
+          isPaused.value = true;
+        }
       }
     }
   },
-  { immediate: true, deep: true }
+  { immediate: true }
 );
+
+onUnmounted(() => {
+  if (timerInterval) {
+    clearInterval(timerInterval);
+  }
+});
 
 const formatName = (user: any) => {
   if (!user) return "";
