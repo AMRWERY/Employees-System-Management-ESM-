@@ -22,18 +22,27 @@
 
               <div class="flex items-center gap-1">
                 <icon name="majesticons:comments-2-line" class="text-blue-400 w-5 h-5" />
-                <span>10 comments</span>
+                <span>10 {{ t('dashboard.comments') }}</span>
               </div>
 
+              <!--add_tag / remove_tag btn -->
               <div>
-                <span class="rounded-lg border bg-blue-50 text-blue-500 px-1.5 py-1 cursor-pointer">add tag</span>
+                <button class="rounded-full" :title="task?.tagged ? t('btn.remove_tag') : t('btn.add_tag')"
+                  @click="toggleTag" :disabled="isTagging">
+                  <icon v-if="!isTagging" :name="task?.tagged
+                    ? 'material-symbols:bookmark-check-sharp'
+                    : 'material-symbols:bookmark-check-outline-sharp'"
+                    :class="task?.tagged ? 'text-purple-700' : 'text-gray-400'" />
+                  <icon v-else name="svg-spinners:90-ring-with-bg" class="text-purple-700 w-5 h-5" />
+                </button>
               </div>
 
-              <div>
-                <base-button :default-icon="false" :appendIcon="'material-symbols:save-rounded'" :type="'button'"
-                  :loading="loading.save" :title="t('btn.save_close')" :textColor="'text-white'"
-                  :hover-color="'hover:bg-blue-800'" variant="solid">
-                  <icon name="svg-spinners:90-ring-with-bg" class="h-6 w-6" v-if="loading.save" />
+              <div
+                :class="{ hidden: task?.status === 'todo' || task?.status === 'cancelled' || task?.status === 'done' }">
+                <base-button :default-icon="false" :appendIcon="loading.save ? '' : 'material-symbols:save-rounded'"
+                  :type="'button'" :loading="loading.save" :title="t('btn.save_close')" :textColor="'text-white'"
+                  :hover-color="'hover:bg-blue-800'" variant="solid" @click="handleMarkAsDone">
+                  <icon name="svg-spinners:90-ring-with-bg" class="h-5 w-5" v-if="loading.save" />
                   <div v-else>
                     <span>{{ t('btn.save_close') }}</span>
                   </div>
@@ -154,6 +163,8 @@ import type { Task } from "@/types/task-management";
 const { t } = useI18n();
 const employeesStore = useEmployeesStore();
 const authStore = useAuthStore();
+const taskStore = useTaskManagementStore()
+const { triggerToast } = useToast();
 
 const props = defineProps<{
   task: Task | null;
@@ -234,6 +245,7 @@ const handleClose = () => {
 const handleMarkAsDone = async () => {
   if (!props.task) return;
   setLoading("done", true);
+  setLoading("save", true);
   clearTimerState();
   if (timerInterval) {
     clearInterval(timerInterval);
@@ -241,6 +253,7 @@ const handleMarkAsDone = async () => {
   }
   await promiseTimeout(loadingTimeOut);
   setLoading("done", false);
+  setLoading("save", false);
   emit("update-status", {
     id: props.task.id,
     status: "done",
@@ -394,6 +407,25 @@ const assigneeName = computed(() => {
   }
   return;
 });
+
+const isTagging = ref(false)
+
+const toggleTag = async () => {
+  if (!props.task) return;
+  isTagging.value = true;
+  const newTaggedState = !props.task.tagged;
+  props.task.tagged = newTaggedState;
+  await taskStore.updateTask(props.task.id, {
+    tagged: newTaggedState
+  });
+  await promiseTimeout(2000);
+  isTagging.value = false;
+  triggerToast({
+    message: t(newTaggedState ? 'toast.tag_added' : 'toast.tag_removed'),
+    type: 'success',
+    icon: 'mdi-check-circle',
+  });
+};
 
 const content = ref("");
 </script>

@@ -102,7 +102,8 @@
     "tasks_board": "لوحة المهام",
     "add_task": "إضافة مهمة",
     "edit_task": "تعديل المهمه",
-    "description": "الوصف:"
+    "description": "الوصف:",
+    "comments": "تعليقات"
   },
   "btn": {
     "go_back_home": "العودة إلى الصفحه الرئيسيه",
@@ -143,7 +144,9 @@
     "add_task": "إضافة مهمة",
     "edit": "تعديل",
     "update": "تحديث",
-    "save_close": "حفظ & إغلاق"
+    "save_close": "حفظ & إغلاق",
+    "add_tag": "إضافة علامة",
+    "remove_tag": "إزالة العلامة"
   },
   "form": {
     "sign_in": "تسجيل الدخول",
@@ -377,7 +380,9 @@
     "task_updated_successfully": "تم تحديث المهمة بنجاح",
     "task_added_successfully": "تمت إضافة المهمة بنجاح",
     "failed_to_task_update": "فشل تحديث المهمة",
-    "failed_to_task_add": "فشل في إضافة المهمة"
+    "failed_to_task_add": "فشل في إضافة المهمة",
+    "tag_added": "تمت إضافة العلامة",
+    "tag_removed": "تمت إزالة العلامة"
   },
   "status": {
     "all": "الكل",
@@ -391,7 +396,8 @@
     "failed": "فشل",
     "todo": "قيد التنفيذ",
     "in-progress": "جارٍ العمل",
-    "done": "تم الانتهاء"
+    "done": "تم الانتهاء",
+    "on-hold": "قيد الانتظار"
   },
   "no_data": {
     "no_leave_requests_found": "لم يتم العثور على طلبات إجازة",

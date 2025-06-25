@@ -102,7 +102,8 @@
     "tasks_board": "Tasks Board",
     "add_task": "Add task",
     "edit_task": "Edit task",
-    "description": "Description:"
+    "description": "Description:",
+    "comments": "comments"
   },
   "btn": {
     "go_back_home": "Go back Home",
@@ -143,7 +144,9 @@
     "add_task": "Add task",
     "edit": "Edit",
     "update": "Update",
-    "save_close": "Save & Close"
+    "save_close": "Save & Close",
+    "add_tag": "add tag",
+    "remove_tag": "remove tag"
   },
   "form": {
     "sign_in": "Sign in",
@@ -377,7 +380,9 @@
     "task_updated_successfully": "Task updated successfully",
     "task_added_successfully": "Task added successfully",
     "failed_to_task_update": "Failed to update task",
-    "failed_to_task_add": "Failed to add task"
+    "failed_to_task_add": "Failed to add task",
+    "tag_added": "Tag added",
+    "tag_removed": "Tag removed"
   },
   "status": {
     "all": "All",
@@ -391,7 +396,8 @@
     "failed": "Failed",
     "todo": "To Do",
     "in-progress": "In Progress",
-    "done": "Done"
+    "done": "Done",
+    "on-hold": "On hold"
   },
   "no_data": {
     "no_leave_requests_found": "No leave requests found",
