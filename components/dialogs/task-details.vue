@@ -25,11 +25,15 @@
                 <span>10 {{ t('dashboard.comments') }}</span>
               </div>
 
-              <!--add_tag btn -->
+              <!--add_tag / remove_tag btn -->
               <div>
-                <button class="rounded-full cursor-pointer">
-                  <icon name="material-symbols:bookmark-check-outline-sharp" class="text-purple-700" />
-                  <icon name="material-symbols:bookmark-check-sharp" class="text-purple-700" />
+                <button class="rounded-full" :title="task?.tagged ? t('btn.remove_tag') : t('btn.add_tag')"
+                  @click="toggleTag" :disabled="isTagging">
+                  <icon v-if="!isTagging" :name="task?.tagged
+                    ? 'material-symbols:bookmark-check-sharp'
+                    : 'material-symbols:bookmark-check-outline-sharp'"
+                    :class="task?.tagged ? 'text-purple-700' : 'text-gray-400'" />
+                  <icon v-else name="svg-spinners:90-ring-with-bg" class="text-purple-700 w-5 h-5" />
                 </button>
               </div>
 
@@ -159,6 +163,8 @@ import type { Task } from "@/types/task-management";
 const { t } = useI18n();
 const employeesStore = useEmployeesStore();
 const authStore = useAuthStore();
+const taskStore = useTaskManagementStore()
+const { triggerToast } = useToast();
 
 const props = defineProps<{
   task: Task | null;
@@ -401,6 +407,25 @@ const assigneeName = computed(() => {
   }
   return;
 });
+
+const isTagging = ref(false)
+
+const toggleTag = async () => {
+  if (!props.task) return;
+  isTagging.value = true;
+  const newTaggedState = !props.task.tagged;
+  props.task.tagged = newTaggedState;
+  await taskStore.updateTask(props.task.id, {
+    tagged: newTaggedState
+  });
+  await promiseTimeout(2000);
+  isTagging.value = false;
+  triggerToast({
+    message: t(newTaggedState ? 'toast.tag_added' : 'toast.tag_removed'),
+    type: 'success',
+    icon: 'mdi-check-circle',
+  });
+};
 
 const content = ref("");
 </script>
