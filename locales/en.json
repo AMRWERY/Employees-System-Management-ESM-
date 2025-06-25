@@ -102,7 +102,9 @@
     "tasks_board": "Tasks Board",
     "add_task": "Add task",
     "edit_task": "Edit task",
-    "description": "Description:"
+    "description": "Description:",
+    "add_tag": "add tag",
+    "comments": "comments"
   },
   "btn": {
     "go_back_home": "Go back Home",
@@ -392,7 +394,7 @@
     "todo": "To Do",
     "in-progress": "In Progress",
     "done": "Done",
-    "on_hold": "On hold"
+    "on-hold": "On hold"
   },
   "no_data": {
     "no_leave_requests_found": "No leave requests found",

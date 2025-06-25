@@ -102,7 +102,9 @@
     "tasks_board": "لوحة المهام",
     "add_task": "إضافة مهمة",
     "edit_task": "تعديل المهمه",
-    "description": "الوصف:"
+    "description": "الوصف:",
+    "add_tag": "إضافة علامة",
+    "comments": "تعليقات"
   },
   "btn": {
     "go_back_home": "العودة إلى الصفحه الرئيسيه",
@@ -392,7 +394,7 @@
     "todo": "قيد التنفيذ",
     "in-progress": "جارٍ العمل",
     "done": "تم الانتهاء",
-    "on_hold": "قيد الانتظار"
+    "on-hold": "قيد الانتظار"
   },
   "no_data": {
     "no_leave_requests_found": "لم يتم العثور على طلبات إجازة",

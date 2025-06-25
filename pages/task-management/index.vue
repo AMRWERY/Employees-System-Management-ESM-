@@ -29,7 +29,7 @@
                             @drop="handleDrop($event, status)">
                             <transition-group name="task" tag="ul" class="space-y-3" appear>
                                 <li v-for="(task, index) in tasksByStatus(status)" :key="task.id" :data-index="index"
-                                    class="relative p-5 bg-white rounded-xl border border-gray-100 shadow-md hover:shadow-lg transition cursor-grab space-y-3"
+                                    class="relative p-5 bg-white rounded-xl border border-gray-100 shadow-md hover:shadow-lg transition cursor-grab space-y-3 h-[160px] overflow-hidden flex flex-col justify-between"
                                     draggable="true" @dragstart="handleDragStart($event, task)"
                                     @dragover.prevent="handleDragOver(index)" @dragleave="handleDragLeave"
                                     @click="openModal(task)">
@@ -40,15 +40,21 @@
                                         <span :class="[
                                             'text-xs px-2 py-0.5 rounded-full font-medium whitespace-nowrap',
                                             statusStyles(task.status)]">
-                                            {{ task.status }}
+                                            {{ t(`status.${task.status}`) }}
                                         </span>
                                     </div>
                                     <p class="text-sm text-gray-600 line-clamp-2">
                                         {{ task.description }}
                                     </p>
-                                    <div class="flex items-center justify-between text-xs text-gray-400 mt-2">
-                                        <span>#{{ index + 1 }}</span>
-                                        <span class="italic">{{ task.priority || 'Normal' }}</span>
+                                    <div class="flex items-center justify-between text-xs text-gray-400 pt-1">
+                                        <div class="flex items-center gap-1">
+                                            <span>#{{ index + 1 }}</span>
+                                        </div>
+                                        <div class="flex items-center gap-1">
+                                            <icon name="mdi:flag-outline" class="w-4 h-4 text-gray-400" />
+                                            <span class="italic">{{ t(`priorities.${task.priority || 'medium'}`)
+                                                }}</span>
+                                        </div>
                                     </div>
                                 </li>
                             </transition-group>
@@ -76,7 +82,7 @@ const statusLabels: Record<Status, string> = {
     'todo': t('status.todo'),
     'in-progress': t('status.in-progress'),
     'done': t('status.done'),
-    'on-hold': t('status.on_hold'),
+    'on-hold': t('status.on-hold'),
     'cancelled': t('status.cancelled'),
 }
 

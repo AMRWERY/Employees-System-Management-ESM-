@@ -22,18 +22,23 @@
 
               <div class="flex items-center gap-1">
                 <icon name="majesticons:comments-2-line" class="text-blue-400 w-5 h-5" />
-                <span>10 comments</span>
+                <span>10 {{ t('dashboard.comments') }}</span>
               </div>
 
+              <!--add_tag btn -->
               <div>
-                <span class="rounded-lg border bg-blue-50 text-blue-500 px-1.5 py-1 cursor-pointer">add tag</span>
+                <button class="rounded-full cursor-pointer">
+                  <icon name="material-symbols:bookmark-check-outline-sharp" class="text-purple-700" />
+                  <icon name="material-symbols:bookmark-check-sharp" class="text-purple-700" />
+                </button>
               </div>
 
-              <div>
-                <base-button :default-icon="false" :appendIcon="'material-symbols:save-rounded'" :type="'button'"
-                  :loading="loading.save" :title="t('btn.save_close')" :textColor="'text-white'"
-                  :hover-color="'hover:bg-blue-800'" variant="solid">
-                  <icon name="svg-spinners:90-ring-with-bg" class="h-6 w-6" v-if="loading.save" />
+              <div
+                :class="{ hidden: task?.status === 'todo' || task?.status === 'cancelled' || task?.status === 'done' }">
+                <base-button :default-icon="false" :appendIcon="loading.save ? '' : 'material-symbols:save-rounded'"
+                  :type="'button'" :loading="loading.save" :title="t('btn.save_close')" :textColor="'text-white'"
+                  :hover-color="'hover:bg-blue-800'" variant="solid" @click="handleMarkAsDone">
+                  <icon name="svg-spinners:90-ring-with-bg" class="h-5 w-5" v-if="loading.save" />
                   <div v-else>
                     <span>{{ t('btn.save_close') }}</span>
                   </div>
@@ -234,6 +239,7 @@ const handleClose = () => {
 const handleMarkAsDone = async () => {
   if (!props.task) return;
   setLoading("done", true);
+  setLoading("save", true);
   clearTimerState();
   if (timerInterval) {
     clearInterval(timerInterval);
@@ -241,6 +247,7 @@ const handleMarkAsDone = async () => {
   }
   await promiseTimeout(loadingTimeOut);
   setLoading("done", false);
+  setLoading("save", false);
   emit("update-status", {
     id: props.task.id,
     status: "done",
