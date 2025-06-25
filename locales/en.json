@@ -103,7 +103,8 @@
     "add_task": "Add task",
     "edit_task": "Edit task",
     "description": "Description:",
-    "comments": "comments"
+    "comments": "comments",
+    "like": "Like"
   },
   "btn": {
     "go_back_home": "Go back Home",

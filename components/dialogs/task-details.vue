@@ -80,6 +80,11 @@
               <text-editor v-model="content" />
             </div>
 
+            <div>
+              <!-- comments component -->
+              <comments />
+            </div>
+
             <!-- base-button component-->
             <base-button :default-icon="false" :link="true" @click="$emit('edit-task', task)"
               v-if="task?.status !== 'done'">
