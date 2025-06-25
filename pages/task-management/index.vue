@@ -20,34 +20,39 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 border-gray-200 border p-4 rounded-lg">
-                <div v-for="status in statuses" :key="status" class="bg-white rounded p-2 shadow-lg">
-                    <h2 class="text-lg font-semibold mb-4 text-center border-b pb-3">{{ statusLabels[status] }}</h2>
-                    <div class="h-[400px] overflow-y-auto hide-scrollbar" :data-status="status" @dragover.prevent
-                        @drop="handleDrop($event, status)">
-                        <transition-group name="task" tag="ul" class="space-y-3" appear>
-                            <li v-for="(task, index) in tasksByStatus(status)" :key="task.id" :data-index="index"
-                                class="flex items-center hover:bg-gray-50 transition bg-blue-50 p-3 rounded shadow cursor-grab"
-                                draggable="true" @dragstart="handleDragStart($event, task)"
-                                @dragover.prevent="handleDragOver(index)" @dragleave="handleDragLeave"
-                                @click="openModal(task)">
-                                <!-- Task content -->
-                                <div
-                                    class="flex-shrink-0 w-11 h-11 bg-blue-200 rounded-full flex items-center justify-center">
-                                    <span class="text-sm text-blue-600 font-bold">{{ index + 1 }}</span>
-                                </div>
-                                <div class="ms-4 flex-grow">
-                                    <div class="text-[15px] font-medium text-slate-900">{{ task.title }}</div>
-                                    <div class="text-[13px] text-slate-500">{{ task.description }}</div>
-                                </div>
-                                <div class="flex items-center space-s-2">
-                                    <span
-                                        class="bg-green-100 text-green-600 text-xs font-medium px-2 py-1 rounded-full">{{
-                                            task.status
-                                        }}</span>
-                                </div>
-                            </li>
-                        </transition-group>
+            <div class="overflow-x-auto">
+                <div
+                    class="grid grid-flow-col auto-cols-[minmax(400px,1fr)] gap-6 border-gray-200 border p-4 rounded-lg min-w-fit">
+                    <div v-for="status in statuses" :key="status" class="bg-white rounded p-2 shadow-lg flex-shrink-0">
+                        <h2 class="text-lg font-semibold mb-4 text-center border-b pb-3">{{ statusLabels[status] }}</h2>
+                        <div class="h-[400px] overflow-y-auto hide-scrollbar" :data-status="status" @dragover.prevent
+                            @drop="handleDrop($event, status)">
+                            <transition-group name="task" tag="ul" class="space-y-3" appear>
+                                <li v-for="(task, index) in tasksByStatus(status)" :key="task.id" :data-index="index"
+                                    class="relative p-5 bg-white rounded-xl border border-gray-100 shadow-md hover:shadow-lg transition cursor-grab space-y-3"
+                                    draggable="true" @dragstart="handleDragStart($event, task)"
+                                    @dragover.prevent="handleDragOver(index)" @dragleave="handleDragLeave"
+                                    @click="openModal(task)">
+                                    <div class="flex justify-between items-start">
+                                        <h3 class="text-[16px] font-semibold text-gray-800 leading-snug line-clamp-1">
+                                            {{ task.title }}
+                                        </h3>
+                                        <span :class="[
+                                            'text-xs px-2 py-0.5 rounded-full font-medium whitespace-nowrap',
+                                            statusStyles(task.status)]">
+                                            {{ task.status }}
+                                        </span>
+                                    </div>
+                                    <p class="text-sm text-gray-600 line-clamp-2">
+                                        {{ task.description }}
+                                    </p>
+                                    <div class="flex items-center justify-between text-xs text-gray-400 mt-2">
+                                        <span>#{{ index + 1 }}</span>
+                                        <span class="italic">{{ task.priority || 'Normal' }}</span>
+                                    </div>
+                                </li>
+                            </transition-group>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -65,12 +70,14 @@ onMounted(() => {
     taskStore.fetchTasks()
 })
 
-const statuses: Status[] = ['todo', 'in-progress', 'done']
+const statuses: Status[] = ['todo', 'in-progress', 'done', 'on-hold', 'cancelled']
 
 const statusLabels: Record<Status, string> = {
     'todo': t('status.todo'),
     'in-progress': t('status.in-progress'),
-    'done': t('status.done')
+    'done': t('status.done'),
+    'on-hold': t('status.on_hold'),
+    'cancelled': t('status.cancelled'),
 }
 
 const tasks = computed(() => taskStore.tasks)
@@ -182,6 +189,22 @@ const handleTaskSubmit = async (newTask: Task) => {
 const handleEditFromDetails = (task: Task) => {
     isModalOpen.value = false
     openEditDialog(task)
+}
+
+const statusStyles = (status: Status): string => {
+    switch (status) {
+        case 'done':
+            return 'bg-green-100 text-green-700';
+        case 'cancelled':
+            return 'bg-red-100 text-red-700';
+        case 'on-hold':
+            return 'bg-yellow-100 text-yellow-700';
+        case 'in-progress':
+            return 'bg-blue-100 text-blue-700';
+        case 'todo':
+        default:
+            return 'bg-gray-100 text-gray-700';
+    }
 }
 
 useHead({
