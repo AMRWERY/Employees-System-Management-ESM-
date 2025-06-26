@@ -14,7 +14,21 @@
 
       <!-- Editor area -->
       <div ref="editor" class="min-h-[150px] p-3 outline-none prose prose-sm max-w-none" contenteditable
-        @keydown.enter="handleEnter" v-html="modelValue" />
+        @keydown.enter="handleEnter" @input="handleInput" @keydown="handleKeyDown" v-html="modelValue" />
+    </div>
+
+    <!-- Mention dropdown -->
+    <div v-if="showMentions"
+      class="absolute z-10 mt-1 w-60 max-h-60 overflow-auto rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+      :style="{ top: `${mentionPosition.top}px`, left: `${mentionPosition.left}px` }">
+      <div v-for="(employee, index) in filteredEmployees" :key="employee.id"
+        class="relative cursor-pointer select-none py-2 ps-3 pr-9 hover:bg-gray-100"
+        :class="{ 'bg-gray-100': index === selectedMentionIndex }" @click="insertMention(employee)">
+        <div class="flex items-center">
+          <img :src="employee.profileImg || '/dummy-profile-img.jpg'" class="h-6 w-6 rounded-full me-2" />
+          <span class="truncate">{{ formatName(employee) }}</span>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -74,6 +88,115 @@ const addEmoji = () => {
   range.collapse(true);
   selection.removeAllRanges();
   selection.addRange(range);
+};
+
+const employeesStore = useEmployeesStore();
+const showMentions = ref(false);
+const mentionQuery = ref('');
+const selectedMentionIndex = ref(0);
+const mentionPosition = ref({ top: 0, left: 0 });
+const lastAtPosition = ref(0);
+
+const handleInput = () => {
+  checkForMentions();
+};
+
+const handleKeyDown = (e: KeyboardEvent) => {
+  if (showMentions.value) {
+    switch (e.key) {
+      case 'ArrowDown':
+        e.preventDefault();
+        selectedMentionIndex.value = Math.min(
+          selectedMentionIndex.value + 1,
+          filteredEmployees.value.length - 1
+        );
+        break;
+      case 'ArrowUp':
+        e.preventDefault();
+        selectedMentionIndex.value = Math.max(selectedMentionIndex.value - 1, 0);
+        break;
+      case 'Enter':
+        e.preventDefault();
+        if (filteredEmployees.value[selectedMentionIndex.value]) {
+          insertMention(filteredEmployees.value[selectedMentionIndex.value]);
+        }
+        break;
+      case 'Escape':
+        e.preventDefault();
+        showMentions.value = false;
+        break;
+      default:
+        // Allow normal typing to continue
+        break;
+    }
+  } else if (e.key === '@') {
+    // Trigger mention detection on next tick
+    nextTick(checkForMentions);
+  }
+};
+
+const checkForMentions = () => {
+  if (!editor.value) return;
+  const selection = window.getSelection();
+  if (!selection || selection.rangeCount === 0) return;
+  const range = selection.getRangeAt(0);
+  const node = range.startContainer;
+  const text = node.textContent || '';
+  const offset = range.startOffset;
+  // Find the last '@' symbol before the cursor
+  const textBeforeCursor = text.substring(0, offset);
+  const atIndex = textBeforeCursor.lastIndexOf('@');
+  if (atIndex !== -1 && (atIndex === 0 || /\s/.test(textBeforeCursor[atIndex - 1]))) {
+    mentionQuery.value = textBeforeCursor.substring(atIndex + 1);
+    lastAtPosition.value = atIndex;
+    // Get cursor position
+    const rangeClone = range.cloneRange();
+    rangeClone.setStart(node, atIndex);
+    rangeClone.setEnd(node, atIndex);
+    const rect = rangeClone.getBoundingClientRect();
+    if (editor.value) {
+      const editorRect = editor.value.getBoundingClientRect();
+      mentionPosition.value = {
+        top: rect.top - editorRect.top + 25,
+        left: rect.left - editorRect.left
+      };
+    }
+    showMentions.value = true;
+    selectedMentionIndex.value = 0;
+  } else {
+    showMentions.value = false;
+  }
+};
+
+const allEmployees = computed(() => {
+  return employeesStore.allUsers.filter(e => e.status === 'active');
+});
+
+const filteredEmployees = computed(() => {
+  if (!mentionQuery.value) return allEmployees.value;
+  const query = mentionQuery.value.toLowerCase();
+  return allEmployees.value.filter(employee => {
+    const name = formatName(employee).toLowerCase();
+    return name.includes(query);
+  });
+});
+
+const formatName = (user: any) => {
+  if (!user) return "";
+  const parts = [];
+  if (user.firstName) parts.push(user.firstName);
+  if (user.middleName) parts.push(user.middleName);
+  if (user.lastName) parts.push(user.lastName);
+  return parts.join(" ");
+};
+
+const insertMention = (employee: any) => {
+  if (!editor.value) return;
+  const name = formatName(employee);
+  const mentionHtml = `<span contenteditable="false" class="font-semibold text-blue-500">${name}</span>&nbsp;`;
+  document.execCommand('insertHTML', false, mentionHtml);
+  emit('update:modelValue', editor.value.innerHTML);
+  showMentions.value = false;
 };
 </script>
 
