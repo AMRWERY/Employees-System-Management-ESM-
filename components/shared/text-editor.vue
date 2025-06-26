@@ -14,7 +14,7 @@
 
       <!-- Editor area -->
       <div ref="editor" class="min-h-[150px] p-3 outline-none prose prose-sm max-w-none" contenteditable
-        @input="updateContent" @keydown.enter="handleEnter" v-html="modelValue" />
+        @keydown.enter="handleEnter" v-html="modelValue" />
     </div>
   </div>
 </template>
@@ -28,29 +28,9 @@ const emit = defineEmits(['update:modelValue'])
 
 const editor = ref<HTMLElement | null>(null)
 
-const updateContent = () => {
-  if (editor.value) {
-    // Process each paragraph separately
-    const paragraphs = editor.value.querySelectorAll('p, div') as NodeListOf<HTMLElement>;
-    paragraphs.forEach(p => {
-      const text = p.innerText.trim();
-      if (!text) return;
-      // Remove existing direction attributes
-      p.removeAttribute('dir');
-      p.removeAttribute('style');
-      // Set direction per paragraph
-      const rtlChars = /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF]/;
-      p.style.textAlign = rtlChars.test(text) ? 'right' : 'left';
-      p.style.unicodeBidi = 'plaintext';
-    });
-    emit('update:modelValue', editor.value.innerHTML);
-  }
-};
-
 const handleEnter = (e: KeyboardEvent) => {
   e.preventDefault();
   document.execCommand('insertParagraph');
-  nextTick(updateContent);
 };
 
 const exec = (command: string, value?: string) => {
@@ -59,7 +39,6 @@ const exec = (command: string, value?: string) => {
   } else {
     document.execCommand(command, false)
   }
-  updateContent()
 }
 
 type Button = {
@@ -95,7 +74,6 @@ const addEmoji = () => {
   range.collapse(true);
   selection.removeAllRanges();
   selection.addRange(range);
-  updateContent();
 };
 </script>
 
