@@ -4,11 +4,17 @@
       <div v-for="comment in comments" :key="comment.id">
         <!-- Main comment -->
         <div class="flex items-start space-s-3">
-          <img :src="comment.avatar" class="w-8 h-8 rounded-full border border-gray-400" />
+          <img :src="comment.avatar || '/dummy-profile-img.jpg'" class="w-8 h-8 rounded-full border border-gray-400" />
           <div>
             <div class="px-4 py-2 rounded-lg max-w-3xl border border-gray-300">
               <p class="font-bold text-sm">{{ comment.author }}</p>
-              <p class="text-sm">{{ comment.text }}</p>
+              <!-- <p class="text-sm">{{ comment.text }}</p> -->
+               <p class="text-sm">
+  <template v-if="comment.mentionedEmployee">
+    <span class="font-semibold text-blue-500">@{{ comment.mentionedEmployee.name }}</span>&nbsp;
+  </template>
+  {{ comment.comment }}
+</p>
             </div>
             <div class="text-xs text-gray-400 flex items-center gap-4 mt-1.5 ms-2">
               <span>{{ comment.time }}</span>
@@ -24,11 +30,11 @@
         <!-- Replies -->
         <div v-if="comment.replies" class="ms-12 mt-2 space-y-3">
           <div v-for="reply in comment.replies" :key="reply.id" class="flex items-start space-s-3">
-            <img :src="comment.avatar" class="w-8 h-8 rounded-full border border-gray-400" />
+            <img :src="reply.avatar || '/dummy-profile-img.jpg'" class="w-8 h-8 rounded-full border border-gray-400" />
             <div>
               <div class="px-4 py-2 rounded-lg max-w-3xl border border-gray-300">
                 <p class="font-bold text-sm">{{ reply.author }}</p>
-                <p class="text-sm">{{ reply.text }}</p>
+                <p class="text-sm">{{ reply.comment }}</p>
               </div>
               <div class="text-xs text-gray-400 flex items-center gap-4 mt-1.5 ms-2">
                 <span>{{ reply.time }}</span>
@@ -47,24 +53,11 @@
 </template>
 
 <script lang="ts" setup>
+import type { TaskComment } from '@/types/task-comments';
+
 const { t } = useI18n()
 
-const comments = [
-  {
-    id: 1,
-    author: "user 1",
-    text: "Aspernatur beatae cu.",
-    time: "1d",
-    avatar: "https://justfields.com/storage/projects/7M5rV059/images.jpg",
-    replies: [
-      {
-        id: 11,
-        author: "user 2",
-        text: "Et dolore exercitati.",
-        time: "1d",
-        avatar: "https://justfields.com/storage/projects/7M5rV059/images.jpg",
-      },
-    ],
-  },
-];
+defineProps<{
+  comments: TaskComment[]
+}>()
 </script>
