@@ -46,7 +46,7 @@
 
       <li v-if="hasAnyRole('employee')">
         <nuxt-link-locale to="/holiday-dates" class="flex items-center p-2 text-white rounded-lg group"
-          exact-active-class="bg-gray-400 text-white hover:bg-gray-500">
+          :class="isActive('/holiday-dates') ? 'bg-gray-400 text-white hover:bg-gray-500' : ''">
           <icon name="heroicons-solid:calendar-days" class="w-5 h-5 transition duration-75 group-hover:text-white"
             :class="{ 'text-gray-400': route.path === '/holiday-dates', 'text-white': route.path !== '/holiday-dates' }" />
           <span class="flex-1 ms-3 whitespace-nowrap">{{ t('layouts.holiday_dates') }}</span>
@@ -54,17 +54,8 @@
       </li>
 
       <li v-if="hasAnyRole('employee')">
-        <nuxt-link to="" class="flex items-center p-2 text-white rounded-lg group"
-          exact-active-class="bg-gray-400 text-white hover:bg-gray-500">
-          <icon name="solar:hand-money-linear" class="w-5 h-5 transition duration-75 group-hover:text-white"
-            :class="{ 'text-gray-400': route.path === '', 'text-white': route.path !== '' }" aria-hidden="true" />
-          <span class="flex-1 ms-3 whitespace-nowrap">{{ t('layouts.my_payslips_payroll') }}</span>
-        </nuxt-link>
-      </li>
-
-      <li v-if="hasAnyRole('employee')">
         <nuxt-link-locale to="/task-management" class="flex items-center p-2 text-white rounded-lg group"
-          exact-active-class="bg-gray-400 text-white hover:bg-gray-500">
+          :class="isActive('/task-management') ? 'bg-gray-400 text-white hover:bg-gray-500' : ''">
           <icon name="fluent:tasks-app-28-filled" class="w-5 h-5 transition duration-75 group-hover:text-white"
             :class="{ 'text-gray-400': route.path === '/task-management', 'text-white': route.path !== '/settings' }" />
           <span class="flex-1 ms-3 whitespace-nowrap">{{ t('layouts.task_management') }}</span>
@@ -77,6 +68,8 @@
 <script lang="ts" setup>
 const { t } = useI18n()
 const route = useRoute();
+const { hasAnyRole } = useUserRoles()
+const isActive = useSidebarActive()
 
 type DropdownNames = 'personal'
 
@@ -88,6 +81,4 @@ const openDropdowns = reactive<Record<DropdownNames, boolean>>({
 const toggleDropdown = (name: DropdownNames) => {
   openDropdowns[name] = !openDropdowns[name]
 }
-
-const { hasAnyRole } = useUserRoles()
 </script>

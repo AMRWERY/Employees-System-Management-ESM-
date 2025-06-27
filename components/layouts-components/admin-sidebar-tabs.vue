@@ -3,7 +3,7 @@
     <div class="space-y-3">
       <li v-if="hasAnyRole('admin')">
         <nuxt-link-locale to="/" class="flex items-center p-2 text-white rounded-lg group"
-          exact-active-class="bg-gray-400 text-white hover:bg-gray-500">
+          active-class="bg-gray-400 text-white hover:bg-gray-500" :exact="false">
           <icon name="material-symbols:dashboard" class="w-5 h-5 transition duration-75 group-hover:text-white"
             :class="{ 'text-gray-400': route.path === '/', 'text-white': route.path !== '/' }" aria-hidden="true" />
           <span class="flex-1 ms-3 whitespace-nowrap">{{ t('layouts.dashboard') }}</span>
@@ -22,26 +22,26 @@
         </button>
         <ul v-if="openDropdowns.management" class="py-2 space-y-2">
           <li>
-            <nuxt-link-locale to="/admin/managers" class="flex items-center p-2 text-white rounded-lg group ps-7"
-              exact-active-class="bg-gray-400 text-white hover:bg-gray-500">
+            <nuxt-link-locale to="/admin/managers"
+              :class="['flex items-center p-2 text-white rounded-lg group ps-7', isActive('/admin/managers') ? 'bg-gray-400 text-white hover:bg-gray-500' : '']">
               {{ t('layouts.managers') }}
             </nuxt-link-locale>
           </li>
           <li>
-            <nuxt-link-locale to="/admin/employees" class="flex items-center p-2 text-white rounded-lg group ps-7"
-              exact-active-class="bg-gray-400 text-white hover:bg-gray-500">
+            <nuxt-link-locale to="/admin/employees"
+              :class="['flex items-center p-2 text-white rounded-lg group ps-7', isActive('/admin/employees') ? 'bg-gray-400 text-white hover:bg-gray-500' : '']">
               {{ t('layouts.employees') }}
             </nuxt-link-locale>
           </li>
           <li>
-            <nuxt-link-locale to="/admin/teams" class="flex items-center p-2 text-white rounded-lg group ps-7"
-              exact-active-class="bg-gray-400 text-white hover:bg-gray-500">
+            <nuxt-link-locale to="/admin/teams"
+              :class="['flex items-center p-2 text-white rounded-lg group ps-7', isActive('/admin/teams') ? 'bg-gray-400 text-white hover:bg-gray-500' : '']">
               {{ t('layouts.teams') }}
             </nuxt-link-locale>
           </li>
           <li>
             <nuxt-link to="" class="flex items-center p-2 text-white rounded-lg group ps-7"
-              exact-active-class="bg-gray-400 text-white hover:bg-gray-500">
+              active-class="bg-gray-400 text-white hover:bg-gray-500" :exact="false">
               {{ t('layouts.roles_permissions') }}
             </nuxt-link>
           </li>
@@ -61,26 +61,25 @@
         <ul v-if="openDropdowns.processes" class="py-2 space-y-2">
           <li>
             <nuxt-link to="" class="flex items-center p-2 text-white rounded-lg group ps-7"
-              exact-active-class="bg-gray-400 text-white hover:bg-gray-500">
+              active-class="bg-gray-400 text-white hover:bg-gray-500" :exact="false">
               {{ t('layouts.attendance') }}
             </nuxt-link>
           </li>
           <li>
-            <nuxt-link-locale to="/admin/leave-request" class="flex items-center p-2 text-white rounded-lg group ps-7"
-              exact-active-class="bg-gray-400 text-white hover:bg-gray-500">
+            <nuxt-link-locale to="/admin/leave-request"
+              :class="['flex items-center p-2 text-white rounded-lg group ps-7', isActive('/admin/leave-request') ? 'bg-gray-400 text-white hover:bg-gray-500' : '']">
               {{ t('layouts.leave_management') }}
             </nuxt-link-locale>
           </li>
           <li>
             <nuxt-link-locale to="/admin/payroll-management"
-              class="flex items-center p-2 text-white rounded-lg group ps-7"
-              exact-active-class="bg-gray-400 text-white hover:bg-gray-500">
+              :class="['flex items-center p-2 text-white rounded-lg group ps-7', isActive('/admin/payroll-management') ? 'bg-gray-400 text-white hover:bg-gray-500' : '']">
               {{ t('layouts.payroll_management') }}
             </nuxt-link-locale>
           </li>
           <li>
             <nuxt-link to="" class="flex items-center p-2 text-white rounded-lg group ps-7"
-              exact-active-class="bg-gray-400 text-white hover:bg-gray-500">
+              active-class="bg-gray-400 text-white hover:bg-gray-500" :exact="false">
               {{ t('layouts.performance_reviews') }}
             </nuxt-link>
           </li>
@@ -88,8 +87,8 @@
       </li>
 
       <li v-if="hasAnyRole('admin')">
-        <nuxt-link-locale to="/holiday-dates" class="flex items-center p-2 text-white rounded-lg group"
-          exact-active-class="bg-gray-400 text-white hover:bg-gray-500">
+        <nuxt-link-locale to="/holiday-dates"
+          :class="['flex items-center p-2 text-white rounded-lg group', isActive('/holiday-dates') ? 'bg-gray-400 text-white hover:bg-gray-500' : '']">
           <icon name="heroicons-solid:calendar-days" class="w-5 h-5 transition duration-75 group-hover:text-white"
             :class="{ 'text-gray-400': route.path === '/holiday-dates', 'text-white': route.path !== '/holiday-dates' }" />
           <span class="flex-1 ms-3 whitespace-nowrap">{{ t('layouts.holiday_dates') }}</span>
@@ -97,8 +96,8 @@
       </li>
 
       <li v-if="hasAnyRole('admin')">
-        <nuxt-link-locale to="/task-management" class="flex items-center p-2 text-white rounded-lg group"
-          exact-active-class="bg-gray-400 text-white hover:bg-gray-500">
+        <nuxt-link-locale to="/task-management"
+          :class="['flex items-center p-2 text-white rounded-lg group', isActive('/task-management') ? 'bg-gray-400 text-white hover:bg-gray-500' : '']">
           <icon name="fluent:tasks-app-28-filled" class="w-5 h-5 transition duration-75 group-hover:text-white"
             :class="{ 'text-gray-400': route.path === '/task-management', 'text-white': route.path !== '/settings' }" />
           <span class="flex-1 ms-3 whitespace-nowrap">{{ t('layouts.task_management') }}</span>
@@ -106,8 +105,8 @@
       </li>
 
       <li v-if="hasAnyRole('admin')">
-        <nuxt-link-locale to="/settings" class="flex items-center p-2 text-white rounded-lg group"
-          exact-active-class="bg-gray-400 text-white hover:bg-gray-500">
+        <nuxt-link-locale to="/settings"
+          :class="['flex items-center p-2 text-white rounded-lg group', isActive('/settings') ? 'bg-gray-400 text-white hover:bg-gray-500' : '']">
           <icon name="material-symbols-light:settings-rounded"
             class="w-5 h-5 transition duration-75 group-hover:text-white"
             :class="{ 'text-gray-400': route.path === '/settings', 'text-white': route.path !== '/settings' }" />
@@ -121,6 +120,8 @@
 <script lang="ts" setup>
 const { t } = useI18n()
 const route = useRoute();
+const { hasAnyRole } = useUserRoles()
+const isActive = useSidebarActive()
 
 type DropdownNames = 'management' | 'processes'
 
@@ -133,6 +134,4 @@ const openDropdowns = reactive<Record<DropdownNames, boolean>>({
 const toggleDropdown = (name: DropdownNames) => {
   openDropdowns[name] = !openDropdowns[name]
 }
-
-const { hasAnyRole } = useUserRoles()
 </script>
