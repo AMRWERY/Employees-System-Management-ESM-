@@ -3,7 +3,8 @@
     <div id="task-details-modal">
       <div
         class="fixed inset-0 flex flex-wrap justify-center items-center w-full h-full z-[1000] before:fixed before:inset-0 before:w-full before:h-full before:bg-[rgba(0,0,0,0.5)] overflow-auto">
-        <div class="w-full max-w-2xl bg-white shadow-lg rounded-lg p-4 relative">
+        <div
+          class="w-full max-w-2xl bg-white shadow-lg rounded-lg p-4 relative overflow-y-auto h-[calc(650px-88px)] hide-scrollbar">
           <div class="flex items-center pb-3 border-b border-gray-300">
             <h3 class="text-slate-900 text-xl font-semibold flex-1">
               {{ task?.title }}
@@ -75,14 +76,27 @@
               <p>{{ t("dashboard.elapsed_time") }} {{ formattedTime }}</p>
             </div>
 
-            <div>
-              <!-- text-editor component -->
+            <div class="relative">
               <text-editor v-model="content" />
+              <base-button :default-icon="false" class="absolute bottom-2 end-2" @click="submitComment">
+                {{ t('btn.comment') }}
+              </base-button>
             </div>
+
+            <!-- <div>
+              text-editor component
+              <text-editor v-model="content" />
+
+              <base-button class="mt-2" @click="submitComment">
+                {{ t('btn.comment') }}
+              </base-button>
+            </div> -->
 
             <div>
               <!-- comments component -->
-              <comments />
+              <!-- <comments :comments="commentsStore.comments" @reply="(id, text) => commentsStore.addReplyTo(id, text)" /> -->
+              <comments :comments="commentsStore.comments" />
+              <!-- <comments /> -->
             </div>
 
             <!-- base-button component-->
@@ -432,5 +446,23 @@ const toggleTag = async () => {
   });
 };
 
-const content = ref("");
+const commentsStore = useCommentsStore();
+const content = ref('');
+const taskId = props.task?.id;
+
+// Fetch when task changes
+watch(() => taskId, (id) => {
+  if (id) commentsStore.fetchComments(id);
+}, { immediate: true });
+
+// Submit new comment or self-reply
+const submitComment = async () => {
+  if (!content.value.trim() || !taskId) return;
+  await commentsStore.addCommentOrReply(taskId, content.value.trim());
+  content.value = '';
+};
+
+watch(() => taskId, (id) => {
+  if (id) commentsStore.fetchComments(id);
+}, { immediate: true });
 </script>

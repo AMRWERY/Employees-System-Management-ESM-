@@ -147,7 +147,8 @@
     "update": "Update",
     "save_close": "Save & Close",
     "add_tag": "add tag",
-    "remove_tag": "remove tag"
+    "remove_tag": "remove tag",
+    "comment": "Comment"
   },
   "form": {
     "sign_in": "Sign in",
