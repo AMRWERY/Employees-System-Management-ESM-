@@ -12,12 +12,13 @@ export default defineNuxtRouteMiddleware(async (to) => {
   // Handle localized paths
   const pathWithoutLocale = to.path.split("/").slice(2).join("/") || "/";
   const isPublic = publicRoutes.includes(`/${pathWithoutLocale}`);
+  const loginPath = localeRoute("/auth/login");
 
-  if (!auth.isAuthenticated && !isPublic) {
-    return navigateTo(localeRoute("/auth/login"));
+  if (!auth.isAuthenticated && !isPublic && to.path !== loginPath) {
+    return navigateTo(loginPath);
   }
 
-  if (auth.isAuthenticated && isPublic) {
+  if (auth.isAuthenticated && isPublic && to.path !== localeRoute("/")) {
     return navigateTo(localeRoute("/"));
   }
 });
