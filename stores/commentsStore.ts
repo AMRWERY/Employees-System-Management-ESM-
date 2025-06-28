@@ -134,21 +134,22 @@ export const useCommentsStore = defineStore("comments", {
       await this.fetchComments(taskId); // Refresh
     },
 
-    addReplyTo(commentId: string | number, replyText: string) {
+    async addReplyTo(commentId: string, replyText: string) {
       const user = useAuthStore().user;
       const reply: Reply = {
         id: Date.now(),
         uid: user?.uid || "",
-        author: user?.displayName,
-        avatar: user?.photoURL || "/dummy-profile-img.jpg",
+        author: user?.firstName || "Anonymous",
         comment: replyText,
         time: "Just now",
+        avatar: user?.profileImg || "",
       };
-      const comment = this.comments.find((c) => c.id === commentId);
-      if (comment) {
-        comment.replies = comment.replies || [];
-        comment.replies.push(reply);
-      }
+      const ref = doc(db, "ems-comments", commentId);
+      await updateDoc(ref, {
+        replies: arrayUnion(reply),
+      });
+      const taskId = this.comments.find((c) => c.id === commentId)?.taskId;
+      if (taskId) await this.fetchComments(taskId);
     },
 
     async likeOrDislike(commentId: string) {

@@ -104,7 +104,8 @@
     "edit_task": "Edit task",
     "description": "Description:",
     "comments": "comments",
-    "like": "Like"
+    "like": "Like",
+    "reply": "Reply"
   },
   "btn": {
     "go_back_home": "Go back Home",
@@ -148,7 +149,8 @@
     "save_close": "Save & Close",
     "add_tag": "add tag",
     "remove_tag": "remove tag",
-    "comment": "Comment"
+    "comment": "Comment",
+    "reply": "Reply"
   },
   "form": {
     "sign_in": "Sign in",
@@ -282,7 +284,8 @@
     "priority": "Priority",
     "select_priority": "Select priority",
     "select_assignee": "Select assignee",
-    "assign_to_me": "Assign to me"
+    "assign_to_me": "Assign to me",
+    "write_reply": "Write a reply..."
   },
   "head": {
     "sign_in": "Sign in",

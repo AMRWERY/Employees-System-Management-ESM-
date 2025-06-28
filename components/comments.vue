@@ -8,7 +8,6 @@
           <div>
             <div class="px-4 py-2 rounded-lg max-w-3xl border border-gray-300">
               <p class="font-bold text-sm">{{ comment.author }}</p>
-              <!-- <p class="text-sm">{{ comment.text }}</p> -->
               <p class="text-sm">
                 <template v-if="comment.mentionedEmployee">
                   <span class="font-semibold text-blue-500">@{{ comment.mentionedEmployee.name }}</span>
@@ -18,14 +17,24 @@
             </div>
             <div class="text-xs text-gray-400 flex items-center gap-4 mt-1.5 ms-2">
               <span>{{ getTimeAgo(comment.createdAt) }}</span>
-              <p class="cursor-pointer hover:underline flex items-center gap-1" @click="toggleLike(comment.id || '')">
+              <p class="cursor-pointer flex items-center gap-1" @click="toggleLike(comment.id || '')">
                 <icon :name="comment.likes?.includes(currentUserUid) ? 'solar:like-bold-duotone' : 'solar:like-broken'"
                   class="w-4 h-4" />
-                <span>{{ t('dashboard.like') }}</span>
+                <span class="hover:underline">{{ t('dashboard.like') }}</span>
                 <span v-if="comment.likes?.length" class="text-gray-400">({{ comment.likes.length }})</span>
+                <span class="hover:underline" @click="replyingToId = comment.id ?? null">{{ t('dashboard.reply')
+                }}</span>
               </p>
             </div>
           </div>
+        </div>
+        <div v-if="replyingToId === comment.id" class="mt-2 ms-12 relative">
+          <textarea :placeholder="t('form.write_reply')" rows="3"
+            class="w-full px-3 py-2 transition duration-300 border rounded-md shadow-sm placeholder:text-slate-400 text-slate-700 focus:outline-none focus:border-slate-400 hover:border-slate-300 focus:shadow"
+            v-model="replyText" />
+          <base-button :default-icon="false" :type="'button'" class="absolute bottom-3 end-2"
+            @click="submitReply(comment.id)">
+            {{ t('btn.reply') }}</base-button>
         </div>
 
         <!-- Replies -->
@@ -93,5 +102,15 @@ const currentUserUid = computed(() => authStore.user?.uid ?? "");
 
 const toggleLike = (commentId: string) => {
   commentsStore.likeOrDislike(commentId);
+};
+
+const replyingToId = ref<string | null>(null);
+const replyText = ref('');
+
+const submitReply = async (commentId: string) => {
+  if (!replyText.value.trim()) return;
+  await commentsStore.addReplyTo(commentId, replyText.value.trim());
+  replyText.value = '';
+  replyingToId.value = null;
 };
 </script>

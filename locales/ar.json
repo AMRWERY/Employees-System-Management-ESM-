@@ -104,7 +104,8 @@
     "edit_task": "تعديل المهمه",
     "description": "الوصف:",
     "comments": "تعليقات",
-    "like": "اعجاب"
+    "like": "اعجاب",
+    "reply": "رد"
   },
   "btn": {
     "go_back_home": "العودة إلى الصفحه الرئيسيه",
@@ -148,7 +149,8 @@
     "save_close": "حفظ & إغلاق",
     "add_tag": "إضافة علامة",
     "remove_tag": "إزالة العلامة",
-    "comment": "تعليق"
+    "comment": "تعليق",
+    "reply": "رد"
   },
   "form": {
     "sign_in": "تسجيل الدخول",
@@ -282,7 +284,8 @@
     "priority": "الاولويه",
     "select_priority": "تحديد الأولوية",
     "select_assignee": "حدد المعين له",
-    "assign_to_me": "تعيين لي"
+    "assign_to_me": "تعيين لي",
+    "write_reply": "اكتب ردا..."
   },
   "head": {
     "sign_in": "تسجيل الدخول",
