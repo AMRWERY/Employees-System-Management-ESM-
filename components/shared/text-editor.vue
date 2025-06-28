@@ -22,7 +22,7 @@
       class="absolute z-10 mt-1 w-60 max-h-60 overflow-auto rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
       :style="{ top: `${mentionPosition.top}px`, left: `${mentionPosition.left}px` }">
       <div v-for="(employee, index) in filteredEmployees" :key="employee.id"
-        class="relative cursor-pointer select-none py-2 ps-3 pr-9 hover:bg-gray-100"
+        class="relative cursor-pointer select-none py-2 ps-3 pe-9 hover:bg-gray-100"
         :class="{ 'bg-gray-100': index === selectedMentionIndex }" @click="insertMention(employee)">
         <div class="flex items-center">
           <img :src="employee.profileImg || '/dummy-profile-img.jpg'" class="h-6 w-6 rounded-full me-2" />
@@ -34,9 +34,7 @@
 </template>
 
 <script setup lang="ts">
-const props = defineProps<{
-  modelValue: string;
-}>()
+const props = defineProps<{ modelValue: string }>()
 
 const emit = defineEmits(['update:modelValue'])
 

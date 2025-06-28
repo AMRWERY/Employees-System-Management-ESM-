@@ -83,20 +83,9 @@
               </base-button>
             </div>
 
-            <!-- <div>
-              text-editor component
-              <text-editor v-model="content" />
-
-              <base-button class="mt-2" @click="submitComment">
-                {{ t('btn.comment') }}
-              </base-button>
-            </div> -->
-
             <div>
               <!-- comments component -->
-              <!-- <comments :comments="commentsStore.comments" @reply="(id, text) => commentsStore.addReplyTo(id, text)" /> -->
               <comments :comments="commentsStore.comments" />
-              <!-- <comments /> -->
             </div>
 
             <!-- base-button component-->
