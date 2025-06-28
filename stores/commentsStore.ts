@@ -49,19 +49,18 @@ export const useCommentsStore = defineStore("comments", {
           mentionedEmployee: data.mentionedEmployee, // optional MentionedEmployee
         } as TaskComment; // Cast after ensuring all required fields are present
       });
-
-      console.log(
-        `Fetched ${this.comments.length} comments for task ${taskId}`
-      );
+      // console.log(
+      //   `Fetched ${this.comments.length} comments for task ${taskId}`
+      // );
     },
 
     async addCommentOrReply(taskId: string, commentHtml: string) {
-      console.log("Raw comment HTML from editor:", JSON.stringify(commentHtml));
+      // console.log("Raw comment HTML from editor:", JSON.stringify(commentHtml));
       const authStore = useAuthStore();
       const employeesStore = useEmployeesStore();
       const user = authStore.user;
       if (!user?.uid) {
-        console.error("Cannot add comment: User not authenticated.");
+        // console.error("Cannot add comment: User not authenticated.");
         return;
       }
       let cleanCommentText = "";
@@ -77,7 +76,7 @@ export const useCommentsStore = defineStore("comments", {
           .exec(commentHtml)?.[1]
           ?.trim();
         if (mentionedName) {
-          console.log("Regex matched. Mentioned Name:", mentionedName);
+          // console.log("Regex matched. Mentioned Name:", mentionedName);
           const found = employeesStore.allUsers.find(
             (u) => `${u.firstName} ${u.lastName}`.trim() === mentionedName
           );
@@ -86,7 +85,7 @@ export const useCommentsStore = defineStore("comments", {
               uid: found.id,
               name: mentionedName,
             };
-            console.log("Found mentioned employee:", mentionedEmployee);
+            // console.log("Found mentioned employee:", mentionedEmployee);
           } else {
             console.warn(
               `Could not find an employee with the name: "${mentionedName}"`
@@ -104,11 +103,11 @@ export const useCommentsStore = defineStore("comments", {
         .replace(/<[^>]+>/g, "") // Remove all HTML tags
         .replace(/\s+/g, " ") // Collapse multiple spaces
         .trim(); // Trim leading/trailing whitespace
-      console.log("Final Cleaned Comment:", cleanCommentText);
-      console.log("Final Mentioned Employee:", mentionedEmployee);
+      // console.log("Final Cleaned Comment:", cleanCommentText);
+      // console.log("Final Mentioned Employee:", mentionedEmployee);
       // If the final comment text is empty AND no one was mentioned, do not proceed.
       if (cleanCommentText === "" && !mentionedEmployee) {
-        console.log("Skipping save because comment is effectively empty.");
+        // console.log("Skipping save because comment is effectively empty.");
         return;
       }
       // Build the comment object to store in Firestore
@@ -126,7 +125,7 @@ export const useCommentsStore = defineStore("comments", {
         ...(mentionedEmployee ? { mentionedEmployee: mentionedEmployee } : {}),
         replies: [],
       };
-      console.log("Saving new comment object to Firestore:", newCommentData);
+      // console.log("Saving new comment object to Firestore:", newCommentData);
       await addDoc(collection(db, "ems-comments"), newCommentData);
       await this.fetchComments(taskId); // Refresh
     },
