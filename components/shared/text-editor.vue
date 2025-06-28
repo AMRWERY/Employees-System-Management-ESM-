@@ -14,7 +14,7 @@
 
       <!-- Editor area -->
       <div ref="editor" class="min-h-[150px] p-3 outline-none prose prose-sm max-w-none" contenteditable
-        @keydown.enter="handleEnter" @input="handleInput" @keydown="handleKeyDown" v-html="modelValue" />
+        @keydown.enter="handleEnter" @input="onEditorInput" @keydown="handleKeyDown"></div>
     </div>
 
     <!-- Mention dropdown -->
@@ -34,7 +34,7 @@
 </template>
 
 <script setup lang="ts">
-defineProps<{
+const props = defineProps<{
   modelValue: string;
 }>()
 
@@ -96,10 +96,6 @@ const mentionQuery = ref('');
 const selectedMentionIndex = ref(0);
 const mentionPosition = ref({ top: 0, left: 0 });
 const lastAtPosition = ref(0);
-
-const handleInput = () => {
-  checkForMentions();
-};
 
 const handleKeyDown = (e: KeyboardEvent) => {
   if (showMentions.value) {
@@ -197,6 +193,25 @@ const insertMention = (employee: any) => {
   document.execCommand('insertHTML', false, mentionHtml);
   emit('update:modelValue', editor.value.innerHTML);
   showMentions.value = false;
+};
+
+onMounted(() => {
+  if (editor.value) {
+    editor.value.innerHTML = props.modelValue || '';
+  }
+});
+
+watch(() => props.modelValue, (newVal) => {
+  if (editor.value && editor.value.innerHTML !== newVal) {
+    editor.value.innerHTML = newVal;
+  }
+});
+
+const onEditorInput = () => {
+  if (editor.value) {
+    emit('update:modelValue', editor.value.innerHTML);
+  }
+  checkForMentions();
 };
 </script>
 

@@ -15,7 +15,7 @@
       <div>
         <div class="p-2 text-center">
           <h1 class="text-2xl font-bold capitalize text-gray-800">
-            {{ employee.firstName }} {{ employee.lastName }}
+            {{ employee.firstName }} {{ employee.middleName }} {{ employee.lastName }}
           </h1>
           <p class="text-gray-700 mt-1 font-semibold text-lg">{{ employee.position }}</p>
         </div>
