@@ -89,7 +89,7 @@ export const useCommentsStore = defineStore("comments", {
               uid: found.id,
               name: mentionedName,
             };
-            // console.log("Found mentioned employee:", mentionedEmployee);
+            console.log("Found mentioned employee:", mentionedEmployee);
           } else {
             console.warn(
               `Could not find an employee with the name: "${mentionedName}"`
