@@ -18,10 +18,11 @@
             </div>
             <div class="text-xs text-gray-400 flex items-center gap-4 mt-1.5 ms-2">
               <span>{{ getTimeAgo(comment.createdAt) }}</span>
-              <p class="cursor-pointer hover:underline flex items-center gap-1">
-                <icon name="solar:like-broken" class="w-4 h-4" />
-                <icon name="solar:like-bold-duotone" class="w-4 h-4" />
+              <p class="cursor-pointer hover:underline flex items-center gap-1" @click="toggleLike(comment.id || '')">
+                <icon :name="comment.likes?.includes(currentUserUid) ? 'solar:like-bold-duotone' : 'solar:like-broken'"
+                  class="w-4 h-4" />
                 <span>{{ t('dashboard.like') }}</span>
+                <span v-if="comment.likes?.length" class="text-gray-400">({{ comment.likes.length }})</span>
               </p>
             </div>
           </div>
@@ -56,6 +57,8 @@
 import type { TaskComment } from '@/types/task-comments';
 
 const { t } = useI18n()
+const commentsStore = useCommentsStore();
+const authStore = useAuthStore();
 
 defineProps<{
   comments: TaskComment[]
@@ -85,4 +88,10 @@ function getTimeAgo(createdAt: any): string {
   if (diffDays === 1) return '1 day ago';
   return `${diffDays} days ago`;
 }
+
+const currentUserUid = computed(() => authStore.user?.uid ?? "");
+
+const toggleLike = (commentId: string) => {
+  commentsStore.likeOrDislike(commentId);
+};
 </script>

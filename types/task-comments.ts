@@ -23,4 +23,5 @@ export interface TaskComment {
   createdAt?: any; // ✅ Firestore timestamp (optional)
   replies?: Reply[]; // Nested replies
   mentionedEmployee?: MentionedEmployee;
+  likes?: string[]; // list of user UIDs who liked the comment
 }

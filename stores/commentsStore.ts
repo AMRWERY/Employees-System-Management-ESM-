@@ -6,6 +6,10 @@ import {
   where,
   serverTimestamp,
   orderBy,
+  updateDoc,
+  arrayUnion,
+  arrayRemove,
+  doc,
 } from "firebase/firestore";
 import { db } from "@/firebase";
 import type {
@@ -144,6 +148,34 @@ export const useCommentsStore = defineStore("comments", {
       if (comment) {
         comment.replies = comment.replies || [];
         comment.replies.push(reply);
+      }
+    },
+
+    async likeOrDislike(commentId: string) {
+      const authStore = useAuthStore();
+      const uid = authStore.user?.uid;
+      if (!uid) return;
+      const commentIndex = this.comments.findIndex((c) => c.id === commentId);
+      if (commentIndex === -1) return;
+      const comment = this.comments[commentIndex];
+      const isLiked = comment.likes?.includes(uid);
+      const commentRef = doc(db, "ems-comments", commentId);
+      if (isLiked) {
+        // Dislike (remove UID from likes)
+        await updateDoc(commentRef, {
+          likes: arrayRemove(uid),
+        });
+        this.comments[commentIndex].likes = this.comments[
+          commentIndex
+        ].likes?.filter((id) => id !== uid);
+      } else {
+        // Like (add UID to likes)
+        await updateDoc(commentRef, {
+          likes: arrayUnion(uid),
+        });
+        if (!this.comments[commentIndex].likes)
+          this.comments[commentIndex].likes = [];
+        this.comments[commentIndex].likes.push(uid);
       }
     },
   },
