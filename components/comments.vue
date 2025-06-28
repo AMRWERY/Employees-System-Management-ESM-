@@ -9,12 +9,12 @@
             <div class="px-4 py-2 rounded-lg max-w-3xl border border-gray-300">
               <p class="font-bold text-sm">{{ comment.author }}</p>
               <!-- <p class="text-sm">{{ comment.text }}</p> -->
-               <p class="text-sm">
-  <template v-if="comment.mentionedEmployee">
-    <span class="font-semibold text-blue-500">@{{ comment.mentionedEmployee.name }}</span>&nbsp;
-  </template>
-  {{ comment.comment }}
-</p>
+              <p class="text-sm">
+                <template v-if="comment.mentionedEmployee">
+                  <span class="font-semibold text-blue-500">@{{ comment.mentionedEmployee.name }}</span>
+                </template>
+                {{ comment.comment }}
+              </p>
             </div>
             <div class="text-xs text-gray-400 flex items-center gap-4 mt-1.5 ms-2">
               <span>{{ comment.time }}</span>
