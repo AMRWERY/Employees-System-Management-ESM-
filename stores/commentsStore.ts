@@ -31,31 +31,28 @@ export const useCommentsStore = defineStore("comments", {
         orderBy("createdAt", "asc")
       );
       const snapshot = await getDocs(q);
-      // Explicitly map Firestore data to the TaskComment interface
       this.comments = snapshot.docs.map((doc) => {
         const data = doc.data();
-        // Convert Firestore Timestamp to JS Date for 'time' calculation if needed
-        // For now, assuming you handle 'time: "Just now"' logic elsewhere or it's just a string
         const createdAtDate = data.createdAt?.toDate
           ? data.createdAt.toDate()
           : new Date();
-        // const timeAgo = /* a function to calculate time ago from createdAtDate */; // e.g., using a composable
         return {
-          id: doc.id, // required string (comes from doc.id)
-          uid: data.uid || "", // required string
-          author: data.author, // required string
-          avatar: data.avatar, // optional string
-          comment: data.comment || "", // required string
-          time: data.time || "some time ago", // required string (provide a sensible default)
-          taskId: data.taskId || "", // required string
-          createdAt: data.createdAt, // optional any (Firestore Timestamp)
-          replies: data.replies || [], // optional Reply[]
-          mentionedEmployee: data.mentionedEmployee, // optional MentionedEmployee
-        } as TaskComment; // Cast after ensuring all required fields are present
+          id: doc.id,
+          uid: data.uid || "",
+          author: data.author,
+          avatar: data.avatar,
+          comment: data.comment || "",
+          time: data.time || "some time ago",
+          taskId: data.taskId || "",
+          createdAt: data.createdAt,
+          replies: (data.replies || []).map((reply: any) => ({
+            ...reply,
+            likes: reply.likes || [],
+          })),
+          likes: data.likes || [],
+          mentionedEmployee: data.mentionedEmployee,
+        } as TaskComment;
       });
-      // console.log(
-      //   `Fetched ${this.comments.length} comments for task ${taskId}`
-      // );
     },
 
     async addCommentOrReply(taskId: string, commentHtml: string) {
@@ -63,19 +60,14 @@ export const useCommentsStore = defineStore("comments", {
       const authStore = useAuthStore();
       const employeesStore = useEmployeesStore();
       const user = authStore.user;
-      if (!user?.uid) {
-        // console.error("Cannot add comment: User not authenticated.");
-        return;
-      }
+      if (!user?.uid) return;
       let cleanCommentText = "";
       let mentionedEmployee: MentionedEmployee | undefined = undefined;
       // Regular expression to find the mention pattern: @<span ...>Name</span>
-      const mentionRegex = /@<span[^>]*>([\w\s]+)<\/span>/g; // Use global flag to handle multiple (though we only process first for now)
+      const mentionRegex = /@<span[^>]*>([\w\s]+)<\/span>/g;
       const mentionMatch = commentHtml.match(mentionRegex);
       if (mentionMatch && mentionMatch[0]) {
-        // --- Logic for comments WITH a mention ---
-        const fullMentionHtml = mentionMatch[0]; // The entire matched string, e.g., "@<span...>Amr</span>"
-        // Extract the name from the first capture group of the first match
+        const fullMentionHtml = mentionMatch[0];
         const mentionedName = /@<span[^>]*>([\w\s]+)<\/span>/
           .exec(commentHtml)?.[1]
           ?.trim();
@@ -91,15 +83,13 @@ export const useCommentsStore = defineStore("comments", {
             };
             // console.log("Found mentioned employee:", mentionedEmployee);
           } else {
-            console.warn(
-              `Could not find an employee with the name: "${mentionedName}"`
-            );
+            // console.warn(
+            //   `Could not find an employee with the name: "${mentionedName}"`
+            // );
           }
         }
-        // Remove the mention HTML part to get the remaining text
         cleanCommentText = commentHtml.replace(fullMentionHtml, "");
       } else {
-        // --- Logic for comments WITHOUT a mention ---
         cleanCommentText = commentHtml;
       }
       cleanCommentText = cleanCommentText
@@ -107,14 +97,7 @@ export const useCommentsStore = defineStore("comments", {
         .replace(/<[^>]+>/g, "") // Remove all HTML tags
         .replace(/\s+/g, " ") // Collapse multiple spaces
         .trim(); // Trim leading/trailing whitespace
-      // console.log("Final Cleaned Comment:", cleanCommentText);
-      // console.log("Final Mentioned Employee:", mentionedEmployee);
-      // If the final comment text is empty AND no one was mentioned, do not proceed.
-      if (cleanCommentText === "" && !mentionedEmployee) {
-        // console.log("Skipping save because comment is effectively empty.");
-        return;
-      }
-      // Build the comment object to store in Firestore
+      if (cleanCommentText === "" && !mentionedEmployee) return;
       const newCommentData: Omit<TaskComment, "id"> = {
         uid: user.uid,
         author: `${user.firstName || ""} ${user.middleName || ""} ${
@@ -129,9 +112,8 @@ export const useCommentsStore = defineStore("comments", {
         ...(mentionedEmployee ? { mentionedEmployee: mentionedEmployee } : {}),
         replies: [],
       };
-      // console.log("Saving new comment object to Firestore:", newCommentData);
       await addDoc(collection(db, "ems-comments"), newCommentData);
-      await this.fetchComments(taskId); // Refresh
+      await this.fetchComments(taskId);
     },
 
     async addReplyTo(commentId: string, replyText: string) {
@@ -139,10 +121,14 @@ export const useCommentsStore = defineStore("comments", {
       const reply: Reply = {
         id: Date.now(),
         uid: user?.uid || "",
-        author: user?.firstName || "Anonymous",
+        author: `${user?.firstName || ""} ${user?.middleName || ""} ${
+          user?.lastName || ""
+        }`.trim(),
         comment: replyText,
         time: "Just now",
         avatar: user?.profileImg || "",
+        createdAt: new Date(),
+        likes: [],
       };
       const ref = doc(db, "ems-comments", commentId);
       await updateDoc(ref, {
@@ -177,6 +163,50 @@ export const useCommentsStore = defineStore("comments", {
         if (!this.comments[commentIndex].likes)
           this.comments[commentIndex].likes = [];
         this.comments[commentIndex].likes.push(uid);
+      }
+    },
+
+    async toggleReplyLike(commentId: string, replyId: number) {
+      const authStore = useAuthStore();
+      const userId = authStore.user?.uid;
+      if (!userId || !commentId) return;
+      const commentRef = doc(db, "ems-comments", commentId);
+      const comment = this.comments.find((c) => c.id === commentId);
+      if (!comment || !comment.replies) return;
+      // Find the reply index
+      const replyIndex = comment.replies.findIndex((r) => r.id === replyId);
+      if (replyIndex === -1) return;
+      // Create updated replies array
+      const updatedReplies = [...comment.replies];
+      // Initialize likes array if needed
+      if (!updatedReplies[replyIndex].likes) {
+        updatedReplies[replyIndex].likes = [];
+      }
+      // Check if user has liked this reply
+      const isLiked = updatedReplies[replyIndex].likes!.includes(userId);
+      // Update likes array
+      if (isLiked) {
+        updatedReplies[replyIndex].likes = updatedReplies[
+          replyIndex
+        ].likes!.filter((id) => id !== userId);
+      } else {
+        updatedReplies[replyIndex].likes = [
+          ...updatedReplies[replyIndex].likes!,
+          userId,
+        ];
+      }
+      try {
+        // Update Firestore
+        await updateDoc(commentRef, {
+          replies: updatedReplies,
+        });
+        // Update local state
+        const commentIndex = this.comments.findIndex((c) => c.id === commentId);
+        if (commentIndex !== -1) {
+          this.comments[commentIndex].replies = updatedReplies;
+        }
+      } catch (error) {
+        console.error("Error toggling reply like:", error);
       }
     },
   },

@@ -10,6 +10,8 @@ export interface Reply {
   avatar: string;
   comment: string;
   time: string;
+  createdAt?: string | Date; // Add this for time display
+  likes?: string[];
 }
 
 export interface TaskComment {
@@ -23,5 +25,5 @@ export interface TaskComment {
   createdAt?: any; // ✅ Firestore timestamp (optional)
   replies?: Reply[]; // Nested replies
   mentionedEmployee?: MentionedEmployee;
-  likes?: string[]; // list of user UIDs who liked the comment
+  likes?: string[];
 }

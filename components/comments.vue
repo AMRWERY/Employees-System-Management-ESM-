@@ -28,6 +28,8 @@
             </div>
           </div>
         </div>
+
+        <!-- reply input -->
         <div v-if="replyingToId === comment.id" class="mt-2 ms-12 relative">
           <textarea :placeholder="t('form.write_reply')" rows="3"
             class="w-full px-3 py-2 transition duration-300 border rounded-md shadow-sm placeholder:text-slate-400 text-slate-700 focus:outline-none focus:border-slate-400 hover:border-slate-300 focus:shadow"
@@ -47,11 +49,13 @@
                 <p class="text-sm">{{ reply.comment }}</p>
               </div>
               <div class="text-xs text-gray-400 flex items-center gap-4 mt-1.5 ms-2">
-                <span>{{ reply.time }}</span>
-                <p class="cursor-pointer hover:underline flex items-center gap-1">
-                  <icon name="solar:like-broken" class="w-4 h-4" />
-                  <icon name="solar:like-bold-duotone" class="w-4 h-4" />
+                <span>{{ getTimeAgo(reply.createdAt) }}</span>
+                <p class="cursor-pointer hover:underline flex items-center gap-1"
+                  @click="comment.id ? toggleReplyLike(comment.id, reply.id) : null">
+                  <icon :name="reply.likes?.includes(currentUserUid) ? 'solar:like-bold-duotone' : 'solar:like-broken'"
+                    class="w-4 h-4" />
                   <span>{{ t('dashboard.like') }}</span>
+                  <span v-if="reply.likes?.length" class="text-gray-400">({{ reply.likes.length }})</span>
                 </p>
               </div>
             </div>
@@ -69,9 +73,7 @@ const { t } = useI18n()
 const commentsStore = useCommentsStore();
 const authStore = useAuthStore();
 
-defineProps<{
-  comments: TaskComment[]
-}>()
+defineProps<{ comments: TaskComment[] }>()
 
 const now = ref(new Date());
 
@@ -84,9 +86,25 @@ onMounted(() => {
 });
 
 function getTimeAgo(createdAt: any): string {
-  const createdDate = createdAt?.toDate?.() || new Date(createdAt);
+  let createdDate: Date;
+  if (!createdAt) {
+    return 'Just now';
+  }
+  // Firestore Timestamp case
+  if (typeof createdAt?.toDate === 'function') {
+    createdDate = createdAt.toDate();
+  }
+  // ISO string or JS Date
+  else if (typeof createdAt === 'string' || createdAt instanceof Date) {
+    createdDate = new Date(createdAt);
+  }
+  // Fallback
+  else {
+    return 'Just now';
+  }
   const diffMs = now.value.getTime() - createdDate.getTime();
   const diffMins = Math.floor(diffMs / 60000);
+  if (isNaN(diffMins)) return 'Just now';
   if (diffMins < 1) return 'Just now';
   if (diffMins === 1) return '1 minute ago';
   if (diffMins < 60) return `${diffMins} minutes ago`;
@@ -112,5 +130,9 @@ const submitReply = async (commentId: string) => {
   await commentsStore.addReplyTo(commentId, replyText.value.trim());
   replyText.value = '';
   replyingToId.value = null;
+};
+
+const toggleReplyLike = async (commentId: string, replyId: number) => {
+  await commentsStore.toggleReplyLike(commentId, replyId);
 };
 </script>
