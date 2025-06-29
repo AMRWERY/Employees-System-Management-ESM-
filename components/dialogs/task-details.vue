@@ -23,7 +23,7 @@
 
               <div class="flex items-center gap-1">
                 <icon name="majesticons:comments-2-line" class="text-blue-400 w-5 h-5" />
-                <span>10 {{ t('dashboard.comments') }}</span>
+                <span>{{ totalComments }} {{ t('dashboard.comments') }}</span>
               </div>
 
               <!--add_tag / remove_tag btn -->
@@ -451,7 +451,13 @@ const submitComment = async () => {
   content.value = '';
 };
 
-watch(() => taskId, (id) => {
-  if (id) commentsStore.fetchComments(id);
-}, { immediate: true });
+const totalComments = computed(() => {
+  const comments = commentsStore.comments;
+  if (!comments.length) return 0;
+  const mainComments = comments.length;
+  const replies = comments.reduce((total, comment) => {
+    return total + (comment.replies?.length || 0);
+  }, 0);
+  return mainComments + replies;
+});
 </script>
