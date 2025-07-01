@@ -34,7 +34,7 @@ const props = defineProps({
   },
   bgColor: {
     type: String,
-    default: 'bg-[#3b5998]'
+    default: 'base-btn-bg'
   },
   hoverColor: {
     type: String,
