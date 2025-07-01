@@ -265,8 +265,9 @@ const closeDialog = () => {
 
 const handleEmployeeSelected = (selectedEmployee: Employee | undefined) => {
   if (selectedEmployee) {
-    formValues.employee_id = selectedEmployee.employeeId;
-    formValues.employee_name = `${selectedEmployee.firstName} ${selectedEmployee.lastName}`;
+    // Use optional chaining and nullish coalescing to handle potential undefined
+    formValues.employee_id = selectedEmployee.employeeId ?? '';
+    formValues.employee_name = `${selectedEmployee.firstName ?? ''} ${selectedEmployee.lastName ?? ''}`.trim();
   } else {
     formValues.employee_id = '';
     formValues.employee_name = '';
