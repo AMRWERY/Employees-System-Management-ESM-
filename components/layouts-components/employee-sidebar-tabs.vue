@@ -12,9 +12,8 @@
 
       <li v-if="hasAnyRole('employee')">
         <button @click="toggleDropdown('personal')" type="button"
-          class="flex items-center w-full p-2 text-base text-white transition duration-75 rounded-lg group hover:bg-gray-800">
-          <icon name="icon-park-solid:personal-privacy"
-            class="flex-shrink-0 w-5 h-5 text-gray-400 transition duration-75 group-hover:text-white"
+          class="flex items-center w-full p-2 text-base text-white transition duration-75 rounded-lg group">
+          <icon name="icon-park-solid:personal-privacy" class="w-5 h-5 transition duration-75 group-hover:text-white"
             aria-hidden="true" />
           <span class="flex-1 ms-3 text-start whitespace-nowrap">{{ t('layouts.personal') }}</span>
           <icon name="material-symbols:keyboard-arrow-down-rounded" class="w-5 h-5"
