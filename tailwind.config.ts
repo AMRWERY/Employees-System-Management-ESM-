@@ -11,20 +11,6 @@ export default {
   ],
   theme: {
     extend: {
-      colors: {
-        lightTheme: "#e0e0e0",
-        // darkTheme: '#44475A',
-        lightText: {
-          primary: "#1a1a1a",
-          secondary: "#4b4b4b",
-          muted: "#757575",
-        },
-        darkText: {
-          primary: "#f8f8f2",
-          secondary: "#d6d6d6",
-          muted: "#999999",
-        },
-      },
       // screens: {
       //   xs: "414px",
       //   // => @media (min-width: 414px) { ... }

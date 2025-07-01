@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
+
 @layer utilities {
   .layout-bg {
     @apply bg-[conic-gradient(at_top_left,_var(--tw-gradient-stops))] from-[#202040] via-[#202060] to-[#602080];
@@ -16,6 +17,7 @@
   }
 
   .task-card-bg {
+    
     /* @apply bg-[radial-gradient(ellipse_at_bottom_right,_var(--tw-gradient-stops))] from-[#4f6f52] via-[#739072] to-[#86a789]; */
     /* @apply bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-[#2a528a] via-[#5d6ec7] to-[#9f71db]; */
     /* @apply bg-gradient-to-br from-[#587850] via-[#709078] to-[#78b0a0]; */
@@ -29,3 +31,4 @@
     /* @apply bg-[radial-gradient(ellipse_at_bottom,_var(--tw-gradient-stops))] from-[#1d5464] via-[#207e82] to-[#298f9b]; */ /* good */
   }
 }
+
