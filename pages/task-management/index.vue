@@ -23,7 +23,10 @@
             <div class="overflow-x-auto">
                 <div
                     class="grid grid-flow-col auto-cols-[minmax(400px,1fr)] gap-6 border-gray-200 border p-4 rounded-lg min-w-fit">
-                    <div v-for="status in statuses" :key="status" class="bg-white rounded p-2 shadow-lg flex-shrink-0">
+                    <div v-for="status in statuses" :key="status" :class="[
+                        'rounded p-2 shadow-lg flex-shrink-0',
+                        columnGradientByStatus(status)
+                    ]">
                         <h2 class="text-lg font-semibold mb-4 text-center border-b pb-3">{{ statusLabels[status] }}</h2>
                         <div class="h-[400px] overflow-y-auto hide-scrollbar" :data-status="status" @dragover.prevent
                             @drop="handleDrop($event, status)">
@@ -53,7 +56,7 @@
                                         <div class="flex items-center gap-1">
                                             <icon name="mdi:flag-outline" class="w-4 h-4 text-gray-400" />
                                             <span class="italic">{{ t(`priorities.${task.priority || 'medium'}`)
-                                                }}</span>
+                                            }}</span>
                                         </div>
                                     </div>
                                 </li>
@@ -212,6 +215,23 @@ const statusStyles = (status: Status): string => {
             return 'bg-gray-100 text-gray-700';
     }
 }
+
+const columnGradientByStatus = (status: Status): string => {
+    switch (status) {
+        case 'todo':
+            return 'bg-[radial-gradient(ellipse_at_bottom_right,_var(--tw-gradient-stops))] from-[#4f6f52] via-[#739072] to-[#86a789]';
+        case 'in-progress':
+            return 'bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-[#2a528a] via-[#5d6ec7] to-[#9f71db]';
+        case 'done':
+            return 'bg-[conic-gradient(at_bottom_right,_var(--tw-gradient-stops))] from-[#fff1bc] via-[#7dc383] to-[#6a9c78]';
+        case 'on-hold':
+            return 'bg-[conic-gradient(at_top_right,_var(--tw-gradient-stops))] from-[#8bbccc] via-[#4c6793] to-[#5c2e7e]';
+        case 'cancelled':
+            return 'bg-[conic-gradient(at_bottom_right,_var(--tw-gradient-stops))] from-[#351f39] via-[#726a95] to-[#719fb0]';
+        default:
+            return 'bg-white';
+    }
+};
 
 useHead({
     titleTemplate: () => t('head.task_management'),
