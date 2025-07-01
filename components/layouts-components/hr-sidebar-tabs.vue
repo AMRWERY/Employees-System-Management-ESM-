@@ -112,19 +112,3 @@ const toggleDropdown = (name: DropdownNames) => {
   openDropdowns[name] = !openDropdowns[name]
 }
 </script>
-
-<style scoped>
-[dir="rtl"] .router-link-active {
-  background-color: rgb(156 163 175) !important;
-}
-
-/* Ensure active state works in both directions */
-.router-link-active {
-  background-color: rgb(156 163 175);
-  color: white !important;
-}
-
-.router-link-active:hover {
-  background-color: rgb(107 114 128);
-}
-</style>

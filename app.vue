@@ -1,17 +1,15 @@
 <template>
   <div>
     <ClientOnly>
-      <div class="bg-lightTheme">
-        <NuxtLayout>
-          <!-- progress-bar component -->
-          <progress-bar />
+      <NuxtLayout>
+        <!-- progress-bar component -->
+        <progress-bar />
 
-          <!-- breadcrumb component -->
-          <breadcrumb v-if="!isHome" class="mb-7" />
+        <!-- breadcrumb component -->
+        <breadcrumb v-if="!isHome" class="mb-7" />
 
-          <NuxtPage />
-        </NuxtLayout>
-      </div>
+        <NuxtPage />
+      </NuxtLayout>
     </ClientOnly>
 
     <!-- dynamic-toast component -->

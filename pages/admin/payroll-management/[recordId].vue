@@ -3,8 +3,7 @@
     <!-- employee-profile-skeleton-loader component -->
     <employee-profile-skeleton-loader v-if="isLoading || !minLoadingDone" />
 
-    <div class="max-w-3xl mx-auto p-8 border-gray-700 rounded-lg shadow mt-7 employee-details-bg border-4"
-      v-else-if="employee">
+    <div class="max-w-3xl mx-auto p-4 border border-gray-200 rounded-lg shadow mt-7" v-else-if="employee">
       <div class="flex justify-center">
         <div class="relative w-36 h-36">
           <span class="sr-only">user photo</span>
@@ -15,21 +14,21 @@
 
       <div class="mb-6">
         <div class="p-2 text-center">
-          <h1 class="text-2xl font-bold capitalize text-gray-200">
+          <h1 class="text-2xl font-bold capitalize text-gray-800">
             {{ employee.firstName }} {{ employee.lastName }}
           </h1>
-          <p class="text-gray-100 mt-1 font-semibold text-lg">{{ employee.position }}</p>
+          <p class="text-gray-700 mt-1 font-semibold text-lg">{{ employee.position }}</p>
         </div>
 
-        <div class="space-y-6 border-t pt-4">
+        <div class="space-y-6 mt-4 border-t pt-4">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <p class="text-sm text-gray-200">{{ t('dashboard.employee_id') }}</p>
+              <p class="text-sm text-gray-500">{{ t('dashboard.employee_id') }}</p>
               <p class="text-gray-900 font-medium">{{ employee.employeeId }}</p>
             </div>
 
             <div>
-              <p class="text-sm text-gray-200">{{ t('dashboard.department') }}</p>
+              <p class="text-sm text-gray-500">{{ t('dashboard.department') }}</p>
               <p class="text-gray-900 font-medium">
                 {{ employee.teamId ? getTeamName(employee.teamId) : t('dashboard.not_assigned') }}</p>
             </div>
@@ -37,24 +36,24 @@
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <p class="text-sm text-gray-200">{{ t('dashboard.email') }}</p>
+              <p class="text-sm text-gray-500">{{ t('dashboard.email') }}</p>
               <p class="text-gray-900 font-medium">{{ employee.email }}</p>
             </div>
 
             <div>
-              <p class="text-sm text-gray-200">{{ t('dashboard.role') }}</p>
+              <p class="text-sm text-gray-500">{{ t('dashboard.role') }}</p>
               <p class="text-gray-900 font-medium capitalize">{{ employee.role }}</p>
             </div>
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <p class="text-sm text-gray-200">{{ t('dashboard.manager') }}</p>
+              <p class="text-sm text-gray-500">{{ t('dashboard.manager') }}</p>
               <p class="text-gray-900 font-medium">{{ getManagerName(employee.managerId) }}</p>
             </div>
 
             <div>
-              <p class="text-sm text-gray-200">{{ t('dashboard.start_date') }}</p>
+              <p class="text-sm text-gray-500">{{ t('dashboard.start_date') }}</p>
               <p class="text-gray-900 font-medium">
                 {{ formatDate(employee.createdAt) }}
               </p>
@@ -63,23 +62,23 @@
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <p class="text-sm text-gray-200">{{ t('dashboard.base_salary') }}</p>
+              <p class="text-sm text-gray-500">{{ t('dashboard.base_salary') }}</p>
               <p class="text-gray-900 font-medium capitalize">{{ formatCurrency(employee.payrolls[0]?.base_salary) }}
               </p>
             </div>
 
             <div>
-              <p class="text-sm text-gray-200">{{ t('dashboard.net_salary') }}</p>
+              <p class="text-sm text-gray-500">{{ t('dashboard.net_salary') }}</p>
               <p class="text-gray-900 font-medium capitalize">{{ formatCurrency(employee.payrolls[0]?.netSalary) }}
               </p>
             </div>
           </div>
 
           <div class="flex items-center gap-2">
-            <p class="text-sm text-gray-200">{{ t('dashboard.status') }}</p>
+            <p class="text-sm text-gray-500">{{ t('dashboard.status') }}</p>
             <span :class="employee.status === 'blocked'
-              ? 'bg-red-300 text-red-800'
-              : 'bg-green-300 text-green-800'" class="px-3 py-1 rounded-full text-sm font-medium">
+              ? 'bg-red-100 text-red-800'
+              : 'bg-green-100 text-green-800'" class="px-3 py-1 rounded-full text-sm font-medium">
               {{ employee.status === 'blocked' ? t('status.blocked') : t('status.active') }}
             </span>
           </div>
