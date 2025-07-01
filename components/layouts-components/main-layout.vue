@@ -5,7 +5,7 @@
 
     <div :class="{ 'rtl': localeStore.isRTL }">
       <!-- Backdrop overlay for mobile - only visible when sidebar is open -->
-      <div v-if="isSidebarOpen" class="fixed inset-0 bg-gray-900 bg-opacity-50 z-30 sm:hidden"
+      <div v-if="isSidebarOpen" class="fixed inset-0 bg-opacity-50 z-30 sm:hidden"
         @click="isSidebarOpen = false"></div>
 
       <!-- Navbar - Now full width at the top -->
@@ -13,18 +13,18 @@
         <div class="flex flex-wrap justify-between items-center">
           <div class="flex items-center justify-start">
             <button @click="toggleSidebar"
-              class="p-2 text-gray-400 flex items-center rounded-lg sm:hidden hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-700">
+              class="p-2 text-gray-300 flex items-center rounded-lg sm:hidden focus:outline-none focus:ring-2 focus:ring-gray-700">
               <span class="sr-only">Toggle sidebar</span>
               <icon name="heroicons:bars-3-bottom-left-20-solid" class="w-6 h-6" aria-hidden="true" />
             </button>
-            <span class="self-center text-xl font-semibold text-white ms-2.5">ESM</span>
+            <span class="self-center text-3xl font-semibold text-white ms-2.5">ESM</span>
           </div>
 
           <!-- Right side navbar items -->
           <div class="flex items-center gap-2">
             <!-- RTL Toggle -->
             <button
-              class="text-gray-200 hover:bg-gray-800 focus:outline-none focus:ring-4 focus:ring-gray-700 rounded-lg text-sm p-2.5 me-1"
+              class="text-gray-100 rounded-lg text-sm p-2.5 me-1"
               @click="switchLocale(localeStore.isRTL ? 'en' : 'ar')">
               <span v-if="localeStore.isRTL" class="flex items-center">
                 <icon name="heroicons:language" class="w-4 h-4 me-1.5" />
@@ -40,7 +40,7 @@
             <div class="flex items-center ms-3">
               <div>
                 <nuxt-link-locale to="/profile" type="button"
-                  class="flex text-sm bg-gray-800 rounded-full focus:ring-4 focus:ring-gray-700" id="user-menu-button"
+                  class="flex text-sm rounded-full" id="user-menu-button"
                   aria-expanded="false">
                   <span class="sr-only">Open user menu</span>
                   <img class="w-8 h-8 rounded-full" :src="profileImage" alt="user-photo">
