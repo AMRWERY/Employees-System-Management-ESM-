@@ -17,7 +17,7 @@ import {
   // startAfter,
   // getCountFromServer,
 } from "firebase/firestore";
-import { db } from "@/firebase"; // Adjust path
+import { db } from "@/firebase";
 import {
   type Payroll,
   type PayrollInputData,
