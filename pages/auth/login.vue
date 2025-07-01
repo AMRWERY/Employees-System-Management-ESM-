@@ -20,9 +20,9 @@
           <h3 class="text-slate-900 lg:text-3xl text-2xl font-bold mb-8">
             {{ t('form.sign_in') }}
           </h3>
-          <div class="space-y-4">
+          <div class="space-y-6">
             <ClientOnly>
-              <div class="grid col-span-1 sm:grid-cols-6 gap-x-6 space-y-4">
+              <div class="grid col-span-1 sm:grid-cols-6 gap-x-6">
                 <div class="col-span-full">
                   <dynamic-inputs :label="t('form.email')" :placeholder="t('form.enter_your_email')" type="email"
                     name="email" :rules="'required|email'" :required="true" v-model="email" />
@@ -51,7 +51,7 @@
             </div>
           </div>
 
-          <div class="!mt-4">
+          <div class="!mt-7">
             <!-- base-button component -->
             <base-button :default-icon="false" :block="true" type="submit" :disabled="loading" @click="handleLogin">
               <icon name="svg-spinners:270-ring-with-bg" v-if="loading" />

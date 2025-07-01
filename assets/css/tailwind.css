@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
+
 @layer utilities {
   .layout-bg {
     @apply bg-[conic-gradient(at_top_left,_var(--tw-gradient-stops))] from-[#202040] via-[#202060] to-[#602080];
@@ -30,3 +31,4 @@
     /* @apply bg-[radial-gradient(ellipse_at_bottom,_var(--tw-gradient-stops))] from-[#1d5464] via-[#207e82] to-[#298f9b]; */ /* good */
   }
 }
+
