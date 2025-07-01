@@ -78,10 +78,11 @@
             </nuxt-link-locale>
           </li>
           <li>
-            <nuxt-link to="" class="flex items-center p-2 text-white rounded-lg group ps-7"
+            <nuxt-link-locale to="/admin/performance-reviews"
+              class="flex items-center p-2 text-white rounded-lg group ps-7"
               active-class="bg-gray-400 text-white hover:bg-gray-500" :exact="false">
               {{ t('layouts.performance_reviews') }}
-            </nuxt-link>
+            </nuxt-link-locale>
           </li>
         </ul>
       </li>
