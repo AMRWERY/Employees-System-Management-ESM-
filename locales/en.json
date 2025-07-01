@@ -105,7 +105,11 @@
     "description": "Description:",
     "comments": "comments",
     "like": "Like",
-    "reply": "Reply"
+    "reply": "Reply",
+    "performance_reviews": "Performance reviews",
+    "review_period": "Review period",
+    "reviewer": "Reviewer",
+    "overall_score": "Overall score"
   },
   "btn": {
     "go_back_home": "Go back Home",
@@ -150,7 +154,8 @@
     "add_tag": "add tag",
     "remove_tag": "remove tag",
     "comment": "Comment",
-    "reply": "Reply"
+    "reply": "Reply",
+    "new_review": "New Review"
   },
   "form": {
     "sign_in": "Sign in",
@@ -285,7 +290,9 @@
     "select_priority": "Select priority",
     "select_assignee": "Select assignee",
     "assign_to_me": "Assign to me",
-    "write_reply": "Write a reply..."
+    "write_reply": "Write a reply...",
+    "edit_review": "Edit review",
+    "add_review": "Add review"
   },
   "head": {
     "sign_in": "Sign in",
@@ -304,7 +311,8 @@
     "managers": "Managers",
     "holiday_dates": "Holiday dates",
     "payroll_management": "Payroll management",
-    "task_management": "Task management"
+    "task_management": "Task management",
+    "performance_reviews": "Performance reviews"
   },
   "error_page": {
     "you_are_all_alone_here": "You are all alone here 😁"
@@ -387,7 +395,9 @@
     "failed_to_task_update": "Failed to update task",
     "failed_to_task_add": "Failed to add task",
     "tag_added": "Tag added",
-    "tag_removed": "Tag removed"
+    "tag_removed": "Tag removed",
+    "review_updated": "Performance review updated successfully",
+    "review_added": "Performance review added successfully"
   },
   "status": {
     "all": "All",
@@ -410,7 +420,8 @@
     "no_teams_found": "No teams / departments found",
     "no_managers_found": "No managers found",
     "no_payroll_records_found": "No payroll records found",
-    "no_payroll_history_found": "No payroll history found for this employee."
+    "no_payroll_history_found": "No payroll history found for this employee",
+    "no_performance_reviews_found": "No performance reviews found"
   },
   "breadcrumb": {
     "home": "Home",
@@ -431,7 +442,8 @@
     "holiday_dates": "Holiday dates",
     "admin_payroll_management": "Payroll management",
     "admin_payroll_management_recordid": "Employee details",
-    "task_management": "Task management"
+    "task_management": "Task management",
+    "admin_performance_reviews": "Performance reviews"
   },
   "days": {
     "mon": "Mon",
