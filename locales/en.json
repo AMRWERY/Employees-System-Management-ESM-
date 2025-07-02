@@ -155,7 +155,8 @@
     "remove_tag": "remove tag",
     "comment": "Comment",
     "reply": "Reply",
-    "new_review": "New Review"
+    "new_review": "New Review",
+    "save": "Save"
   },
   "form": {
     "sign_in": "Sign in",

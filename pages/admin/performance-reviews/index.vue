@@ -4,7 +4,7 @@
       <p class="text-2xl font-semibold text-gray-700">{{ t('dashboard.performance_reviews') }}</p>
       <div class="flex items-center justify-center gap-4 ms-auto">
         <!-- base-button component -->
-        <base-button :default-icon="false">
+        <base-button :default-icon="false" @click="openReviewDialog()">
           {{ t('btn.new_review') }}
         </base-button>
 
@@ -185,6 +185,12 @@ const handleSaveReview = async (reviewData: PerformanceReview) => {
     isEditingReviews.value = false;
     selectedReviewForForm.value = null;
   }
+};
+
+const openReviewDialog = () => {
+  isEditingReviews.value = false;
+  selectedReviewForForm.value = null;
+  showReviewsDialog.value = true;
 };
 
 useHead({

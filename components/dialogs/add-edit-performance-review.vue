@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div id="add-edit-performance-review-modal">
+    <div id="add-edit-performance-review-modal" v-if="modelValue">
       <div
         class="fixed inset-0 p-4 flex flex-wrap justify-center items-center w-full h-full z-[1000] before:fixed before:inset-0 before:w-full before:h-full before:bg-[rgba(0,0,0,0.5)] overflow-auto">
         <div class="w-full max-w-2xl bg-white shadow-lg rounded-lg p-6 relative">
@@ -106,11 +106,10 @@
           </div>
 
           <div class="border-t border-gray-300 pt-6 flex justify-end gap-4">
-            <button type="button"
-              class="px-4 py-2 rounded-lg text-white text-sm font-medium border-none outline-none tracking-wide bg-blue-600 hover:bg-blue-700 active:bg-blue-600"
-              @click="submitForm">
-              {{ t('btn.save') }}
-            </button>
+            <!-- base-button component -->
+            <base-button :default-icon="false" :type="'submit'" :disabled="loading" @click="submitForm">
+              {{ isEditing ? t('btn.save') : t('btn.add') }}
+            </base-button>
           </div>
         </div>
       </div>
@@ -126,6 +125,7 @@ const { t } = useI18n();
 const authStore = useAuthStore()
 const employeeStore = useEmployeesStore()
 const managerStore = useManagerStore()
+const { isLoading: loading, startLoading } = useLoading(3000)
 
 const props = defineProps({
   modelValue: {
