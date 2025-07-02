@@ -2,7 +2,7 @@
   <div>
     <div class="relative w-max mx-auto" ref="dropdownContainer">
       <button type="button" @click="isOpen = !isOpen"
-        class="px-5 py-2.5 rounded text-sm font-medium border border-slate-300 cursor-pointer outline-0 hover:bg-slate-50 flex items-center">
+        class="px-5 py-2.5 rounded text-sm font-medium border border-slate-300 cursor-pointer outline-0 bg-white hover:bg-slate-50 flex items-center">
         {{ t('menu.download') }}
         <icon name="ic:sharp-keyboard-arrow-down" class="w-5 h-5 ms-3" />
       </button>

@@ -158,6 +158,15 @@
     "new_review": "New Review",
     "save": "Save"
   },
+  "tooltip": {
+    "view": "View",
+    "block": "Block",
+    "unblock": "Unblock",
+    "delete": "Delete",
+    "mark_paid": "Mark Paid",
+    "mark_failed": "Mark Failed",
+    "edit": "Edit"
+  },
   "form": {
     "sign_in": "Sign in",
     "email": "Email",

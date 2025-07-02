@@ -1,5 +1,5 @@
 export interface Column<T = any> {
-  key: keyof T | string;
+  key: string;
   label: string;
   class?: string | ((item: T) => string[]);
   // class?: string;
