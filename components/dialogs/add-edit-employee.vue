@@ -101,8 +101,6 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue', 'save']);
 
 const isEditing = ref(false);
-const isLoadingData = ref(false);
-const managersLoaded = ref(false);
 
 const visibleProxy = computed({
   get: () => props.modelValue,
@@ -136,77 +134,28 @@ const resetForm = () => {
 };
 
 watch(
-  () => props.modelValue,
-  async (newVal) => {
-    if (newVal) {
-      isLoadingData.value = true;
-
-      try {
-        // Load required data
-        if (teamsStore.teams.length === 0) {
-          await teamsStore.fetchAll();
-        }
-
-        // Only fetch managers if not already loaded
-        if (!managersLoaded.value) {
-          await managerssStore.fetchManagers();
-          managersLoaded.value = true;
-        }
-
-        if (props.employeeData) {
-          // Pre-fill form
-          Object.assign(formValues, {
-            firstName: props.employeeData.firstName || '',
-            middleName: props.employeeData.middleName || '',
-            lastName: props.employeeData.lastName || '',
-            email: props.employeeData.email || '',
-            position: props.employeeData.position || '',
-            base_salary: props.employeeData.base_salary || 0,
-          });
-
-          selectedTeam.value = props.employeeData.teamId || '';
-
-          // Wait for next tick to ensure DOM updates
-          await nextTick();
-
-          selectedManager.value = props.employeeData.managerId || '';
-        } else {
-          resetForm();
-        }
-      } catch (error) {
-        console.error("Error loading dialog data:", error);
-      } finally {
-        isLoadingData.value = false;
-      }
+  () => props.employeeData,
+  (newEmployeeData) => {
+    isEditing.value = !!newEmployeeData;
+    if (newEmployeeData) {
+      // Pre-fill form for editing
+      Object.assign(formValues, {
+        firstName: newEmployeeData.firstName || '',
+        middleName: newEmployeeData.middleName || '',
+        lastName: newEmployeeData.lastName || '',
+        email: newEmployeeData.email || '',
+        position: newEmployeeData.position || '',
+        base_salary: newEmployeeData.base_salary || 0,
+      });
+      selectedTeam.value = newEmployeeData.teamId || '';
+      selectedManager.value = newEmployeeData.managerId || '';
     } else {
+      // Reset form for add mode
       resetForm();
     }
   },
   { immediate: true }
 );
-// watch(
-//   () => props.employeeData,
-//   (newEmployeeData) => {
-//     isEditing.value = !!newEmployeeData;
-//     if (newEmployeeData) {
-//       // Pre-fill form for editing
-//       Object.assign(formValues, {
-//         firstName: newEmployeeData.firstName || '',
-//         middleName: newEmployeeData.middleName || '',
-//         lastName: newEmployeeData.lastName || '',
-//         email: newEmployeeData.email || '',
-//         position: newEmployeeData.position || '',
-//         base_salary: newEmployeeData.base_salary || 0,
-//       });
-//       selectedTeam.value = newEmployeeData.teamId || '';
-//       selectedManager.value = newEmployeeData.managerId || '';
-//     } else {
-//       // Reset form for add mode
-//       resetForm();
-//     }
-//   },
-//   { immediate: true }
-// );
 
 watch(() => props.modelValue, (newVal) => {
   if (!newVal) {

@@ -4,7 +4,7 @@
       :title="task ? t('dashboard.edit_task') : t('dashboard.add_task')"
       :data="{ task, title, description, assignedTo, priority, assiginOptions, priorityOptions, loading }"
       @close="emit('close')">
-      <template #default="{ data }">
+      <template #default>
         <div class="my-6">
           <ClientOnly>
             <div class="grid col-span-1 sm:grid-cols-6 gap-x-6 space-y-6">
@@ -31,7 +31,7 @@
           </ClientOnly>
         </div>
       </template>
-      <template #footer="{ close }">
+      <template #footer>
         <base-button :default-icon="false" type="submit" :disabled="loading" @click="handleSubmit">
           <icon name="svg-spinners:90-ring-with-bg" v-if="loading" />
           <span v-else>{{ task ? t('btn.update') : t('btn.add') }}</span>

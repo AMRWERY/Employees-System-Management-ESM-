@@ -12,7 +12,7 @@
               class="ms-2 cursor-pointer shrink-0 text-gray-400 hover:text-gray-500" @click="closeDialog" />
           </div>
 
-          <div class="my-3 overflow-y-auto h-[calc(500px-88px)] hide-scrollbar">
+          <div class="my-3 overflow-y-auto hide-scrollbar" :style="contentStyle">
             <slot :data="data"></slot>
           </div>
 
@@ -26,7 +26,7 @@
 </template>
 
 <script setup lang="ts">
-defineProps({
+const props = defineProps({
   id: {
     type: String,
     default: ''
@@ -42,6 +42,10 @@ defineProps({
   data: { // Data to pass down to the slotted content
     type: Object,
     default: () => ({})
+  },
+  dialogHeight: {
+    type: String,
+    default: 'calc(500px - 88px)'
   }
 });
 
@@ -51,4 +55,8 @@ const closeDialog = () => {
   emit('update:modelValue', false); // Update v-model to hide
   emit('close'); // Emit a separate close event if needed for additional logic
 };
+
+const contentStyle = computed(() => ({
+  height: props.dialogHeight
+}));
 </script>

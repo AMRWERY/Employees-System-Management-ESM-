@@ -345,6 +345,31 @@ export const useTeamStore = defineStore("teams", {
       const end = start + this.membersPerPage;
       this.paginatedMembers = this.filteredMembers.slice(start, end);
     },
+
+    async deleteTeam(teamId: string) {
+      try {
+        // Remove team reference from all members
+        const teamRef = doc(db, "ems-teams", teamId);
+        const teamDoc = await getDoc(teamRef);
+        if (!teamDoc.exists()) throw new Error("Team not found");
+        const memberIds = teamDoc.data().memberIds || [];
+        // Remove teamId from each member
+        const memberUpdates = memberIds.map((memberId: string) =>
+          updateDoc(doc(db, "ems-users", memberId), { teamId: null })
+        );
+        await Promise.all(memberUpdates);
+        // Delete the team document
+        await runTransaction(db, async (transaction) => {
+          transaction.delete(teamRef);
+        });
+        // Remove from local state
+        this.teams = this.teams.filter((t) => t.id !== teamId);
+        this.updateTeamPagination();
+      } catch (error) {
+        console.error("Error deleting team:", error);
+        throw error;
+      }
+    },
   },
 
   getters: {

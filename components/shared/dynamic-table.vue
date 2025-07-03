@@ -79,7 +79,7 @@
 
             <td v-if="hasView || hasBlock || hasDelete || hasEdit || hasMarkPaid || hasMarkFailed"
               class="px-6 py-4 text-end">
-              <div class="flex items-center gap-3">
+              <div class="flex items-center gap-3.5 justify-end">
                 <button v-if="hasView" class="rounded-full text-blue-500 hover:text-blue-700 transition"
                   :title="t('tooltip.view')" @click="$emit('view', item)">
                   <icon name="tabler:eye" class="w-7 h-7 text-blue-500 hover:text-blue-700" />

@@ -3,7 +3,7 @@
     "dashboard": "لوحة التحكم",
     "management": "الإدارة",
     "employees": "الموظفين",
-    "teams": "الفرق / الأقسام",
+    "teams": "الفرق/الأقسام",
     "roles_permissions": "الأدوار والأذونات",
     "hr_processes": "عمليات الموارد البشرية",
     "attendance": "الحضور",
@@ -61,7 +61,7 @@
     "department_id": "معرف القسم",
     "lead_id": "معرف المدير",
     "position": "المسمي الوظيفي",
-    "department": "القسم / الفريق",
+    "department": "القسم/الفريق",
     "role": "الدور",
     "average_performance": "متوسط الأداء",
     "left_leave_days": "أيام الإجازة المتبقية",
@@ -110,7 +110,11 @@
     "review_period": "فترة المراجعة",
     "reviewer": "المراجع",
     "overall_score": "النتيجة الإجمالية",
-    "edit_employee": "تعديل الموظف"
+    "edit_employee": "تعديل الموظف",
+    "edit_team": "تعديل الفريق/القسم",
+    "delete_team_title": "هل أنت متأكد أنك تريد حذف هذا؟",
+    "delete_team_confirmation_01": "أنت على وشك حذف فريق / قسم {name}.",
+    "delete_team_confirmation_02": "لا يمكن التراجع عن هذا الإجراء."
   },
   "btn": {
     "go_back_home": "العودة إلى الصفحه الرئيسيه",
@@ -250,7 +254,7 @@
     "new_password": "كلمة المرور الجديدة",
     "confirm_password": "تأكيد كلمة المرور",
     "created_at": "تم إنشاءه في",
-    "department": "القسم / الفريق",
+    "department": "القسم/الفريق",
     "manager": "المدير",
     "managers": "المديرين",
     "select_manager": "اختر المدير",
@@ -281,7 +285,7 @@
     "search_or_enter_employee_id": "ابحث عن معرف الموظف أو أدخله",
     "search_placeholder": "ابحث هنا...",
     "search_by_email_or_name": "ابحث عن طريق الأيميل أو الاسم",
-    "search_by_name": "البحث حسب اسم القسم / الفريق",
+    "search_by_name": "البحث حسب اسم القسم/الفريق",
     "failure_reason": "سبب الفشل",
     "enter_failure_reason_placeholder": "أدخل السبب...",
     "deductions_reason": "سبب الخصم",
@@ -410,7 +414,11 @@
     "review_updated": "تم تحديث مراجعة الأداء بنجاح",
     "review_added": "تمت إضافة مراجعة الأداء بنجاح",
     "employee_updated_successfully": "تم تحديث الموظف بنجاح",
-    "failed_to_update_employee": "فشل تحديث الموظف"
+    "failed_to_update_employee": "فشل تحديث الموظف",
+    "team_updated_successfully": "تم تحديث الفريق / القسم بنجاح",
+    "failed_to_update_team": "فشل تحديث الفريق / القسم",
+    "team_deleted_success": "تم حذف الفريق / القسم بنجاح",
+    "failed_to_delete_team": "فشل حذف الفريق / القسم"
   },
   "status": {
     "all": "الكل",
