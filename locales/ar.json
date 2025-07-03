@@ -109,7 +109,8 @@
     "performance_reviews": "مراجعات الأداء",
     "review_period": "فترة المراجعة",
     "reviewer": "المراجع",
-    "overall_score": "النتيجة الإجمالية"
+    "overall_score": "النتيجة الإجمالية",
+    "edit_employee": "تعديل الموظف"
   },
   "btn": {
     "go_back_home": "العودة إلى الصفحه الرئيسيه",
@@ -407,7 +408,9 @@
     "tag_added": "تمت إضافة العلامة",
     "tag_removed": "تمت إزالة العلامة",
     "review_updated": "تم تحديث مراجعة الأداء بنجاح",
-    "review_added": "تمت إضافة مراجعة الأداء بنجاح"
+    "review_added": "تمت إضافة مراجعة الأداء بنجاح",
+    "employee_updated_successfully": "تم تحديث الموظف بنجاح",
+    "failed_to_update_employee": "فشل تحديث الموظف"
   },
   "status": {
     "all": "الكل",

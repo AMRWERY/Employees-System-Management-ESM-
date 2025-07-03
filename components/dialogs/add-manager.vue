@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="modelValue" id="add-employee-modal">
+    <div v-if="modelValue" id="add-edit-employee-modal">
       <div @click.self="$emit('update:modelValue', false)"
         class="fixed inset-0 p-4 flex flex-wrap justify-end items-end w-full h-full z-[1000] before:fixed before:inset-0 before:w-full before:h-full before:bg-[rgba(0,0,0,0.5)] overflow-auto">
         <div class="w-full max-w-lg bg-white shadow-lg rounded-lg p-6 relative">

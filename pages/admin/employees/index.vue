@@ -8,8 +8,8 @@
           {{ t('btn.add_employee') }}
         </base-button>
 
-        <!-- add-employee component -->
-        <add-employee v-model="showAddDialog" @save="handleSave" />
+        <!-- add-edit-employee component -->
+        <add-edit-employee v-model="showAddDialog" :employeeData="editingEmployee || undefined" @save="handleSave" />
       </div>
     </div>
 
@@ -38,10 +38,11 @@
 
       <div v-else>
         <!-- dynamic-table component -->
-        <dynamic-table :items="paginatedEmployees" :columns="tableColumns" :has-view="true" :has-block="true"
-          :has-delete="true" @view="(item: Employee) => viewEmployee(item)"
-          @block="(item: Employee) => toggleBlockEmployee(item)" @delete="(item: Employee) => deleteEmployee(item)"
-          v-model:selectedItems="selectedItems" @update:selectedItems="handleSelectedItemsUpdate" />
+        <dynamic-table :items="paginatedEmployees" :columns="tableColumns" :has-view="true" :has-edit="true"
+          :has-block="true" :has-delete="true" @view="(item: Employee) => viewEmployee(item)"
+          @edit="(item: Employee) => openEditDialog(item)" @block="(item: Employee) => toggleBlockEmployee(item)"
+          @delete="(item: Employee) => deleteEmployee(item)" v-model:selectedItems="selectedItems"
+          @update:selectedItems="handleSelectedItemsUpdate" />
       </div>
 
       <!-- pagination component -->
@@ -251,15 +252,31 @@ const deleteEmployee = async (employee: Employee) => {
 }
 
 const showAddDialog = ref(false);
+const editingEmployee = ref<Employee | null>(null);
+
+watch(showAddDialog, (newVal) => {
+  if (!newVal) {
+    // Add a small delay to allow transition to complete
+    setTimeout(() => {
+      editingEmployee.value = null;
+    }, 300);
+  }
+});
+
+const openEditDialog = (employee: Employee) => {
+  showAddDialog.value = false;
+  editingEmployee.value = employee;
+  setTimeout(() => {
+    editingEmployee.value = {...employee};
+    showAddDialog.value = true;
+  }, 0);
+};
 
 const handleSave = async () => {
-  try {
-    // Your save logic
-    showAddDialog.value = false;
-    // triggerToast({...});
-  } catch (error) {
-    // Error handling
-  }
+  showAddDialog.value = false;
+  setTimeout(() => {
+    editingEmployee.value = null;
+  }, 0);
 };
 
 const selectedItems = ref<TableItem[]>([]);

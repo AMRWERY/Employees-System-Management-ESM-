@@ -1,122 +1,90 @@
 <template>
   <div>
-    <!-- Re-using your existing modal structure and classes -->
-    <div v-if="modelValue" id="add-edit-payroll-modal">
-      <div
-        class="fixed inset-0 p-4 flex flex-wrap justify-end items-end w-full h-full z-[1000] before:fixed before:inset-0 before:w-full before:h-full before:bg-[rgba(0,0,0,0.5)] overflow-auto">
-        <div class="w-full max-w-lg bg-white shadow-lg rounded-lg p-6 relative">
-          <div class="flex items-center pb-3 border-b border-gray-300">
-            <h3 class="text-slate-900 text-xl font-semibold flex-1 capitalize">
-              {{ isEditing ? t('form.edit_payroll_record') : t('form.add_payroll_record') }}
-            </h3>
-            <icon name="material-symbols:close-small-rounded"
-              class="ms-2 cursor-pointer shrink-0 text-gray-400 hover:text-gray-500" @click="closeDialog" />
+    <dynamic-dialog :model-value="modelValue" id="add-edit-payroll-modal"
+      :title="isEditing ? t('form.edit_payroll_record') : t('form.add_payroll_record')"
+      @update:modelValue="onDialogClose">
+      <template #default>
+        <ClientOnly>
+          <div class="grid col-span-1 sm:grid-cols-2 gap-x-6 gap-y-1">
+            <div class="sm:col-span-1">
+              <label class="block text-sm font-medium text-gray-700 mb-1">{{ t('form.employee_id') }}</label>
+              <auto-complete-input @itemSelected="handleEmployeeSelected"
+                :placeholder="t('form.search_or_enter_employee_id')" :disabled="isEditing" v-model="formValues.uid" />
+            </div>
+            <div class="sm:col-span-1">
+              <dynamic-inputs :label="t('form.employee_name')" :placeholder="t('form.enter_employee_name')" type="text"
+                :name="t('form.employee_name')" rules="required|alpha_spaces" :required="true" :disabled="isEditing"
+                v-model="formValues.employeeName" />
+            </div>
+            <div class="sm:col-span-1">
+              <label class="block text-sm font-medium text-gray-700 mb-1">{{ t('form.department') }}</label>
+              <select v-model="formValues.department_id" :disabled="isEditing"
+                class="w-full px-3 py-2 transition duration-300 border rounded-md shadow-sm placeholder:text-slate-400 text-slate-700 focus:outline-none focus:border-slate-400 hover:border-slate-300 focus:shadow">
+                <option value="" disabled>{{ t('form.select_department') }}</option>
+                <option v-for="team in availableTeamsForDropdown" :key="team.id" :value="team.id">
+                  {{ team.displayName }}
+                </option>
+              </select>
+            </div>
+            <div class="sm:col-span-1">
+              <label class="block text-sm font-medium text-gray-700 mb-1">{{ t('form.pay_period_yyyy_mm') }}</label>
+              <date-picker v-model="formValues.pay_period" />
+            </div>
+            <div class="sm:col-span-1">
+              <dynamic-inputs :label="t('form.base_salary')" :placeholder="t('form.enter_amount')" type="number"
+                :name="t('form.base_salary')" rules="required|min_value:0" :required="true"
+                v-model="formValues.base_salary" />
+            </div>
+            <div class="sm:col-span-1">
+              <dynamic-inputs :label="t('form.working_days')" :placeholder="t('form.enter_working_days')" type="number"
+                :name="t('form.working_days')" rules="required|min_value:0|integer" :required="true"
+                v-model="formValues.working_days" />
+            </div>
+            <div class="sm:col-span-1">
+              <dynamic-inputs :label="t('form.days_present')" :placeholder="t('form.enter_days')" type="number"
+                :name="t('form.days_present')" rules="required|min_value:0|integer" :required="true"
+                v-model="formValues.days_present" />
+            </div>
+            <div class="sm:col-span-1">
+              <dynamic-inputs :label="t('form.overtime_hours')" :placeholder="t('form.enter_hours')" type="number"
+                :name="t('form.overtime_hours')" rules="required|min_value:0" v-model="formValues.overtime_hours" />
+            </div>
+            <div class="sm:col-span-1">
+              <dynamic-inputs :label="t('form.overtime_rate')" :placeholder="t('form.enter_rate')" type="number"
+                :name="t('form.overtime_rate')" rules="required|min_value:0" v-model="formValues.overtime_rate" />
+            </div>
+            <div class="sm:col-span-1">
+              <dynamic-inputs :label="t('form.bonuses')" :placeholder="t('form.enter_amount')" type="number"
+                :name="t('form.bonuses')" rules="required|min_value:0" v-model="formValues.bonuses" />
+            </div>
+            <div class="sm:col-span-1">
+              <dynamic-inputs :label="t('form.tax_percent')" :placeholder="t('form.enter_percentage')" type="number"
+                :name="t('form.tax_percent')" rules="required|min_value:0|max_value:100"
+                v-model="formValues.tax_percent" />
+            </div>
+            <div class="sm:col-span-1">
+              <dynamic-inputs :label="t('form.deductions')" :placeholder="t('form.enter_amount')" type="number"
+                :name="t('form.deductions')" rules="required|min_value:0" v-model="formValues.deductions" />
+            </div>
+            <div class="col-span-full" v-if="formValues.deductions">
+              <dynamic-inputs :label="t('form.deductions_reason')" :placeholder="t('form.enter_deductions_reason_here')"
+                type="textarea" :required="true" :name="t('form.deductions_reason')" rules="required"
+                v-model="formValues.deductions_reason" />
+            </div>
+            <div class="col-span-full">
+              <dynamic-inputs :label="t('form.notes')" :placeholder="t('form.enter_your_notes')" type="textarea"
+                :name="t('form.notes')" v-model="formValues.notes" />
+            </div>
           </div>
-
-          <!-- Adjusted height for potentially more fields -->
-          <div class="my-3 overflow-y-auto h-[calc(500px-88px)] hide-scrollbar">
-            <ClientOnly>
-              <div class="grid col-span-1 sm:grid-cols-2 gap-x-6 gap-y-1">
-                <div class="sm:col-span-1">
-                  <label class="block text-sm font-medium text-gray-700 mb-1">{{ t('form.employee_id') }}</label>
-                  <!-- auto-complete-input component -->
-                  <auto-complete-input @itemSelected="handleEmployeeSelected"
-                    :placeholder="t('form.search_or_enter_employee_id')" :disabled="isEditing"
-                    v-model="formValues.uid" />
-                </div>
-
-                <div class="sm:col-span-1">
-                  <dynamic-inputs :label="t('form.employee_name')" :placeholder="t('form.enter_employee_name')"
-                    type="text" :name="t('form.employee_name')" rules="required|alpha_spaces" :required="true"
-                    :disabled="isEditing" v-model="formValues.employeeName" />
-                </div>
-
-                <div class="sm:col-span-1">
-                  <label class="block text-sm font-medium text-gray-700 mb-1">{{ t('form.department') }}</label>
-                  <select v-model="formValues.department_id" :disabled="isEditing"
-                    class="w-full px-3 py-2 transition duration-300 border rounded-md shadow-sm placeholder:text-slate-400 text-slate-700 focus:outline-none focus:border-slate-400 hover:border-slate-300 focus:shadow">
-                    <option value="" disabled>{{ t('form.select_department') }}</option>
-                    <option v-for="team in availableTeamsForDropdown" :key="team.id" :value="team.id">
-                      {{ team.displayName }}
-                    </option>
-                  </select>
-                </div>
-
-                <div class="sm:col-span-1">
-                  <label class="block text-sm font-medium text-gray-700 mb-1">{{ t('form.pay_period_yyyy_mm')
-                  }}</label>
-                  <!-- date-picker component-->
-                  <date-picker v-model="formValues.pay_period" />
-                </div>
-
-                <div class="sm:col-span-1">
-                  <dynamic-inputs :label="t('form.base_salary')" :placeholder="t('form.enter_amount')" type="number"
-                    :name="t('form.base_salary')" rules="required|min_value:0" :required="true"
-                    v-model="formValues.base_salary" />
-                </div>
-
-                <div class="sm:col-span-1">
-                  <dynamic-inputs :label="t('form.working_days')" :placeholder="t('form.enter_working_days')"
-                    type="number" :name="t('form.working_days')" rules="required|min_value:0|integer" :required="true"
-                    v-model="formValues.working_days" />
-                </div>
-
-                <div class="sm:col-span-1">
-                  <dynamic-inputs :label="t('form.days_present')" :placeholder="t('form.enter_days')" type="number"
-                    :name="t('form.days_present')" rules="required|min_value:0|integer" :required="true"
-                    v-model="formValues.days_present" />
-                </div>
-
-                <div class="sm:col-span-1">
-                  <dynamic-inputs :label="t('form.overtime_hours')" :placeholder="t('form.enter_hours')" type="number"
-                    :name="t('form.overtime_hours')" rules="required|min_value:0" v-model="formValues.overtime_hours" />
-                </div>
-
-                <div class="sm:col-span-1">
-                  <dynamic-inputs :label="t('form.overtime_rate')" :placeholder="t('form.enter_rate')" type="number"
-                    :name="t('form.overtime_rate')" rules="required|min_value:0" v-model="formValues.overtime_rate" />
-                </div>
-
-                <div class="sm:col-span-1">
-                  <dynamic-inputs :label="t('form.bonuses')" :placeholder="t('form.enter_amount')" type="number"
-                    :name="t('form.bonuses')" rules="required|min_value:0" v-model="formValues.bonuses" />
-                </div>
-
-                <div class="sm:col-span-1">
-                  <dynamic-inputs :label="t('form.tax_percent')" :placeholder="t('form.enter_percentage')" type="number"
-                    :name="t('form.tax_percent')" rules="required|min_value:0|max_value:100"
-                    v-model="formValues.tax_percent" />
-                </div>
-
-                <div class="sm:col-span-1">
-                  <dynamic-inputs :label="t('form.deductions')" :placeholder="t('form.enter_amount')" type="number"
-                    :name="t('form.deductions')" rules="required|min_value:0" v-model="formValues.deductions" />
-                </div>
-
-                <div class="col-span-full" v-if="formValues.deductions">
-                  <dynamic-inputs :label="t('form.deductions_reason')"
-                    :placeholder="t('form.enter_deductions_reason_here')" type="textarea" :required="true"
-                    :name="t('form.deductions_reason')" rules="required" v-model="formValues.deductions_reason" />
-                </div>
-
-                <div class="col-span-full">
-                  <dynamic-inputs :label="t('form.notes')" :placeholder="t('form.enter_your_notes')" type="textarea"
-                    :name="t('form.notes')" v-model="formValues.notes" />
-                </div>
-              </div>
-            </ClientOnly>
-          </div>
-
-          <div class="border-t border-gray-300 pt-3 flex justify-end gap-4">
-            <!-- base-button component -->
-            <base-button :default-icon="false" type="submit" :loading="loading" @click="handleSubmit">
-              <icon name="svg-spinners:90-ring-with-bg" v-if="loading" />
-              <span v-else>{{ isEditing ? t('btn.save_changes') : t('btn.add_record') }}</span>
-            </base-button>
-          </div>
-        </div>
-      </div>
-    </div>
+        </ClientOnly>
+      </template>
+      <template #footer>
+        <base-button :default-icon="false" type="submit" :loading="loading" @click="handleSubmit">
+          <icon name="svg-spinners:90-ring-with-bg" v-if="loading" />
+          <span v-else>{{ isEditing ? t('btn.save_changes') : t('btn.add_record') }}</span>
+        </base-button>
+      </template>
+    </dynamic-dialog>
   </div>
 </template>
 
@@ -295,7 +263,7 @@ const handleSubmit = async () => {
   }
 };
 
-const closeDialog = () => {
+const onDialogClose = () => {
   emit('update:modelValue', false);
   resetForm();
 };

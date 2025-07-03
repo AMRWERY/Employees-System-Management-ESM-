@@ -338,6 +338,37 @@ export const useEmployeesStore = defineStore("employees", {
       }
     },
 
+    async updateEmployee(
+      employeeId: string,
+      updateData: {
+        firstName?: string;
+        middleName?: string;
+        lastName?: string;
+        email?: string;
+        position?: string;
+        teamId?: string;
+        managerId?: string;
+        base_salary?: number;
+      }
+    ): Promise<void> {
+      try {
+        const userRef = doc(db, "ems-users", employeeId);
+        await updateDoc(userRef, updateData);
+        // Update local state
+        const idx = this.employees.findIndex((e) => e.id === employeeId);
+        if (idx > -1) {
+          this.employees[idx] = {
+            ...this.employees[idx],
+            ...updateData,
+          };
+        }
+        await this.fetchEmployees();
+      } catch (error) {
+        console.error("Failed to update employee:", error);
+        throw error;
+      }
+    },
+
     async getDepartmentForTeam(teamId?: string): Promise<string> {
       if (!teamId) return "";
       try {

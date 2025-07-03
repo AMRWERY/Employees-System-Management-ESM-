@@ -109,7 +109,8 @@
     "performance_reviews": "Performance reviews",
     "review_period": "Review period",
     "reviewer": "Reviewer",
-    "overall_score": "Overall score"
+    "overall_score": "Overall score",
+    "edit_employee": "Edit employee"
   },
   "btn": {
     "go_back_home": "Go back Home",
@@ -407,7 +408,9 @@
     "tag_added": "Tag added",
     "tag_removed": "Tag removed",
     "review_updated": "Performance review updated successfully",
-    "review_added": "Performance review added successfully"
+    "review_added": "Performance review added successfully",
+    "employee_updated_successfully": "Employee updated successfully",
+    "failed_to_update_employee": "Failed to update employee"
   },
   "status": {
     "all": "All",

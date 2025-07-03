@@ -6,7 +6,7 @@
         <base-button :default-icon="false" @click="showAddDialog = true">
           {{ t('btn.add_employee') }}
         </base-button>
-        <add-employee v-model="showAddDialog" @save="handleSave" />
+        <add-edit-employee v-model="showAddDialog" @save="handleSave" />
       </div> -->
     </div>
 
