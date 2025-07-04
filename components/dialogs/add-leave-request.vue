@@ -1,10 +1,9 @@
 <template>
   <div>
-    <button role="button" @click="showModal = true"
-      class="text-white bg-[#3b5998] hover:bg-[#3b5998]/90 focus:ring-4 focus:outline-none focus:ring-[#3b5998]/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center flex items-center justify-center gap-2">
-      <icon name="heroicons-solid:plus" class="w-5 h-5" />
+    <!-- base-btn componenet -->
+    <base-button :default-icon="false" :type="'button'" @click="showModal = true">
       {{ t('btn.add_request') }}
-    </button>
+    </base-button>
 
     <div v-if="showModal"
       class="fixed inset-0 flex flex-wrap justify-center items-center w-full h-full z-[1000] before:fixed before:inset-0 before:w-full before:h-full before:bg-[rgba(0,0,0,0.5)] overflow-auto">
@@ -188,8 +187,8 @@ const submitForm = async () => {
       submittedAt: new Date(),
       durationDays: parseInt(form.duration),
       attachments: [] as string[], // To store download URLs
-      managerId: parsedUserData?.managerId || '',
-  teamId: parsedUserData?.teamId || '', 
+      managerId: parsedUserData?.managerId || null,
+      teamId: parsedUserData?.teamId || null,
     }
     // console.log('Submitting request with data:', requestData)
     // Upload attachments if any

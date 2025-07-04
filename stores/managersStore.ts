@@ -61,6 +61,7 @@ export const useManagerStore = defineStore("managers", {
         this.managers = managers.filter(
           (manager) => manager.email !== "test-admin@ems.com"
         );
+        // console.log('managers list:', managers)
         this.updatePagination();
       } catch (error) {
         // console.error("Error fetching managers:", error);
@@ -196,29 +197,7 @@ export const useManagerStore = defineStore("managers", {
     },
 
     async updateManager(managerId: string, updates: Partial<Manager>) {
-      try {
-        const userRef = doc(db, "ems-users", managerId);
-        // Don't update password here; handle password change separately if needed
-        const { password, id, uid, createdAt, ...rest } = updates;
-        await updateDoc(userRef, rest);
-        // Also update in ems-managers collection if exists
-        const managersRef = collection(db, "ems-managers");
-        const q = query(managersRef, where("uid", "==", managerId));
-        const snapshot = await getDocs(q);
-        const updatePromises = snapshot.docs.map((docSnap) =>
-          updateDoc(doc(db, "ems-managers", docSnap.id), rest)
-        );
-        await Promise.all(updatePromises);
-        // Update local state
-        const idx = this.managers.findIndex((m) => m.id === managerId);
-        if (idx !== -1) {
-          this.managers[idx] = { ...this.managers[idx], ...rest };
-          this.updatePagination();
-        }
-      } catch (error) {
-        this.error = "Failed to update manager";
-        throw error;
-      }
+      // Implement update logic
     },
 
     async deleteManager(managerId: string): Promise<void> {

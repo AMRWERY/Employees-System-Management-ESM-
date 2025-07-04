@@ -166,6 +166,7 @@ const tableColumns = computed(() => {
       format: (request: LeaveRequest) => {
         if (!request.managerId) return t("dashboard.not_assigned");
         const manager = managersStore.managers.find(m => m.id === request.managerId);
+        // console.log(manager)
         return manager ? `${manager.firstName} ${manager.lastName}` : t("dashboard.not_assigned");
       }
     },
