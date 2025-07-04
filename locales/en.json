@@ -114,7 +114,8 @@
     "edit_team": "Edit team",
     "delete_team_title": "Are you sure you want to delete this?",
     "delete_team_confirmation_01": "You are about to delete team / department {name}",
-    "delete_team_confirmation_02": "This action cannot be undone."
+    "delete_team_confirmation_02": "This action cannot be undone.",
+    "edit_manager": "Edit manager"
   },
   "btn": {
     "go_back_home": "Go back Home",
@@ -293,9 +294,6 @@
     "enter_base_salary": "Enter employee base salary",
     "net_salary": "Net salary",
     "enter_net_salary": "Enter employee net salary",
-    "middle_name": "Middle name",
-    "enter_middle_name": "Enter middle name",
-    "enter_your_middle_name": "Enter your middle name",
     "birth_date": "Birthdate",
     "title": "Title",
     "enter_task_title": "Enter task title",
@@ -418,7 +416,9 @@
     "team_updated_successfully": "Team / Department updated successfully",
     "failed_to_update_team": "Failed to update team / department",
     "team_deleted_success": "Team / department deleted successfully",
-    "failed_to_delete_team": "Failed to delete team / department"
+    "failed_to_delete_team": "Failed to delete team / department",
+    "manager_updated_successfully": "Manager updated successfully",
+    "failed_to_update_manager": "Failed to update manager"
   },
   "status": {
     "all": "All",

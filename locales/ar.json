@@ -114,7 +114,8 @@
     "edit_team": "تعديل الفريق/القسم",
     "delete_team_title": "هل أنت متأكد أنك تريد حذف هذا؟",
     "delete_team_confirmation_01": "أنت على وشك حذف فريق / قسم {name}.",
-    "delete_team_confirmation_02": "لا يمكن التراجع عن هذا الإجراء."
+    "delete_team_confirmation_02": "لا يمكن التراجع عن هذا الإجراء.",
+    "edit_manager": "تعديل المدير"
   },
   "btn": {
     "go_back_home": "العودة إلى الصفحه الرئيسيه",
@@ -201,7 +202,7 @@
     "forgot_password": "هل نسيت كلمة السر",
     "first_name": "الاسم الأول",
     "enter_your_first_name": "أدخل اسمك الأول",
-    "last_name": "اسم العائله",
+    "last_name": "اسم الأخير",
     "enter_your_last_name": "أدخل اسمك العائله",
     "field_required": "هذا الحقل مطلوب",
     "email_invalid": "البريد الإلكتروني غير صالح",
@@ -238,7 +239,7 @@
     "medical": "إجازة طبية",
     "search_by_email": "ابحث عن طريق البريد الإلكتروني",
     "enter_first_name": "أدخل الاسم الأول",
-    "enter_last_name": "أدخل الاسم العائله",
+    "enter_last_name": "أدخل الاسم الأخير",
     "enter_email": "أدخل البريد الإلكتروني",
     "enter_password": "أدخل كلمة المرور",
     "teams": "الفرق / الأقسام",
@@ -293,9 +294,6 @@
     "enter_base_salary": "أدخل الراتب الأساسي للموظف",
     "net_salary": "الراتب الصافي",
     "enter_net_salary": "أدخل صافي راتب الموظف",
-    "middle_name": "الاسم الأخير",
-    "enter_middle_name": "أدخل الاسم الأخير",
-    "enter_your_middle_name": "أدخل اسمك الأخير",
     "birth_date": "تاريخ الميلاد",
     "title": "العنوان",
     "enter_task_title": "أدخل عنوان المهمة",
@@ -418,7 +416,9 @@
     "team_updated_successfully": "تم تحديث الفريق / القسم بنجاح",
     "failed_to_update_team": "فشل تحديث الفريق / القسم",
     "team_deleted_success": "تم حذف الفريق / القسم بنجاح",
-    "failed_to_delete_team": "فشل حذف الفريق / القسم"
+    "failed_to_delete_team": "فشل حذف الفريق / القسم",
+    "manager_updated_successfully": "تم تحديث المدير بنجاح",
+    "failed_to_update_manager": "فشل تحديث المدير"
   },
   "status": {
     "all": "الكل",

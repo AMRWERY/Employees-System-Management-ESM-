@@ -8,19 +8,11 @@
           {{ t('btn.add_manager') }}
         </base-button>
 
-        <!-- add-manager component -->
-        <add-manager v-model="showAddDialog" @save="handleSave" />
+        <!-- add-edit-manager component -->
+        <add-edit-manager v-model="showAddDialog" :managerData="editingManager || undefined" @save="handleSave" />
       </div>
     </div>
 
-    <!-- Search input -->
-    <!-- <div class="relative w-[300px]">
-      <input type="text" v-model="searchTerm" :placeholder="t('form.search_by_email')"
-        class="px-4 py-2 pe-10 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full" />
-      <div class="absolute inset-y-0 end-0 flex items-center pe-3 pointer-events-none">
-        <icon name="heroicons-solid:magnifying-glass" class="w-5 h-5 text-gray-400" />
-      </div>
-    </div> -->
     <div class="flex items-center gap-4">
       <!-- search-input component -->
       <search-input v-model="localSearchTerm" @search="handleGlobalSearch"
@@ -46,10 +38,10 @@
 
       <div v-else>
         <!-- dynamic-table component -->
-        <dynamic-table :items="managerStore.paginatedManagers" :columns="tableColumns" :has-view="true"
-          :has-block="true" :has-delete="true" @view="viewManagerDetails"
-          @block="(item: Manager) => toggleBlockManager(item)" @delete="(item: Manager) => deleteManager(item)" v-model:selectedItems="selectedItems"
-            @update:selectedItems="handleSelectedItemsUpdate" />
+        <dynamic-table :items="managerStore.paginatedManagers" :columns="tableColumns" :has-view="true" :has-edit="true"
+          :has-block="true" :has-delete="true" @view="viewManagerDetails" @edit="openEditManagerDialog"
+          @block="(item: Manager) => toggleBlockManager(item)" @delete="(item: Manager) => deleteManager(item)"
+          v-model:selectedItems="selectedItems" @update:selectedItems="handleSelectedItemsUpdate" />
       </div>
 
       <!-- pagination component -->
@@ -174,7 +166,6 @@ onMounted(async () => {
       teamStore.fetchAll()
     ]);
   } catch (error) {
-    // console.error('Error fetching managers:', error)
     triggerToast({
       message: t('toast.failed_to_load_managers'),
       type: 'error',
@@ -188,11 +179,11 @@ onMounted(async () => {
 
 const handleSave = async () => {
   try {
-    // Your save logic
     showAddDialog.value = false;
-    // triggerToast({...});
+    editingManager.value = null;
+    // Optionally refresh list or show toast
   } catch (error) {
-    // Error handling
+    console.error(error)
   }
 };
 
@@ -260,6 +251,25 @@ const selectedItems = ref<TableItem[]>([]);
 const handleSelectedItemsUpdate = (items: TableItem[]) => {
   // console.log('Selected items updated:', items);
   selectedItems.value = items;
+};
+
+const editingManager = ref<Manager | null>(null);
+
+watch(showAddDialog, (newVal) => {
+  if (!newVal) {
+    setTimeout(() => {
+      editingManager.value = null;
+    }, 100);
+  }
+});
+
+const openEditManagerDialog = (manager: Manager) => {
+  editingManager.value = null;
+  showAddDialog.value = false;
+  setTimeout(() => {
+    editingManager.value = { ...manager };
+    showAddDialog.value = true;
+  }, 0);
 };
 
 useHead({
