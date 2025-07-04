@@ -31,12 +31,6 @@
                       type="text" :name="t('form.first_name')" :rules="'required|alpha_spaces'" :required="true"
                       v-model="firstName" />
                   </div>
-
-                  <div class="sm:col-span-3">
-                    <dynamic-inputs :label="t('form.middle_name')" :placeholder="t('form.enter_your_middle_name')"
-                      type="text" :name="t('form.middle_name')" :rules="'required|alpha_spaces'" :required="true"
-                      v-model="middleName" />
-                  </div>
                 </div>
 
                 <div class="grid col-span-1 sm:grid-cols-6 gap-x-6">
@@ -105,7 +99,6 @@
 const { t } = useI18n()
 const authStore = useAuthStore()
 const firstName = ref('');
-const middleName = ref('');
 const lastName = ref('');
 const email = ref('');
 const password = ref('');
@@ -122,7 +115,7 @@ const { value: termsAccepted, errorMessage: termsError } = useField<boolean>(
 );
 
 const handleSignup = async () => {
-  if (!email.value || !password.value || !firstName.value || !middleName.value || !lastName.value || !termsAccepted.value) {
+  if (!email.value || !password.value || !firstName.value || !lastName.value || !termsAccepted.value) {
     errorMessage.value = t('toast.all_fields_are_required')
     return
   }
@@ -132,7 +125,6 @@ const handleSignup = async () => {
       email.value,
       password.value,
       firstName.value,
-      middleName.value,
       lastName.value
     );
     triggerToast({

@@ -6,7 +6,7 @@ export const useBirthdateStore = defineStore("birthdate", {
     todaysBirthdays: [] as {
       id: string;
       firstName: string;
-      middleName: string;
+      lastName: string;
       profileImg: string | null;
     }[],
     loading: false,
@@ -48,7 +48,7 @@ export const useBirthdateStore = defineStore("birthdate", {
                 this.todaysBirthdays.push({
                   id: doc.id,
                   firstName: userData.firstName || "",
-                  middleName: userData.middleName || "",
+                  lastName: userData.lastName || "",
                   profileImg: userData.profileImg || null,
                 });
               }

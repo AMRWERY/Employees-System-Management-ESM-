@@ -14,11 +14,6 @@
                   v-model="formValues.firstName" />
               </div>
               <div class="col-span-full">
-                <dynamic-inputs :label="t('form.middle_name')" :placeholder="t('form.enter_middle_name')" type="text"
-                  :name="t('form.middle_name')" :rules="'required|alpha_spaces'" :required="true"
-                  v-model="formValues.middleName" />
-              </div>
-              <div class="col-span-full">
                 <dynamic-inputs :label="t('form.last_name')" :placeholder="t('form.enter_last_name')" type="text"
                   :name="t('form.last_name')" :rules="'required|alpha_spaces'" :required="true"
                   v-model="formValues.lastName" />
@@ -111,7 +106,6 @@ const visibleProxy = computed({
 
 const formValues = reactive({
   firstName: '',
-  middleName: '',
   lastName: '',
   email: '',
   password: '',
@@ -122,7 +116,6 @@ const formValues = reactive({
 
 const resetForm = () => {
   formValues.firstName = '';
-  formValues.middleName = '';
   formValues.lastName = '';
   formValues.email = '';
   formValues.password = '';
@@ -141,7 +134,6 @@ watch(
       // Pre-fill form for editing
       Object.assign(formValues, {
         firstName: newEmployeeData.firstName || '',
-        middleName: newEmployeeData.middleName || '',
         lastName: newEmployeeData.lastName || '',
         email: newEmployeeData.email || '',
         position: newEmployeeData.position || '',
@@ -184,7 +176,6 @@ const handleSubmit = async () => {
       // Update employee
       await employeesStore.updateEmployee(props.employeeData.id, {
         firstName: formValues.firstName,
-        middleName: formValues.middleName,
         lastName: formValues.lastName,
         email: formValues.email,
         position: formValues.position,
@@ -202,7 +193,6 @@ const handleSubmit = async () => {
       // Add employee
       await employeesStore.createEmployee({
         firstName: formValues.firstName,
-        middleName: formValues.middleName,
         lastName: formValues.lastName,
         email: formValues.email,
         password: formValues.password,

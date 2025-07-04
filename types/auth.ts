@@ -7,7 +7,6 @@ export type UserData = {
   uid: string;
   email: string | null;
   firstName?: string;
-  middleName?: string;
   lastName?: string;
   role?: string;
   profileImg?: string | null;

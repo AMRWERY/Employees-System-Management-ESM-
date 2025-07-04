@@ -12,7 +12,6 @@ export interface Member {
   id: string;
   employeeId: string;
   firstName: string;
-  middleName: string;
   lastName: string;
   email: string;
   position: string;

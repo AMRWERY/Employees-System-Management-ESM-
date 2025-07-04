@@ -33,7 +33,7 @@
         <div
           class="xl:w-[80%] lg:w-[90%] md:w-[94%] sm:w-[96%] w-[92%] mx-auto flex flex-col gap-4 justify-center items-center relative xl:-top-[6rem] lg:-top-[6rem] md:-top-[4rem] sm:-top-[3rem] -top-[2.2rem]">
           <h1 class="text-center text-gray-800 text-2xl capitalize">{{ form.firstName }} {{
-            form.middleName }}</h1>
+            form.lastName }}</h1>
           <p class="text-center text-gray-800 text-lg capitalize -mt-2 bg-gray-100 p-1.5 shadow-md rounded-lg">{{
             form.position || form.role }}</p>
           <!-- Profile Form -->
@@ -45,11 +45,6 @@
                   <div class="sm:col-span-3">
                     <dynamic-inputs :label="t('form.first_name')" :name="t('form.first_name')" :disabled="true" readonly
                       v-model="form.firstName" />
-                  </div>
-
-                  <div class="sm:col-span-3">
-                    <dynamic-inputs :label="t('form.middle_name')" :name="t('form.middle_name')" :disabled="true"
-                      readonly v-model="form.middleName" />
                   </div>
 
                   <div class="sm:col-span-3">
@@ -164,7 +159,6 @@ const isSavingBirthdate = ref(false);
 
 const form = reactive({
   firstName: '',
-  middleName: '',
   lastName: '',
   email: '',
   employeeId: '',
@@ -283,7 +277,6 @@ onMounted(async () => {
       const sessionUser = JSON.parse(sessionStorage.getItem("user") || "{}");
       // Update all form fields from employee data with fallbacks
       form.firstName = employee.firstName || authStore.user?.firstName || sessionUser.firstName || "";
-      form.middleName = employee.middleName || authStore.user?.middleName || sessionUser.middleName || "";
       form.lastName = employee.lastName || authStore.user?.lastName || sessionUser.lastName || "";
       form.email = employee.email || authStore.user?.email || sessionUser.email || "";
       form.employeeId = employee.employeeId || authStore.user?.employeeId || sessionUser.employeeId || "";

@@ -100,7 +100,7 @@ export const useCommentsStore = defineStore("comments", {
       if (cleanCommentText === "" && !mentionedEmployee) return;
       const newCommentData: Omit<TaskComment, "id"> = {
         uid: user.uid,
-        author: `${user.firstName || ""} ${user.middleName || ""} ${
+        author: `${user.firstName || ""} ${
           user.lastName || ""
         }`.trim(),
         comment: cleanCommentText, // The final cleaned text
@@ -121,7 +121,7 @@ export const useCommentsStore = defineStore("comments", {
       const reply: Reply = {
         id: Date.now(),
         uid: user?.uid || "",
-        author: `${user?.firstName || ""} ${user?.middleName || ""} ${
+        author: `${user?.firstName || ""} ${
           user?.lastName || ""
         }`.trim(),
         comment: replyText,

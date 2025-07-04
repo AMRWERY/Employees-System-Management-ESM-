@@ -48,7 +48,6 @@ export const useEmployeesStore = defineStore("employees", {
               id: doc.id,
               email: data.email || "",
               firstName: data.firstName,
-              middleName: data.middleName,
               lastName: data.lastName,
               employeeId: data.employeeId,
               role: data.role,
@@ -85,7 +84,6 @@ export const useEmployeesStore = defineStore("employees", {
               id: doc.id,
               email: data.email || "",
               firstName: data.firstName,
-              middleName: data.middleName,
               lastName: data.lastName,
               employeeId: data.employeeId,
               role: data.role,
@@ -132,7 +130,6 @@ export const useEmployeesStore = defineStore("employees", {
           id: employeeDoc.id,
           email: data.email || "",
           firstName: data.firstName,
-          middleName: data.middleName,
           lastName: data.lastName,
           employeeId: data.employeeId,
           role: data.role,
@@ -176,7 +173,6 @@ export const useEmployeesStore = defineStore("employees", {
           uid: employeeData.uid || employeeDocSnap.id,
           email: employeeData.email || "",
           firstName: employeeData.firstName || "",
-          middleName: employeeData.middleName || "",
           lastName: employeeData.lastName || "",
           employeeId: employeeData.employeeId,
           departmentId: employeeData.departmentId,
@@ -225,7 +221,6 @@ export const useEmployeesStore = defineStore("employees", {
 
     async createEmployee(employeeData: {
       firstName: string;
-      middleName: string;
       lastName: string;
       email: string;
       password: string;
@@ -262,7 +257,6 @@ export const useEmployeesStore = defineStore("employees", {
             uid: userCredential.user.uid,
             employeeId: employeeId,
             firstName: employeeData.firstName,
-            middleName: employeeData.middleName,
             lastName: employeeData.lastName,
             email: employeeData.email,
             position: employeeData.position || "Employee",
@@ -342,7 +336,6 @@ export const useEmployeesStore = defineStore("employees", {
       employeeId: string,
       updateData: {
         firstName?: string;
-        middleName?: string;
         lastName?: string;
         email?: string;
         position?: string;

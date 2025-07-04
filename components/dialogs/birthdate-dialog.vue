@@ -67,7 +67,7 @@ const showDialog = ref(false);
 
 const employeeName = computed(() => {
   if (!birthdateStore.currentEmployee) return '';
-  return `${birthdateStore.currentEmployee.firstName} ${birthdateStore.currentEmployee.middleName}`;
+  return `${birthdateStore.currentEmployee.firstName} ${birthdateStore.currentEmployee.lastName}`;
 });
 
 const employeeProfileImg = computed(() => {
