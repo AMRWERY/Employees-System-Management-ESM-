@@ -307,7 +307,11 @@
     "write_reply": "Write a reply...",
     "edit_review": "Edit review",
     "add_review": "Add review",
-    "other_info": "Other information"
+    "other_info": "Other information",
+    "reviewer": "Reviewer",
+    "select_reviewer": "Select reviewer",
+    "review_period":"Review period",
+    "select_period": "Select period"
   },
   "head": {
     "sign_in": "Sign in",
