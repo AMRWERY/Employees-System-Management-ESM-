@@ -327,7 +327,8 @@
     "holiday_dates": "Holiday dates",
     "payroll_management": "Payroll management",
     "task_management": "Task management",
-    "performance_reviews": "Performance reviews"
+    "performance_reviews": "Performance reviews",
+    "admin_teams_employees_employeeid":"Employee Details"
   },
   "error_page": {
     "you_are_all_alone_here": "You are all alone here 😁"

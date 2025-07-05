@@ -327,7 +327,8 @@
     "holiday_dates": "تواريخ العطلات",
     "payroll_management": "إدارة الرواتب",
     "task_management": "إدارة المهام",
-    "performance_reviews": "مراجعات الأداء"
+    "performance_reviews": "مراجعات الأداء",
+    "admin_teams_employees_employeeid": "تفاصيل الموظف"
   },
   "error_page": {
     "you_are_all_alone_here": "أنت وحدك هنا 😁"

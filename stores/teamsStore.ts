@@ -220,6 +220,7 @@ export const useTeamStore = defineStore("teams", {
           manager: data.manager,
           profileImg: data.profileImg,
           base_salary: data.base_salary,
+          netSalary: data.netSalary,
           birthDate: data.birthDate,
           createdAt: data.createdAt?.toDate(),
           role: data.role,
