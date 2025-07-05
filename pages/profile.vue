@@ -77,7 +77,7 @@
                       v-model="form.createdAt" />
                   </div>
 
-                  <div class="sm:col-span-3" v-if="form.role === 'employee'">
+                  <div class="sm:col-span-3" v-if="form.role === 'employee' || form.role !== 'admin'">
                     <dynamic-inputs :label="t('form.manager')" :name="t('form.manager')" :disabled="true" readonly
                       :model-value="managerName" />
                   </div>
@@ -96,7 +96,7 @@
                       <date-picker v-model="form.birthDate" class="w-full" />
 
                       <!-- base-button component -->
-                      <base-button @click="saveBirthdate" :disabled="isSavingBirthdate" type="submit"
+                      <base-button @click="saveBirthdate" :disabled="isSavingBirthdate" :type="'submit'"
                         :default-icon="false" class="w-full h-full flex items-center justify-center">
                         <icon v-if="isSavingBirthdate" name="svg-spinners:90-ring-with-bg" class="text-lg" />
                         <span v-else>{{ t('btn.save_birthdate') }}</span>
@@ -131,7 +131,7 @@
 
                 <div class="pt-4">
                   <!-- base-button component -->
-                  <base-button :default-icon="false" :block="true" type="submit" :disabled="isLoading"
+                  <base-button :default-icon="false" :block="true" :type="'submit'" :disabled="isLoading"
                     @click="updatePassword">
                     <icon name="svg-spinners:90-ring-with-bg" v-if="isLoading" />
                     <span v-else>{{ t('btn.update_password') }}</span>
@@ -171,7 +171,7 @@ const form = reactive({
   base_salary: 0 as number,
   newPassword: '',
   confirmPassword: '',
-  birthDate: '' as string | null,
+  birthDate: null as Date | string | null,
 })
 
 const isLoading = computed(() => profileStore.passwordUpdateLoading)
@@ -259,6 +259,14 @@ const removeImagePreview = async () => {
   }
 }
 
+const convertToDate = (value: any): Date | null => {
+  if (!value) return null;
+  if (typeof value === 'object' && 'toDate' in value) {
+    return value.toDate(); // Convert Firestore Timestamp
+  }
+  return value;
+};
+
 onMounted(async () => {
   profileStore.initializeProfileImage();
   if (managersStore.managers.length === 0) {
@@ -287,7 +295,10 @@ onMounted(async () => {
       form.managerId = employee.managerId || authStore.user?.managerId || sessionUser.managerId || "";
       form.status = employee.status || authStore.user?.status || sessionUser.status || "active";
       form.base_salary = employee.base_salary || authStore.user?.base_salary || sessionUser.base_salary || 0;
-      form.birthDate = employee.birthDate || authStore.user?.birthDate || sessionUser.birthDate || null;
+      form.birthDate = convertToDate(employee.birthDate)
+        || convertToDate(authStore.user?.birthDate)
+        || convertToDate(sessionUser.birthDate)
+        || null;
     } catch (error) {
       triggerToast({
         message: t("toast.failed_fetch_profile"),
@@ -315,7 +326,10 @@ const translatedStatus = computed(() => {
 const saveBirthdate = async () => {
   isSavingBirthdate.value = true;
   try {
-    await authStore.saveProfile(null, form.birthDate);
+    const birthDateValue = form.birthDate instanceof Date
+      ? form.birthDate.toISOString()
+      : form.birthDate;
+    await authStore.saveProfile(null, birthDateValue);
     triggerToast({
       message: t('toast.birthdate_updated'),
       type: 'success',
