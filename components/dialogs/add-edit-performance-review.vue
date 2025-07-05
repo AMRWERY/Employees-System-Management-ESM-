@@ -16,7 +16,7 @@
             <ClientOnly>
               <div class="grid col-span-1 sm:grid-cols-2 gap-x-6 gap-y-1">
                 <div class="sm:col-span-1">
-                  <label class="block text-sm font-medium text-gray-700 mb-1">{{ t('form.employee') }}</label>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">{{ t('form.employee_id') }}</label>
                   <!-- auto-complete-input component -->
                   <auto-complete-input @itemSelected="handleEmployeeSelected"
                     :placeholder="t('form.search_or_enter_employee_id')" :disabled="isEditing"
@@ -29,36 +29,23 @@
                     :disabled="isEditing" v-model="formValues.employee_name" />
                 </div>
 
+                <div class="sm:col-span-1">
+                  <!-- select-input component -->
+                  <select-input v-model="formValues.reviewer_id" :options="reviewerOptions" :label="t('form.reviewer')"
+                    :placeholder="t('form.select_reviewer')" />
+                </div>
 
-                <!-- <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">
-                  {{ t('form.review_period') }}
-                </label>
-                <select v-model="formValues.review_period" class="w-full p-2 border rounded-lg">
-                  <option v-for="period in reviewPeriods" :key="period" :value="period">
-                    {{ period }}
-                  </option>
-                </select>
-              </div> -->
+                <div class="sm:col-span-1">
+                  <!-- select-input component -->
+                  <select-input v-model="formValues.review_period" :options="periodOptions"
+                    :label="t('form.review_period')" :placeholder="t('form.select_period')" />
+                </div>
               </div>
             </ClientOnly>
 
-            <!-- Reviewer Selection -->
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">
-                {{ t('form.reviewer') }}
-              </label>
-              <select v-model="formValues.reviewer_id" class="w-full p-2 border rounded-lg">
-                <option v-for="reviewer in reviewers" :key="reviewer.id" :value="reviewer.id">
-                  {{ reviewer.firstName }} {{ reviewer.lastName }} ({{ reviewer.position }})
-                </option>
-              </select>
-            </div>
-
             <!-- Ratings -->
-            <div class="space-y-4">
+            <div class="space-y-4 mt-6 border-t pt-5">
               <h4 class="text-lg font-medium text-gray-800">{{ t('form.ratings') }}</h4>
-
               <div v-for="(rating, key) in formValues.ratings" :key="key" class="flex items-center justify-between">
                 <label class="text-sm font-medium text-gray-700 capitalize">
                   {{ t(`performance.${key}`) }}
@@ -118,7 +105,7 @@
 </template>
 
 <script lang="ts" setup>
-import type { PerformanceReview, Rating } from '@/types/employees-performance'
+import type { PerformanceReview, Rating, SelectOption } from '@/types/employees-performance'
 import type { Employee } from '@/types/employee';
 
 const { t } = useI18n();
@@ -273,4 +260,25 @@ const handleEmployeeSelected = (selectedEmployee: Employee | undefined) => {
     formValues.employee_name = '';
   }
 };
+
+const reviewerOptions = computed<SelectOption[]>(() => {
+  return reviewers.value.map(reviewer => {
+    // Format the label: "FirstName LastName (Position)" or just "FirstName LastName" if no position
+    const baseName = `${reviewer.firstName || ''} ${reviewer.lastName || ''}`.trim();
+    const label = reviewer.position
+      ? `${baseName} (${reviewer.position})`
+      : baseName;
+    return {
+      value: reviewer.id,
+      label: label
+    };
+  });
+});
+
+const periodOptions = computed<SelectOption[]>(() => {
+  return reviewPeriods.value.map(period => ({
+    value: period,
+    label: period
+  }));
+});
 </script>

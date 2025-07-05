@@ -83,3 +83,8 @@ export interface EmployeesPerformanceState {
   isLoading: boolean;
   error: string | null;
 }
+
+export interface SelectOption {
+  value: string;
+  label: string;
+}

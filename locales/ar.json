@@ -107,7 +107,6 @@
     "like": "اعجاب",
     "reply": "رد",
     "performance_reviews": "مراجعات الأداء",
-    "review_period": "فترة المراجعة",
     "reviewer": "المراجع",
     "overall_score": "النتيجة الإجمالية",
     "edit_employee": "تعديل الموظف",
@@ -307,7 +306,11 @@
     "write_reply": "اكتب ردا...",
     "edit_review": "تعديل المراجعة",
     "add_review": "أضف مراجعة",
-    "other_info": "معلومات أخرى"
+    "other_info": "معلومات أخرى",
+    "reviewer": "المراجع",
+    "select_reviewer": "اختر المراجع",
+    "review_period": "فترة المراجعة",
+    "select_period": "اختر الفترة"
   },
   "head": {
     "sign_in": "تسجيل الدخول",

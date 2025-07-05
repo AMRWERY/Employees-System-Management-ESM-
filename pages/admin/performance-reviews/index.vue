@@ -142,7 +142,6 @@ const skeletonHeaders = ref<TableHeader[]>([
 
 const filteredPerformance = computed(() => {
   let performanceReviews = [...employeesPerformanceStore.performanceReviews];
-
   if (localSearchTerm.value.trim()) {
     const searchLower = localSearchTerm.value.trim().toLowerCase();
     performanceReviews = performanceReviews.filter(review =>
@@ -165,7 +164,6 @@ const handleSaveReview = async (reviewData: PerformanceReview) => {
   const actionToTake = isEditingReviews.value && selectedReviewForForm.value?.id
     ? employeesPerformanceStore.updatePerformanceReview(selectedReviewForForm.value.id, reviewData)
     : employeesPerformanceStore.addPerformanceReview(reviewData);
-
   try {
     await actionToTake;
     triggerToast({
