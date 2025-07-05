@@ -32,15 +32,16 @@
 
         <div
           class="xl:w-[80%] lg:w-[90%] md:w-[94%] sm:w-[96%] w-[92%] mx-auto flex flex-col gap-4 justify-center items-center relative xl:-top-[6rem] lg:-top-[6rem] md:-top-[4rem] sm:-top-[3rem] -top-[2.2rem]">
-          <h1 class="text-center text-gray-800 text-2xl capitalize">{{ form.firstName }} {{
+          <h1 class="text-center text-gray-800 text-2xl capitalize font-bold">{{ form.firstName }} {{
             form.lastName }}</h1>
-          <p class="text-center text-gray-800 text-lg capitalize -mt-2 bg-gray-100 p-1.5 shadow-md rounded-lg">{{
-            form.position || form.role }}</p>
+          <p
+            class="text-center text-gray-800 text-lg capitalize -mt-2 bg-white p-1.5 px-3 shadow-md shadow-[#005fb3] rounded-lg font-semibold border-2 border-gray-300">
+            {{ t(`roles.${form.role}`) }}</p>
           <!-- Profile Form -->
           <ClientOnly>
             <div class="w-full max-w-3xl mx-auto space-y-6 bg-white rounded-lg shadow-md p-6">
               <div class="space-y-4">
-                <h2 class="text-xl font-semibold text-gray-800 mb-4">{{ t('form.personal_info') }}</h2>
+                <h2 class="text-xl font-semibold text-gray-800 mb-7">{{ t('form.personal_info') }}</h2>
                 <div class="grid grid-cols-1 md:grid-cols-6 gap-6">
                   <div class="sm:col-span-3">
                     <dynamic-inputs :label="t('form.first_name')" :name="t('form.first_name')" :disabled="true" readonly
@@ -97,7 +98,7 @@
 
                       <!-- base-button component -->
                       <base-button @click="saveBirthdate" :disabled="isSavingBirthdate" :type="'submit'"
-                        :default-icon="false" class="w-full h-full flex items-center justify-center">
+                        :default-icon="false" class="w-full h-full flex items-center justify-end">
                         <icon v-if="isSavingBirthdate" name="svg-spinners:90-ring-with-bg" class="text-lg" />
                         <span v-else>{{ t('btn.save_birthdate') }}</span>
                       </base-button>
@@ -113,7 +114,7 @@
 
               <!-- Password Update Section -->
               <div class="pt-4 border-t border-gray-200 space-y-4">
-                <h2 class="text-xl font-semibold text-gray-800 mb-4">{{ t('form.change_password') }}</h2>
+                <h2 class="text-xl font-semibold text-gray-800 mb-7">{{ t('form.change_password') }}</h2>
 
                 <div class="grid grid-cols-1 md:grid-cols-6 gap-6">
                   <div class="sm:col-span-3">
@@ -261,10 +262,22 @@ const removeImagePreview = async () => {
 
 const convertToDate = (value: any): Date | null => {
   if (!value) return null;
+  // Handle Firestore Timestamp
   if (typeof value === 'object' && 'toDate' in value) {
-    return value.toDate(); // Convert Firestore Timestamp
+    return value.toDate();
   }
-  return value;
+  // Handle ISO strings
+  if (typeof value === 'string') {
+    try {
+      const date = new Date(value);
+      if (!isNaN(date.getTime())) return date;
+    } catch (e) {
+      console.error('Date conversion error:', e);
+    }
+  }
+  // Return Date objects directly
+  if (value instanceof Date) return value;
+  return null;
 };
 
 onMounted(async () => {
@@ -326,10 +339,7 @@ const translatedStatus = computed(() => {
 const saveBirthdate = async () => {
   isSavingBirthdate.value = true;
   try {
-    const birthDateValue = form.birthDate instanceof Date
-      ? form.birthDate.toISOString()
-      : form.birthDate;
-    await authStore.saveProfile(null, birthDateValue);
+    await authStore.saveProfile(null, form.birthDate);
     triggerToast({
       message: t('toast.birthdate_updated'),
       type: 'success',

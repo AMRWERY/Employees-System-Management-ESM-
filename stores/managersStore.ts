@@ -55,6 +55,9 @@ export const useManagerStore = defineStore("managers", {
               status: data.status || "active",
               createdAt: data.createdAt?.toDate?.() || new Date(),
               teamId: data.teamId || null,
+              base_salary: data.base_salary || null,
+              netSalary: data.netSalary || null,
+              birthDate: data.birthDate?.toDate?.() || new Date(),
             };
           }
         );
@@ -96,6 +99,9 @@ export const useManagerStore = defineStore("managers", {
             status: data.status || "active",
             createdAt: data.createdAt?.toDate?.() || new Date(),
             teamId: data.teamId || null,
+            base_salary: data.base_salary || 0,
+            netSalary: data.netSalary || 0,
+            birthDate: data.birthDate?.toDate?.() || new Date(),
           };
           return manager;
         } else {

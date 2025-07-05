@@ -46,9 +46,11 @@ export function useCurrencyLocale() {
 
   const currencyLocale = computed(() => {
     const lang = locale.value; // Now typed as 'en' | 'ar'
-    const mapping = currencyLocaleMap[currentCurrency.value] || currencyLocaleMap.DEFAULT;
+    const mapping =
+      currencyLocaleMap[currentCurrency.value] || currencyLocaleMap.DEFAULT;
     return mapping[lang]; // TypeScript knows lang is 'en' | 'ar'
   });
+
   // const currencyLocale = computed(() => {
   //   const lang = locale.value as "en" | "ar";
   //   const currency = currentCurrency.value as keyof typeof currencyLocaleMap;
@@ -58,8 +60,17 @@ export function useCurrencyLocale() {
   //   return mapping[lang];
   // });
 
+  const formatCurrency = (amount: number | null | undefined): string => {
+    if (amount == null) return ""; // Handle null/undefined
+    return new Intl.NumberFormat(currencyLocale.value, {
+      style: "currency",
+      currency: currentCurrency.value,
+    }).format(amount);
+  };
+
   return {
     currentCurrency,
     currencyLocale,
+    formatCurrency,
   };
 }

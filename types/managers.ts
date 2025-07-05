@@ -14,6 +14,9 @@ export interface Manager {
   createdAt?: Date;
   profileImg: string;
   teamId: string | null;
+  base_salary: number;
+  netSalary: number;
+  birthDate?: Date;
 }
 
 export interface ManagerState {

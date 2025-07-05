@@ -115,7 +115,8 @@
     "delete_team_title": "Are you sure you want to delete this?",
     "delete_team_confirmation_01": "You are about to delete team / department {name}",
     "delete_team_confirmation_02": "This action cannot be undone.",
-    "edit_manager": "Edit manager"
+    "edit_manager": "Edit manager",
+    "birthdate": "Birthdate"
   },
   "btn": {
     "go_back_home": "Go back Home",
@@ -250,7 +251,7 @@
     "enter_description": "Enter department short description here",
     "position": "Position",
     "enter_position": "Enter position",
-    "personal_info": "Personal info",
+    "personal_info": "Personal information",
     "change_password": "Change password",
     "new_password": "New password",
     "confirm_password": "Confirm password",
@@ -305,7 +306,8 @@
     "assign_to_me": "Assign to me",
     "write_reply": "Write a reply...",
     "edit_review": "Edit review",
-    "add_review": "Add review"
+    "add_review": "Add review",
+    "other_info": "Other information"
   },
   "head": {
     "sign_in": "Sign in",
@@ -515,5 +517,12 @@
     "high": "High",
     "medium": "Medium",
     "low": "Low"
+  },
+  "roles": {
+    "admin": "Administrator",
+    "manager": "Manager",
+    "employee": "Employee",
+    "accountant": "Accountant",
+    "hr": "HR Specialist"
   }
 }
