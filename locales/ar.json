@@ -115,7 +115,8 @@
     "delete_team_title": "هل أنت متأكد أنك تريد حذف هذا؟",
     "delete_team_confirmation_01": "أنت على وشك حذف فريق / قسم {name}.",
     "delete_team_confirmation_02": "لا يمكن التراجع عن هذا الإجراء.",
-    "edit_manager": "تعديل المدير"
+    "edit_manager": "تعديل المدير",
+    "birthdate": "تاريخ الميلاد"
   },
   "btn": {
     "go_back_home": "العودة إلى الصفحه الرئيسيه",
@@ -305,7 +306,8 @@
     "assign_to_me": "تعيين لي",
     "write_reply": "اكتب ردا...",
     "edit_review": "تعديل المراجعة",
-    "add_review": "أضف مراجعة"
+    "add_review": "أضف مراجعة",
+    "other_info": "معلومات أخرى"
   },
   "head": {
     "sign_in": "تسجيل الدخول",
@@ -515,5 +517,12 @@
     "high": "عالي",
     "medium": "متوسط",
     "low": "منخفض"
+  },
+  "roles": {
+    "admin": "مدير النظام",
+    "manager": "مدير",
+    "employee": "موظف",
+    "accountant": "محاسب",
+    "hr": "أخصائي موارد بشرية"
   }
 }

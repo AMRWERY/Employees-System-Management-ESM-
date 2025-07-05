@@ -11,7 +11,7 @@ export type UserData = {
   role?: string;
   profileImg?: string | null;
   phone?: string | null;
-  birthDate?: string | FirestoreTimestamp | null;
+  birthDate?: string | FirestoreTimestamp | Date | null;
   address?: string;
   apartment?: string;
   selectedCity?: string;

@@ -20,6 +20,7 @@ import {
   where,
   getDocs,
   serverTimestamp,
+  Timestamp,
   // deleteDoc,
 } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
@@ -160,13 +161,10 @@ export const useAuthStore = defineStore("auth", {
           const userData = userDoc.data() as UserData;
           if (
             userData.birthDate &&
-            typeof userData.birthDate !== "string" &&
+            typeof userData.birthDate === "object" &&
             "toDate" in userData.birthDate
           ) {
-            const date = userData.birthDate.toDate();
-            userData.birthDate = `${date.getFullYear()}-${String(
-              date.getMonth() + 1
-            ).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+            userData.birthDate = userData.birthDate.toDate();
           }
           this.user = userData;
           this.role = userData.role || "employee";
@@ -319,7 +317,7 @@ export const useAuthStore = defineStore("auth", {
       }
     },
 
-    async saveProfile(file: File | null, birthDate?: string | null) {
+    async saveProfile(file: File | null, birthDate?: string | Date | null) {
       return new Promise((resolve, reject) => {
         if (!this.user) {
           this.handleError({ message: "User not authenticated" });
@@ -337,10 +335,22 @@ export const useAuthStore = defineStore("auth", {
             reject(new Error("User not authenticated"));
             return;
           }
+          let finalBirthDate: any = birthDate;
+          if (birthDate instanceof Date) {
+            finalBirthDate = Timestamp.fromDate(birthDate);
+          } else if (typeof birthDate === "string") {
+            try {
+              finalBirthDate = Timestamp.fromDate(new Date(birthDate));
+            } catch {
+              finalBirthDate = null;
+            }
+          }
           const updatedProfile: Partial<UserData> = {
             // ...existing properties
             birthDate:
-              birthDate !== undefined ? birthDate : this.user.birthDate || null,
+              finalBirthDate !== undefined
+                ? finalBirthDate
+                : this.user?.birthDate || null,
           };
           // Rest of the update logic remains the same
           updateDoc(userDocRef, updatedProfile)
@@ -351,7 +361,11 @@ export const useAuthStore = defineStore("auth", {
                   ...this.user,
                   ...updatedProfile,
                   birthDate:
-                    birthDate !== undefined ? birthDate : this.user.birthDate,
+                    birthDate instanceof Date
+                      ? birthDate
+                      : birthDate !== undefined
+                      ? birthDate
+                      : this.user.birthDate,
                 };
                 // Update sessionStorage with birthDate
                 const sessionUserData = JSON.parse(
@@ -363,7 +377,9 @@ export const useAuthStore = defineStore("auth", {
                     ...sessionUserData,
                     ...updatedProfile,
                     birthDate:
-                      birthDate !== undefined ? birthDate : this.user.birthDate,
+                      birthDate !== undefined
+                        ? birthDate
+                        : this.user?.birthDate,
                     profileImg: profileImgUrl,
                   })
                 );
