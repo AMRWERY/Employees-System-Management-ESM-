@@ -1,5 +1,9 @@
 import type { Payroll, PayrollSummary } from "@/types/payroll";
 
+export interface FirestoreTimestamp {
+  toDate(): Date;
+}
+
 export interface Employee {
   id: string;
   uid?: string;
@@ -17,10 +21,11 @@ export interface Employee {
   // isBlocked?: boolean;
   status: "blocked" | "active";
   createdAt?: Date;
+  birthDate?: Date;
   profileImg?: string | null;
   payrolls?: PayrollSummary[];
   base_salary: number;
-  // netSalary: number;
+  netSalary: number;
   [key: string]: any;
 }
 

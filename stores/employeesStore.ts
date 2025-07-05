@@ -61,6 +61,7 @@ export const useEmployeesStore = defineStore("employees", {
               createdAt: data.createdAt?.toDate(),
               payrolls: data.payrolls || [],
               base_salary: data.base_salary,
+              netSalary: data.netSalary,
             };
           }
         );
@@ -103,7 +104,7 @@ export const useEmployeesStore = defineStore("employees", {
               createdAt: data.createdAt?.toDate(),
               payrolls: data.payrolls || [],
               base_salary: data.base_salary,
-              // netSalary: data.netSalary,
+              netSalary: data.netSalary,
               ...data,
             } satisfies Employee;
           }
@@ -146,12 +147,12 @@ export const useEmployeesStore = defineStore("employees", {
           profileImg: data.profileImg,
           createdAt: data.createdAt?.toDate(),
           payrolls: data.payrolls || [],
-          base_salary: data.base_salary,
-          // netSalary: data.netSalary,
+          base_salary: data.base_salary || 0,
+          netSalary: data.netSalary || 0,
+          birthDate: data.birthDate?.toDate(),
           ...data,
         } satisfies Employee;
       } catch (error) {
-        // console.error(`Error fetching employee ${employeeId}:`, error);
         throw error;
       }
     },
@@ -191,7 +192,7 @@ export const useEmployeesStore = defineStore("employees", {
           createdAt: employeeData.createdAt?.toDate(),
           payrolls: employeeData.payrolls || [],
           base_salary: employeeData.base_salary,
-          // netSalary: employeeData.netSalary,
+          netSalary: employeeData.netSalary,
         };
         let fetchedPayrolls: Payroll[] = [];
         if (employeeBase.employeeId) {

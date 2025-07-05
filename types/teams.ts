@@ -23,6 +23,7 @@ export interface Member {
   role: string;
   profileImg: string;
   base_salary: number;
+  netSalary: number;
   birthDate: string;
   status?: "blocked" | "active";
 }
