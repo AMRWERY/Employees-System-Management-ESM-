@@ -45,7 +45,7 @@
               </div>
             </td>
             <td v-for="(column, colIndex) in columns" :key="colIndex" class="px-6 py-4">
-              <template v-if="column.key === 'status'">
+              <template v-if="column.key === 'status' || column.key === 'employeeRate'">
                 <span v-if="item.status"
                   :class="['px-2.5 py-1 rounded-full text-sm font-medium', getStatusClass(item.status)]">
                   <template v-if="column.format">
@@ -53,6 +53,16 @@
                   </template>
                   <template v-else>
                     {{ item.status }}
+                  </template>
+                </span>
+                <span v-else-if="item.employeeRate"
+                  :class="['px-2.5 py-1 rounded-full text-sm font-medium', getStatusClass(item.employeeRate)]">
+                  {{ t(`status.${item.employeeRate}`) }}
+                  <template v-if="column.format">
+                    {{ column.format(item) }}
+                  </template>
+                  <template v-else>
+                    {{ item.employeeRate }}
                   </template>
                 </span>
                 <template v-else>
@@ -131,7 +141,7 @@ import type { Column, TableItem } from '@/types/tables'
 
 const { t } = useI18n()
 
-type StatusType = 'pending' | 'approved' | 'rejected' | 'cancelled' | 'blocked' | 'active' | 'paid' | 'failed';
+type StatusType = 'pending' | 'approved' | 'rejected' | 'cancelled' | 'blocked' | 'active' | 'paid' | 'failed' | 'weak' | 'medium' | 'strong';
 
 const props = defineProps<{
   items: readonly any[];
@@ -241,10 +251,13 @@ const statusClasses: Record<StatusType, string> = {
   approved: 'text-green-600 bg-green-100 hover:bg-green-200',
   rejected: 'text-red-600 bg-red-100 hover:bg-red-200',
   cancelled: 'text-gray-600 bg-gray-100 hover:bg-gray-200',
-  blocked: 'bg-red-100 text-red-800',
-  active: 'bg-green-100 text-green-800',
-  paid: 'text-green-700 bg-green-200',
-  failed: 'text-orange-700 bg-orange-200'
+  blocked: 'bg-red-100 text-red-800 hover:bg-red-200',
+  active: 'bg-green-100 text-green-800 hover:bg-green-200',
+  paid: 'text-green-700 bg-green-200 hover:bg-green-200',
+  failed: 'text-orange-700 bg-orange-200 hover:bg-orange-200',
+  weak: 'text-red-700 bg-red-200 hover:bg-red-200',
+  medium: 'text-yellow-700 bg-yellow-200 hover:bg-gray-200',
+  strong: 'text-green-700 bg-green-200 hover:bg-green-200',
 }
 
 const getStatusClass = (status: string | undefined): string => {

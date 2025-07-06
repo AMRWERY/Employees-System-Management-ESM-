@@ -126,7 +126,8 @@
     "top_performer": "Top Performer",
     "exceeded_expectations": "Exceeded Expectations",
     "needs_improvement": "Needs Improvement",
-    "review_date": "Review date"
+    "review_date": "Review date",
+    "overall_rating": "Overall rating"
   },
   "btn": {
     "go_back_home": "Go back Home",
@@ -320,7 +321,7 @@
     "other_info": "Other information",
     "reviewer": "Reviewer",
     "select_reviewer": "Select reviewer",
-    "review_period":"Review period",
+    "review_period": "Review period",
     "select_period": "Select period",
     "ratings": "Ratings",
     "strengths": "Strengths",
@@ -350,7 +351,7 @@
     "payroll_management": "Payroll management",
     "task_management": "Task management",
     "employees_performance_reviews": "Employees Performance Reviews",
-    "admin_teams_employees_employeeid":"Employee Details"
+    "admin_teams_employees_employeeid": "Employee Details"
   },
   "error_page": {
     "you_are_all_alone_here": "You are all alone here 😁"
@@ -458,7 +459,10 @@
     "todo": "To Do",
     "in-progress": "In Progress",
     "done": "Done",
-    "on-hold": "On hold"
+    "on-hold": "On hold",
+    "weak": "Weak",
+    "medium": "Medium",
+    "strong": "Strong"
   },
   "no_data": {
     "no_leave_requests_found": "No leave requests found",

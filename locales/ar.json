@@ -126,7 +126,8 @@
     "exceeded_expectations": "تجاوز التوقعات",
     "needs_improvement": "يحتاج إلى تحسين",
     "review_date": "تاريخ المراجعة",
-    "review_period": "فترة المراجعة"
+    "review_period": "فترة المراجعة",
+    "overall_rating": "التقييم العام"
   },
   "btn": {
     "go_back_home": "العودة إلى الصفحه الرئيسيه",
@@ -458,7 +459,10 @@
     "todo": "قيد التنفيذ",
     "in-progress": "جارٍ العمل",
     "done": "تم الانتهاء",
-    "on-hold": "قيد الانتظار"
+    "on-hold": "قيد الانتظار",
+    "weak": "ضعيف",
+    "medium": "متوسط",
+    "strong": "قوي"
   },
   "no_data": {
     "no_leave_requests_found": "لم يتم العثور على طلبات إجازة",

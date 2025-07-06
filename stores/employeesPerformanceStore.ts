@@ -124,6 +124,12 @@ export const firestoreToPerformanceTag = (
   };
 };
 
+export function getEmployeeRate(score: number): "weak" | "medium" | "strong" {
+  if (score >= 80) return "strong";
+  if (score >= 60) return "medium";
+  return "weak";
+}
+
 export const useEmployeesPerformanceStore = defineStore(
   "employees-performance",
   {
