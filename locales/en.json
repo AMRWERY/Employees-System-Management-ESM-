@@ -94,6 +94,7 @@
     "payrolls": "Payrolls history",
     "employee_payrolls": "Employee payrolls history",
     "filter_by_status": "Filter by Status",
+    "filter_by_ratings_status": "Filter by ratings status",
     "deductions": "Deductions percentage",
     "awesome": "Awesome!",
     "birthday_mss_1": "We wish a happy birthday to",
@@ -311,7 +312,15 @@
     "reviewer": "Reviewer",
     "select_reviewer": "Select reviewer",
     "review_period":"Review period",
-    "select_period": "Select period"
+    "select_period": "Select period",
+    "ratings": "Ratings",
+    "strengths": "Strengths",
+    "improvements": "Improvements",
+    "comments": "Comments",
+    "communication": "Communication",
+    "productivity": "Productivity",
+    "teamwork": "Teamwork",
+    "problem_solving": "Problem Solving"
   },
   "head": {
     "sign_in": "Sign in",

@@ -14,60 +14,54 @@
       </div>
     </div>
 
-    <div class="flex flex-col sm:flex-row gap-4 mb-6 items-end">
-      <div class="flex items-center gap-4">
-        <!-- search-input component -->
-        <search-input v-model="localSearchTerm" @search="handleGlobalSearch"
-          :placeholder="t('form.search_by_name_or_id')" class="w-full sm:w-[300px]" :debounce="300" />
+    <div class="flex items-center gap-4">
+      <!-- search-input component -->
+      <search-input v-model="localSearchTerm" @search="handleGlobalSearch" :placeholder="t('form.search_by_name_or_id')"
+        class="w-full sm:w-[300px]" :debounce="300" />
 
-        <!-- refresh-data-btn component -->
-        <refresh-data-btn @refresh="reloadData" :is-loading="refreshingData" />
+      <!-- refresh-data-btn component -->
+      <refresh-data-btn @refresh="reloadData" :is-loading="refreshingData" />
 
-        <!-- download-files-menu component -->
-        <download-files-menu :allItems="employeesPerformanceStore.performanceReviews" :columns="tableColumns"
-          fileNameBase="employee-performance" />
+      <!-- select-input component -->
+      <select-input v-model="selectedStatusFilterValue" :options="statusOptions"
+        :placeholder="t('dashboard.filter_by_ratings_status')" />
 
-        <!-- select-input component -->
-        <!-- <select-input :placeholder="t('dashboard.filter_by_status')" /> -->
+      <!-- select-input component -->
+      <select-input v-model="selectedReviewPeriod" :options="reviewPeriodOptions"
+        :placeholder="t('form.select_period')" />
+
+      <!-- download-files-menu component -->
+      <download-files-menu :allItems="employeesPerformanceStore.performanceReviews" :columns="tableColumns"
+        fileNameBase="employee-performance" />
+    </div>
+
+    <div v-if="employeesPerformanceStore.isLoading || refreshingData || isFiltering" key="skeleton">
+      <!-- table-skeleton-loader component -->
+      <table-skeleton-loader :headers="skeletonHeaders" :rows="6" />
+    </div>
+
+    <div class="mt-8" v-else>
+      <div v-if="!filteredPerformance.length" class="text-center">
+        <!-- no-data-message component -->
+        <no-data-message :message="t('no_data.no_performance_reviews_found')" icon="heroicons-solid:document-text" />
       </div>
 
-      <!-- <div class="flex flex-col">
-        <label for="filterPayPeriodInput" class="text-sm font-medium text-gray-700 mb-1">{{
-          t('form.filter_by_pay_period') }}</label>
-        <input type="month" id="filterPayPeriodInput" :value="employeesPerformanceStore.filterPayPeriod"
-          @change="handlePayPeriodChange(($event.target as HTMLInputElement).value)"
-          class="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-auto">
-      </div> -->
-      <!-- No "Apply Filters" button needed if store handles changes reactively -->
-
-      <!-- Use store's isLoading for the skeleton -->
-      <div v-if="employeesPerformanceStore.isLoading || refreshingData || isFiltering" key="skeleton-loader">
-        <!-- table-skeleton-loader componenet -->
-        <table-skeleton-loader :headers="skeletonHeaders" :rows="8" />
+      <div v-else>
+        <!-- dynamic-table component -->
+        <dynamic-table :items="filteredPerformance" :columns="tableColumns" :has-edit="true" :has-delete="true"
+          :has-view="true" v-model:selectedItems="selectedItems" @update:selectedItems="handleSelectedItemsUpdate" />
       </div>
 
-      <div class="mt-8" v-else>
-        <div v-if="!filteredPerformance.length" class="text-center">
-          <!-- no-data-message componenet -->
-          <no-data-message :message="t('no_data.no_performance_reviews_found')" icon="heroicons-solid:document-text" />
-        </div>
-        <div v-else>
-          <!-- dynamic-table componenet -->
-          <dynamic-table :items="filteredPerformance" :columns="tableColumns" :has-edit="true" :has-delete="true"
-            :has-view="true" v-model:selectedItems="selectedItems" @update:selectedItems="handleSelectedItemsUpdate" />
-        </div>
-
-        <!-- pagination componenet -->
-        <pagination v-if="employeesPerformanceStore.totalPages > 1"
-          :current-page="employeesPerformanceStore.currentPage || 1" :total-pages="employeesPerformanceStore.totalPages"
-          @page-change="employeesPerformanceStore.setCurrentPage" />
-      </div>
+      <!-- pagination component -->
+      <pagination v-if="employeesPerformanceStore.totalPages > 1"
+        :current-page="employeesPerformanceStore.currentPage || 1" :total-pages="employeesPerformanceStore.totalPages"
+        @page-change="employeesPerformanceStore.setCurrentPage" />
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import type { PerformanceReview } from '@/types/employees-performance'
+import type { PerformanceReview, SelectOption, RatingStstus } from '@/types/employees-performance'
 import type { TableHeader } from '@/types/table-header';
 import type { Column, TableItem } from '@/types/tables';
 
@@ -140,17 +134,9 @@ const skeletonHeaders = ref<TableHeader[]>([
   { type: 'action', loaderWidth: 'w-48' },
 ]);
 
-const filteredPerformance = computed(() => {
-  let performanceReviews = [...employeesPerformanceStore.performanceReviews];
-  if (localSearchTerm.value.trim()) {
-    const searchLower = localSearchTerm.value.trim().toLowerCase();
-    performanceReviews = performanceReviews.filter(review =>
-      review.employee_id.toLowerCase().includes(searchLower) ||
-      review.review_period.toLowerCase().includes(searchLower)
-    );
-  }
-  return performanceReviews;
-});
+onMounted(() => {
+  employeesPerformanceStore.fetchPerformanceReviews()
+})
 
 const selectedItems = ref<TableItem[]>([]);
 
@@ -184,6 +170,62 @@ const handleSaveReview = async (reviewData: PerformanceReview) => {
     selectedReviewForForm.value = null;
   }
 };
+
+const statusOptions = ref<SelectOption[]>([
+  { value: 'Top Performer', label: 'Top Performer' },
+  { value: 'Exceeded Expectations', label: 'Exceeded Expectations' },
+  { value: 'Needs Improvement', label: 'Needs Improvement' }
+])
+
+const selectedStatusFilter = ref<string | null>(null);
+const selectedStatusFilterValue = computed({
+  get: () => selectedStatusFilter.value ?? undefined,
+  set: (val: string | undefined) => {
+    selectedStatusFilter.value = val ?? null;
+  }
+});
+
+const classifyReview = (score: number): RatingStstus["status"] => {
+  if (score >= 90) return "Top Performer";
+  if (score >= 75) return "Exceeded Expectations";
+  return "Needs Improvement";
+};
+
+const filteredPerformance = computed(() => {
+  let performanceReviews = [...employeesPerformanceStore.performanceReviews];
+  if (localSearchTerm.value.trim()) {
+    const searchLower = localSearchTerm.value.trim().toLowerCase();
+    performanceReviews = performanceReviews.filter(review =>
+      review.employee_id.toLowerCase().includes(searchLower) ||
+      review.review_period.toLowerCase().includes(searchLower)
+    );
+  }
+  if (selectedStatusFilter.value) {
+    performanceReviews = performanceReviews.filter(review =>
+      classifyReview(review.overall_score) === selectedStatusFilter.value
+    );
+  }
+  if (selectedReviewPeriod.value) {
+    performanceReviews = performanceReviews.filter(review =>
+      review.review_period === selectedReviewPeriod.value
+    );
+  }
+  return performanceReviews;
+});
+
+const selectedReviewPeriod = ref<string | undefined>(undefined);
+
+const reviewPeriods = ref([
+  'Q1-2024', 'Q2-2024', 'Q3-2024', 'Q4-2024',
+  'Q1-2025', 'Q2-2025', 'Q3-2025', 'Q4-2025'
+]);
+
+const reviewPeriodOptions = computed<SelectOption[]>(() => {
+  return reviewPeriods.value.map(period => ({
+    value: period,
+    label: period
+  }));
+});
 
 const openReviewDialog = () => {
   isEditingReviews.value = false;
