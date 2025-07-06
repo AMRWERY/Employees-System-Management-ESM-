@@ -127,7 +127,10 @@
     "exceeded_expectations": "Exceeded Expectations",
     "needs_improvement": "Needs Improvement",
     "review_date": "Review date",
-    "overall_rating": "Overall rating"
+    "overall_rating": "Overall rating",
+    "delete_review_title": "Are you sure you want to delete this?",
+    "delete_review_confirmation_01": "You are about to delete {name} record",
+    "delete_review_confirmation_02": "This action cannot be undone."
   },
   "btn": {
     "go_back_home": "Go back Home",
@@ -444,7 +447,8 @@
     "team_deleted_success": "Team / department deleted successfully",
     "failed_to_delete_team": "Failed to delete team / department",
     "manager_updated_successfully": "Manager updated successfully",
-    "failed_to_update_manager": "Failed to update manager"
+    "failed_to_update_manager": "Failed to update manager",
+    "review_deleted": "Performance record deleted"
   },
   "status": {
     "all": "All",
