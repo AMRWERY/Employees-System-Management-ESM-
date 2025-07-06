@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="flex items-center justify-between my-6 flex-nowrap">
-      <p class="text-2xl font-semibold text-gray-700">{{ t('dashboard.performance_reviews') }}</p>
+      <p class="text-2xl font-semibold text-gray-700">{{ t('dashboard.employees_performance_reviews') }}</p>
       <div class="flex items-center justify-center gap-4 ms-auto">
         <!-- base-button component -->
         <base-button :default-icon="false" @click="openReviewDialog()">
@@ -301,6 +301,6 @@ const openReviewDialog = () => {
 };
 
 useHead({
-  titleTemplate: () => t('head.performance_reviews'),
+  titleTemplate: () => t('head.employees_performance_reviews'),
 })
 </script>

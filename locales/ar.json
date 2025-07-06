@@ -107,7 +107,7 @@
     "comments": "تعليقات",
     "like": "اعجاب",
     "reply": "رد",
-    "performance_reviews": "مراجعات الأداء",
+    "employees_performance_reviews": "مراجعات أداء الموظفين",
     "reviewer": "المراجع",
     "overall_score": "النتيجة الإجمالية",
     "edit_employee": "تعديل الموظف",
@@ -349,7 +349,7 @@
     "holiday_dates": "تواريخ العطلات",
     "payroll_management": "إدارة الرواتب",
     "task_management": "إدارة المهام",
-    "performance_reviews": "مراجعات الأداء",
+    "employees_performance_reviews": "مراجعات أداء الموظفين",
     "admin_teams_employees_employeeid": "تفاصيل الموظف"
   },
   "error_page": {
@@ -489,7 +489,7 @@
     "admin_payroll_management": "إدارة الرواتب",
     "admin_payroll_management_recordid": "تفاصيل الموظف",
     "task_management": "إدارة المهام",
-    "admin_performance_reviews": "مراجعات الأداء"
+    "admin_performance_reviews": "مراجعات أداء الموظفين"
   },
   "days": {
     "sun": "الأحد",
