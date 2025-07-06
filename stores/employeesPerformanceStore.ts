@@ -42,6 +42,7 @@ export const firestoreToPerformanceReview = (
   return {
     id: doc.id,
     employee_id: data.employee_id,
+    employee_name: data.employee_name,
     review_period: data.review_period,
     reviewer_id: data.reviewer_id,
     ratings: data.ratings,

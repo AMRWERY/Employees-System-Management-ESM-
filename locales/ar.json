@@ -116,7 +116,17 @@
     "delete_team_confirmation_01": "أنت على وشك حذف فريق / قسم {name}.",
     "delete_team_confirmation_02": "لا يمكن التراجع عن هذا الإجراء.",
     "edit_manager": "تعديل المدير",
-    "birthdate": "تاريخ الميلاد"
+    "birthdate": "تاريخ الميلاد",
+    "quarter_1": "الربع الأول",
+    "quarter_2": "الربع الثاني",
+    "quarter_3": "الربع الثالث",
+    "quarter_4": "الربع الأخير",
+    "all": "الكل",
+    "top_performer": "أفضل أداء",
+    "exceeded_expectations": "تجاوز التوقعات",
+    "needs_improvement": "يحتاج إلى تحسين",
+    "review_date": "تاريخ المراجعة",
+    "review_period": "فترة المراجعة"
   },
   "btn": {
     "go_back_home": "العودة إلى الصفحه الرئيسيه",

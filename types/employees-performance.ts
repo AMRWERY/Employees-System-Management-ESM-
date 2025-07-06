@@ -91,5 +91,9 @@ export interface SelectOption {
 }
 
 export interface RatingStstus {
-  status: "Top Performer" | "Needs Improvement" | "Exceeded Expectations";
+  status:
+    | "Top Performer"
+    | "Needs Improvement"
+    | "Exceeded Expectations"
+    | "All";
 }

@@ -117,7 +117,16 @@
     "delete_team_confirmation_01": "You are about to delete team / department {name}",
     "delete_team_confirmation_02": "This action cannot be undone.",
     "edit_manager": "Edit manager",
-    "birthdate": "Birthdate"
+    "birthdate": "Birthdate",
+    "quarter_1": "First quarter",
+    "quarter_2": "Second quarter",
+    "quarter_3": "Third quarter",
+    "quarter_4": "Last quarter",
+    "all": "All",
+    "top_performer": "Top Performer",
+    "exceeded_expectations": "Exceeded Expectations",
+    "needs_improvement": "Needs Improvement",
+    "review_date": "Review date"
   },
   "btn": {
     "go_back_home": "Go back Home",
