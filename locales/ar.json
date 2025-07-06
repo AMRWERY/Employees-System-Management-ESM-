@@ -94,6 +94,7 @@
     "payrolls": "سجل رواتب",
     "employee_payrolls": "سجل رواتب الموظف",
     "filter_by_status": "تصفية حسب الحالة",
+    "filter_by_ratings_status": "تصفية حسب حالة التقييمات",
     "deductions": "نسبه الخصومات",
     "awesome": "مذهل!",
     "birthday_mss_1": "نتمنى لك عيد ميلاد سعيدا",
@@ -310,7 +311,15 @@
     "reviewer": "المراجع",
     "select_reviewer": "اختر المراجع",
     "review_period": "فترة المراجعة",
-    "select_period": "اختر الفترة"
+    "select_period": "اختر الفترة",
+    "ratings": "التقييمات",
+    "strengths": "نقاط القوة",
+    "improvements": "تحسينات الأداء",
+    "comments": "تعليقات",
+    "communication": "التواصل",
+    "productivity": "إنتاجية",
+    "teamwork": "العمل الجماعي",
+    "problem_solving": "حل المشكلات"
   },
   "head": {
     "sign_in": "تسجيل الدخول",

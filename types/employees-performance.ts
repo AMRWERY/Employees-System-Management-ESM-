@@ -82,9 +82,14 @@ export interface EmployeesPerformanceState {
   itemsPerPage?: number;
   isLoading: boolean;
   error: string | null;
+  filterByPeriod?: string;
 }
 
 export interface SelectOption {
   value: string;
   label: string;
+}
+
+export interface RatingStstus {
+  status: "Top Performer" | "Needs Improvement" | "Exceeded Expectations";
 }

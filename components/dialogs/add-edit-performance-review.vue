@@ -41,55 +41,33 @@
                     :label="t('form.review_period')" :placeholder="t('form.select_period')" />
                 </div>
               </div>
-            </ClientOnly>
 
-            <!-- Ratings -->
-            <div class="space-y-4 mt-6 border-t pt-5">
-              <h4 class="text-lg font-medium text-gray-800">{{ t('form.ratings') }}</h4>
-              <div v-for="(rating, key) in formValues.ratings" :key="key" class="flex items-center justify-between">
-                <label class="text-sm font-medium text-gray-700 capitalize">
-                  {{ t(`performance.${key}`) }}
-                </label>
-                <div class="flex items-center gap-2 w-48">
-                  <input type="range" min="1" max="5" v-model.number="formValues.ratings[key]"
-                    class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
-                  <span class="text-sm font-medium w-6 text-center">{{ formValues.ratings[key] }}</span>
+              <!-- Ratings -->
+              <div class="space-y-4 mt-6 border-t py-5">
+                <h4 class="text-lg font-medium text-gray-800">{{ t('form.ratings') }}</h4>
+                <!-- range-input component -->
+                <range-input :ratings="formValues.ratings" />
+                <div class="flex justify-between items-center mt-4 pb-4 border-b">
+                  <span class="text-base font-medium text-gray-800">{{ t('dashboard.overall_score') }}</span>
+                  <span class="text-xl font-bold text-blue-600">{{ overallScore }}%</span>
                 </div>
               </div>
 
-              <div class="flex justify-between items-center mt-4 pt-4 border-t">
-                <span class="text-base font-medium text-gray-800">{{ t('form.overall_score') }}</span>
-                <span class="text-xl font-bold text-blue-600">{{ overallScore }}%</span>
-              </div>
-            </div>
-
-            <!-- Text Areas -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">
-                  {{ t('form.strengths') }}
-                </label>
-                <textarea v-model="formValues.strengths" rows="4"
-                  class="w-full p-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500"></textarea>
+              <div class="sm:col-span-1">
+                <dynamic-inputs :label="t('form.strengths')" type="textarea" :required="true"
+                  :name="t('form.strengths')" rules="required" v-model="formValues.strengths" />
               </div>
 
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">
-                  {{ t('form.improvements') }}
-                </label>
-                <textarea v-model="formValues.improvements" rows="4"
-                  class="w-full p-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500"></textarea>
+              <div class="sm:col-span-1">
+                <dynamic-inputs :label="t('form.improvements')" type="textarea" :required="true"
+                  :name="t('form.improvements')" rules="required" v-model="formValues.improvements" />
               </div>
-            </div>
 
-            <!-- Comments -->
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">
-                {{ t('form.comments') }}
-              </label>
-              <textarea v-model="formValues.comments" rows="3"
-                class="w-full p-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500"></textarea>
-            </div>
+              <div class="sm:col-span-1">
+                <dynamic-inputs :label="t('form.comments')" type="textarea" :required="true" :name="t('form.comments')"
+                  rules="required" v-model="formValues.comments" />
+              </div>
+            </ClientOnly>
           </div>
 
           <div class="border-t border-gray-300 pt-6 flex justify-end gap-4">
@@ -217,9 +195,9 @@ onMounted(async () => {
       position: 'Admin'
     });
   }
-
   // Set default reviewer to current user
-  formValues.reviewer_id = authStore.user?.id || '';
+  if (!authStore.user?.id) return;
+  formValues.reviewer_id = authStore.user.id;
 });
 
 function resetForm() {

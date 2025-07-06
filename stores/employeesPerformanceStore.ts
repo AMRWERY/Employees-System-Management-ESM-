@@ -1,5 +1,11 @@
 import type { DocumentData } from "firebase/firestore";
-import { addDoc, updateDoc, doc, collection } from "firebase/firestore";
+import {
+  addDoc,
+  updateDoc,
+  doc,
+  collection,
+  getDocs,
+} from "firebase/firestore";
 import { db } from "@/firebase";
 import type {
   EmployeesPerformanceState,
@@ -127,6 +133,7 @@ export const useEmployeesPerformanceStore = defineStore(
       feedback: [],
       selfEvaluations: [],
       performanceTags: [],
+      filterByPeriod: "",
       searchTerm: "",
       currentPage: 1,
       itemsPerPage: 10,
@@ -135,17 +142,21 @@ export const useEmployeesPerformanceStore = defineStore(
     }),
 
     actions: {
-      // Performance Reviews
       async fetchPerformanceReviews(employeeId?: string) {
-        // Implementation example:
-        /*
-      const q = employeeId 
-        ? query(collection(db, 'performanceReviews'), where('employee_id', '==', employeeId))
-        : collection(db, 'performanceReviews')
-      
-      const querySnapshot = await getDocs(q)
-      this.performanceReviews = querySnapshot.docs.map(firestoreToPerformanceReview)
-      */
+        try {
+          this.isLoading = true;
+          const reviewsRef = collection(db, "ems-employees-performance");
+          const querySnapshot = await getDocs(reviewsRef);
+
+          this.performanceReviews = querySnapshot.docs.map(
+            firestoreToPerformanceReview
+          );
+        } catch (err) {
+          this.error = "Failed to load performance reviews";
+          console.error("Fetch error:", err);
+        } finally {
+          this.isLoading = false;
+        }
       },
 
       async addPerformanceReview(review: PerformanceReview) {
