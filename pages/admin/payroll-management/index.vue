@@ -320,7 +320,7 @@ const deletePayrollClicked = (payroll: Payroll) => {
     ...deleteDialogProps.value, // Keep default texts
     show: true,
     title: t('dashboard.delete_payroll_title'),
-    message: `${t('dashboard.delete_payroll_confirmation_01', { name: payroll.employeeName, period: payroll.pay_period })} ${t('dashboard.delete_payroll_confirmation_02')}`,
+    message: `${t('dashboard.delete_payroll_confirmation_01', { name: payroll.employeeName, period: payroll.pay_period })}  ${t('dashboard.delete_payroll_confirmation_02')}`,
   };
 };
 

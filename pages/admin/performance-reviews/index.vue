@@ -49,13 +49,19 @@
       <div v-else>
         <!-- dynamic-table component -->
         <dynamic-table :items="filteredPerformance" :columns="tableColumns" :has-edit="true" :has-delete="true"
-          :has-view="true" v-model:selectedItems="selectedItems" @update:selectedItems="handleSelectedItemsUpdate" />
+          :has-view="true" v-model:selectedItems="selectedItems" @update:selectedItems="handleSelectedItemsUpdate"
+          @edit="handleEditReview" @delete="handleDeleteReview" />
       </div>
 
       <!-- pagination component -->
       <pagination v-if="employeesPerformanceStore.totalPages > 1"
         :current-page="employeesPerformanceStore.currentPage || 1" :total-pages="employeesPerformanceStore.totalPages"
         @page-change="employeesPerformanceStore.setCurrentPage" />
+
+      <!-- delete-dialog component -->
+      <delete-dialog :show="dialogProps.show" :title="dialogProps.title" :message="dialogProps.message"
+        :confirm-text="dialogProps.confirmText" :cancel-text="dialogProps.cancelText" :loading="dialogProps.loading"
+        @close="dialogProps.onClose" @confirm="dialogProps.onConfirm" />
     </div>
   </div>
 </template>
@@ -64,6 +70,7 @@
 import type { PerformanceReview, SelectOption, RatingStstus } from '@/types/employees-performance'
 import type { TableHeader } from '@/types/table-header';
 import type { Column, TableItem } from '@/types/tables';
+import type { DeleteDialogProps } from '@/types/delete-dialog'
 
 const { t } = useI18n()
 const employeesPerformanceStore = useEmployeesPerformanceStore()
@@ -78,6 +85,63 @@ const isFiltering = ref(false);
 const showReviewsDialog = ref(false);
 const isEditingReviews = ref(false);
 const selectedReviewForForm = ref<PerformanceReview | null>(null);
+
+const dialogProps = ref<DeleteDialogProps>({
+  show: false,
+  title: '',
+  message: '',
+  cancelText: t('btn.cancel'),
+  confirmText: t('btn.delete'),
+  loading: false
+})
+
+const reviewToDelete = ref<PerformanceReview | null>(null)
+
+const handleEditReview = (review: PerformanceReview) => {
+  isEditingReviews.value = true;
+  selectedReviewForForm.value = { ...review };
+  showReviewsDialog.value = true;
+}
+
+const handleDeleteReview = (review: PerformanceReview) => {
+  reviewToDelete.value = review;
+  const name = review.employee_name || review.employee_id || '';
+  dialogProps.value = {
+    show: true,
+    title: t('dashboard.delete_review_title'),
+    message: t('dashboard.delete_review_confirmation_01', { name }) + ' ' + t('dashboard.delete_review_confirmation_02'),
+    cancelText: t('btn.cancel'),
+    confirmText: t('btn.delete'),
+    loading: false,
+    onClose: () => {
+      dialogProps.value.show = false;
+      reviewToDelete.value = null;
+    },
+    onConfirm: async () => {
+      dialogProps.value.loading = true;
+      try {
+        if (!reviewToDelete.value?.id) return;
+        await employeesPerformanceStore.deletePerformanceReview(reviewToDelete.value.id);
+        dialogProps.value.show = false;
+        reviewToDelete.value = null;
+        triggerToast({
+          message: t('toast.review_deleted'),
+          type: 'success',
+          icon: 'mdi-check-circle',
+        });
+        await employeesPerformanceStore.fetchPerformanceReviews();
+      } catch (error) {
+        triggerToast({
+          message: t('toast.operation_failed'),
+          type: 'error',
+          icon: 'material-symbols:error-outline-rounded',
+        });
+      } finally {
+        dialogProps.value.loading = false;
+      }
+    }
+  };
+}
 
 const handleGlobalSearch = (newSearchTerm: string) => {
   employeesPerformanceStore.setSearchTerm(newSearchTerm);

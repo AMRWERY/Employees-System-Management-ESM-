@@ -5,6 +5,7 @@ import {
   doc,
   collection,
   getDocs,
+  deleteDoc,
 } from "firebase/firestore";
 import { db } from "@/firebase";
 import type {
@@ -149,6 +150,24 @@ export const useEmployeesPerformanceStore = defineStore(
     }),
 
     actions: {
+      async deletePerformanceReview(id: string) {
+        try {
+          this.isLoading = true;
+          await deleteDoc(doc(db, "ems-employees-performance", id));
+          // Remove from local state
+          this.performanceReviews = this.performanceReviews.filter(
+            (r) => r.id !== id
+          );
+          return true;
+        } catch (error) {
+          this.error = "Failed to delete performance review";
+          console.error(error);
+          return false;
+        } finally {
+          this.isLoading = false;
+        }
+      },
+
       async fetchPerformanceReviews(employeeId?: string) {
         try {
           this.isLoading = true;
@@ -215,8 +234,6 @@ export const useEmployeesPerformanceStore = defineStore(
         }
       },
 
-      // ... other actions remain the same ...
-
       // Automatic tag assignment based on performance
       async addPerformanceTag(tag: PerformanceTag) {
         // Implementation will go here
@@ -224,25 +241,19 @@ export const useEmployeesPerformanceStore = defineStore(
         this.performanceTags.push(tag);
       },
 
-      // ... other actions ...
-
       // Automatic tag assignment based on performance
       async assignAutomaticTags(employeeId: string) {
         // Use 'this' to access store methods
         const reviews = this.performanceReviewsForEmployee(employeeId);
         if (reviews.length === 0) return;
-
         const latestReview = reviews[0];
         const overallScore = latestReview.overall_score;
-
         // Remove existing system-generated tags
         this.performanceTags = this.performanceTags.filter(
           (tag) => tag.employee_id !== employeeId || tag.applied_by !== "system"
         );
-
         // Add new tag based on score
         let newTag: PerformanceTag["tag"] | null = null;
-
         if (overallScore >= 90) {
           newTag = "Top Performer";
         } else if (overallScore >= 75) {
@@ -250,7 +261,6 @@ export const useEmployeesPerformanceStore = defineStore(
         } else if (overallScore < 60) {
           newTag = "Needs Improvement";
         }
-
         if (newTag) {
           // Call the action using 'this'
           await this.addPerformanceTag({

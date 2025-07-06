@@ -37,7 +37,7 @@
 
                 <div class="sm:col-span-1">
                   <!-- select-input component -->
-                  <select-input v-model="formValues.review_period" :options="periodOptions"
+                  <select-input v-model="formValues.review_period" :options="reviewPeriodOptions"
                     :label="t('form.review_period')" :placeholder="t('form.select_period')" />
                 </div>
               </div>
@@ -128,11 +128,37 @@ const formValues = reactive<PerformanceReview>({
   created_at: new Date()
 });
 
-// Predefined review periods
-const reviewPeriods = ref([
-  'Q1-2024', 'Q2-2024', 'Q3-2024', 'Q4-2024',
-  'Q1-2025', 'Q2-2025', 'Q3-2025', 'Q4-2025'
-]);
+const generateReviewPeriods = (startYear: number, endYear: number): string[] => {
+  const quarters = ['Q1', 'Q2', 'Q3', 'Q4'];
+  const result: string[] = [];
+  for (let year = startYear; year <= endYear; year++) {
+    for (const q of quarters) {
+      result.push(`${q}-${year}`);
+    }
+  }
+  return result;
+};
+
+const currentYear = new Date().getFullYear();
+const reviewPeriods = ref<string[]>(generateReviewPeriods(currentYear, currentYear + 5));
+
+const quarterMap: Record<string, string> = {
+  Q1: t('dashboard.quarter_1'),
+  Q2: t('dashboard.quarter_2'),
+  Q3: t('dashboard.quarter_3'),
+  Q4: t('dashboard.quarter_4'),
+};
+
+const reviewPeriodOptions = computed<SelectOption[]>(() => {
+  return reviewPeriods.value.map(period => {
+    const [quarter, year] = period.split('-');
+    const translatedQuarter = quarterMap[quarter] || quarter;
+    return {
+      value: period,
+      label: `${translatedQuarter} - ${year}`,
+    };
+  });
+});
 
 // Employees for selection
 const employees = ref<any[]>([]);
@@ -152,6 +178,12 @@ watch(overallScore, (newScore) => {
   formValues.overall_score = newScore;
 });
 
+const getCurrentQuarter = (): string => {
+  const now = new Date();
+  const quarter = Math.floor(now.getMonth() / 3) + 1;
+  return `Q${quarter}-${now.getFullYear()}`;
+}
+
 // Watch for dialog opening
 watch(() => props.modelValue, (newVal) => {
   if (newVal) {
@@ -161,6 +193,7 @@ watch(() => props.modelValue, (newVal) => {
     } else {
       // Set default values for new review
       resetForm();
+      formValues.review_period = getCurrentQuarter()
     }
   }
 });
@@ -200,8 +233,10 @@ onMounted(async () => {
   formValues.reviewer_id = authStore.user.id;
 });
 
-function resetForm() {
+const resetForm = () => {
   formValues.employee_id = '';
+  formValues.employee_name = '';
+  formValues.review_period = '';
   formValues.review_period = reviewPeriods.value[reviewPeriods.value.length - 1];
   formValues.reviewer_id = authStore.user?.id || '';
   formValues.ratings = {
@@ -218,8 +253,14 @@ function resetForm() {
 }
 
 const submitForm = () => {
-  // Create a copy to avoid reactivity issues
-  const reviewData = { ...formValues };
+  if (!formValues.reviewer_id) {
+    formValues.reviewer_id = authStore.user?.id || '';
+  }
+  const reviewData: PerformanceReview = {
+    ...formValues,
+    created_at: new Date()
+  };
+  // const reviewData = { ...formValues };
   emit('save', reviewData);
 };
 
@@ -251,12 +292,5 @@ const reviewerOptions = computed<SelectOption[]>(() => {
       label: label
     };
   });
-});
-
-const periodOptions = computed<SelectOption[]>(() => {
-  return reviewPeriods.value.map(period => ({
-    value: period,
-    label: period
-  }));
 });
 </script>

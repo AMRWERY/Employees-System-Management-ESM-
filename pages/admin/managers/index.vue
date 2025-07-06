@@ -195,7 +195,7 @@ const deleteManager = async (manager: Manager) => {
   dialogProps.value = {
     show: true,
     title: t('dashboard.delete_employee_title'),
-    message: t('dashboard.delete_employee_confirmation_01', { name: name }) + '' + t('dashboard.delete_employee_confirmation_02'),
+    message: t('dashboard.delete_employee_confirmation_01', { name: name }) + ' ' + t('dashboard.delete_employee_confirmation_02'),
     cancelText: t('btn.cancel'),
     confirmText: t('btn.reject'),
     loading: false,

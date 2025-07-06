@@ -127,7 +127,10 @@
     "needs_improvement": "يحتاج إلى تحسين",
     "review_date": "تاريخ المراجعة",
     "review_period": "فترة المراجعة",
-    "overall_rating": "التقييم العام"
+    "overall_rating": "التقييم العام",
+    "delete_review_title": "هل أنت متأكد أنك تريد حذف هذا؟",
+    "delete_review_confirmation_01": "أنت على وشك حذف سجل {name}.",
+    "delete_review_confirmation_02": "لا يمكن التراجع عن هذا الإجراء."
   },
   "btn": {
     "go_back_home": "العودة إلى الصفحه الرئيسيه",
@@ -444,7 +447,8 @@
     "team_deleted_success": "تم حذف الفريق / القسم بنجاح",
     "failed_to_delete_team": "فشل حذف الفريق / القسم",
     "manager_updated_successfully": "تم تحديث المدير بنجاح",
-    "failed_to_update_manager": "فشل تحديث المدير"
+    "failed_to_update_manager": "فشل تحديث المدير",
+    "review_deleted": "تم حذف سجل الأداء"
   },
   "status": {
     "all": "الكل",
