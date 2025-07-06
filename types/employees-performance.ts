@@ -17,7 +17,8 @@ export interface PerformanceReview {
   strengths: string;
   improvements: string;
   overall_score: number;
-  created_at: Date; // Changed to Date only
+  created_at: Date;
+  employeeRate?: "weak" | "medium" | "strong";
 }
 
 export interface Goal {
@@ -92,8 +93,8 @@ export interface SelectOption {
 
 export interface RatingStstus {
   status:
+    | "All"
     | "Top Performer"
     | "Needs Improvement"
-    | "Exceeded Expectations"
-    | "All";
+    | "Exceeded Expectations";
 }

@@ -19,9 +19,6 @@
       <search-input v-model="localSearchTerm" @search="handleGlobalSearch" :placeholder="t('form.search_by_name_or_id')"
         class="w-full sm:w-[300px]" :debounce="300" />
 
-      <!-- refresh-data-btn component -->
-      <refresh-data-btn @refresh="reloadData" :is-loading="refreshingData" />
-
       <!-- select-input component -->
       <select-input v-model="selectedStatusFilterValue" :options="statusOptions"
         :placeholder="t('dashboard.filter_by_ratings_status')" />
@@ -33,6 +30,9 @@
       <!-- download-files-menu component -->
       <download-files-menu :allItems="employeesPerformanceStore.performanceReviews" :columns="tableColumns"
         fileNameBase="employee-performance" />
+
+      <!-- refresh-data-btn component -->
+      <refresh-data-btn @refresh="reloadData" :is-loading="refreshingData" />
     </div>
 
     <div v-if="employeesPerformanceStore.isLoading || refreshingData || isFiltering" key="skeleton">
@@ -133,6 +133,14 @@ const tableColumns = computed((): Column<PerformanceReview>[] => [
   },
   { key: 'overall_score', label: t('dashboard.overall_score'), format: (review: PerformanceReview) => `${review.overall_score}%` },
   {
+    key: 'employeeRate',
+    label: t('dashboard.overall_rating'),
+    format: (review: PerformanceReview) => {
+      const key = getEmployeeRate(review.overall_score)
+      return t(`status.${key}`)
+    }
+  },
+  {
     key: 'created_at',
     label: t('dashboard.review_date'),
     format: (review: PerformanceReview) => formatDate(review.created_at)
@@ -165,14 +173,12 @@ onMounted(async () => {
   if (!managerStore.managers.length) {
     await managerStore.fetchManagers?.();
   }
-
   reviewers.value = managerStore.managers.map(m => ({
     id: m.id,
     firstName: m.firstName,
     lastName: m.lastName,
     position: m.position
   }));
-
   if (authStore.user?.role === 'admin') {
     reviewers.value.push({
       id: authStore.user.id,
@@ -217,7 +223,7 @@ const handleSaveReview = async (reviewData: PerformanceReview) => {
 };
 
 const statusOptions = ref<SelectOption[]>([
-  { value: 'All', label: t('dashboard.all') }, // ← translated "All"
+  { value: 'All', label: t('dashboard.all') },
   { value: 'Top Performer', label: t('dashboard.top_performer') },
   { value: 'Exceeded Expectations', label: t('dashboard.exceeded_expectations') },
   { value: 'Needs Improvement', label: t('dashboard.needs_improvement') }
