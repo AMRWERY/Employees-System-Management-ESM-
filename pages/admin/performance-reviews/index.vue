@@ -37,7 +37,7 @@
 
     <div v-if="employeesPerformanceStore.isLoading || refreshingData || isFiltering" key="skeleton">
       <!-- table-skeleton-loader component -->
-      <table-skeleton-loader :headers="skeletonHeaders" :rows="6" />
+      <table-skeleton-loader :headers="skeletonHeaders" :rows="7" />
     </div>
 
     <div class="mt-8" v-else>
@@ -67,7 +67,10 @@ import type { Column, TableItem } from '@/types/tables';
 
 const { t } = useI18n()
 const employeesPerformanceStore = useEmployeesPerformanceStore()
+const managerStore = useManagerStore()
+const authStore = useAuthStore()
 const { triggerToast } = useToast();
+const { formatDate } = useDateFormat();
 
 const localSearchTerm = ref<string>(employeesPerformanceStore.searchTerm || '');
 const refreshingData = ref(false); // For when the refresh button is clicked
@@ -104,6 +107,8 @@ const reloadData = async () => {
 const currentPage = computed(() => employeesPerformanceStore.currentPage || 1);
 const itemsPerPage = computed(() => employeesPerformanceStore.itemsPerPage || 10);
 
+const reviewers = ref<any[]>([]);
+
 const tableColumns = computed((): Column<PerformanceReview>[] => [
   {
     key: 'index',
@@ -114,29 +119,69 @@ const tableColumns = computed((): Column<PerformanceReview>[] => [
     }
   },
   { key: 'employee_id', label: t('dashboard.employee_id') },
-  { key: 'review_period', label: t('dashboard.review_period') },
-  { key: 'reviewer_id', label: t('dashboard.reviewer') },
-  { key: 'overall_score', label: t('dashboard.overall_score') },
-  // { 
-  //   key: 'created_at', 
-  //   label: t('dashboard.review_date'),
-  //   format: (review: PerformanceReview) => formatDate(review.created_at)
-  // },
+  { key: 'employee_name', label: t('dashboard.employee_name'), format: (review: PerformanceReview) => review.employee_name || '—' },
+  {
+    key: 'reviewer_id', label: t('dashboard.reviewer'),
+    format: (review: PerformanceReview) => {
+      const reviewer = reviewers.value.find(r => r.id === review.reviewer_id);
+      if (!reviewer) return '';
+      const baseName = `${reviewer.firstName || ''} ${reviewer.lastName || ''}`.trim();
+      return reviewer.position
+        ? `${baseName} (${reviewer.position})`
+        : baseName;
+    }
+  },
+  { key: 'overall_score', label: t('dashboard.overall_score'), format: (review: PerformanceReview) => `${review.overall_score}%` },
+  {
+    key: 'created_at',
+    label: t('dashboard.review_date'),
+    format: (review: PerformanceReview) => formatDate(review.created_at)
+  },
+  {
+    key: 'review_period',
+    label: t('dashboard.review_period'),
+    format: (review: PerformanceReview) => {
+      const [q, year] = review.review_period.split('-');
+      return `${quarterMap[q] || q} - ${year}`;
+    }
+  }
 ]);
 
 const skeletonHeaders = ref<TableHeader[]>([
   { type: 'text', loaderWidth: 'w-10' },
   { type: 'text', loaderWidth: 'w-40' },
+  { type: 'text', loaderWidth: 'w-40' },
   { type: 'text', loaderWidth: 'w-32' },
   { type: 'text', loaderWidth: 'w-32' },
   { type: 'text', loaderWidth: 'w-32' },
-  // { type: 'text', loaderWidth: 'w-32' },
   { type: 'action', loaderWidth: 'w-48' },
 ]);
 
-onMounted(() => {
-  employeesPerformanceStore.fetchPerformanceReviews()
-})
+onMounted(async () => {
+  await employeesPerformanceStore.fetchPerformanceReviews();
+  // console.log('Performance Reviews:', employeesPerformanceStore.performanceReviews);
+
+  // Fetch managers first if not already fetched
+  if (!managerStore.managers.length) {
+    await managerStore.fetchManagers?.();
+  }
+
+  reviewers.value = managerStore.managers.map(m => ({
+    id: m.id,
+    firstName: m.firstName,
+    lastName: m.lastName,
+    position: m.position
+  }));
+
+  if (authStore.user?.role === 'admin') {
+    reviewers.value.push({
+      id: authStore.user.id,
+      firstName: authStore.user.firstName,
+      lastName: authStore.user.lastName,
+      position: 'Admin'
+    });
+  }
+});
 
 const selectedItems = ref<TableItem[]>([]);
 
@@ -164,7 +209,7 @@ const handleSaveReview = async (reviewData: PerformanceReview) => {
       type: 'error',
       icon: 'material-symbols:error-outline-rounded',
     });
-    console.error("Save review failed:", error);
+    // console.error("Save review failed:", error);
   } finally {
     isEditingReviews.value = false;
     selectedReviewForForm.value = null;
@@ -172,12 +217,14 @@ const handleSaveReview = async (reviewData: PerformanceReview) => {
 };
 
 const statusOptions = ref<SelectOption[]>([
-  { value: 'Top Performer', label: 'Top Performer' },
-  { value: 'Exceeded Expectations', label: 'Exceeded Expectations' },
-  { value: 'Needs Improvement', label: 'Needs Improvement' }
+  { value: 'All', label: t('dashboard.all') }, // ← translated "All"
+  { value: 'Top Performer', label: t('dashboard.top_performer') },
+  { value: 'Exceeded Expectations', label: t('dashboard.exceeded_expectations') },
+  { value: 'Needs Improvement', label: t('dashboard.needs_improvement') }
 ])
 
 const selectedStatusFilter = ref<string | null>(null);
+
 const selectedStatusFilterValue = computed({
   get: () => selectedStatusFilter.value ?? undefined,
   set: (val: string | undefined) => {
@@ -200,7 +247,7 @@ const filteredPerformance = computed(() => {
       review.review_period.toLowerCase().includes(searchLower)
     );
   }
-  if (selectedStatusFilter.value) {
+  if (selectedStatusFilter.value && selectedStatusFilter.value !== 'All') {
     performanceReviews = performanceReviews.filter(review =>
       classifyReview(review.overall_score) === selectedStatusFilter.value
     );
@@ -215,16 +262,36 @@ const filteredPerformance = computed(() => {
 
 const selectedReviewPeriod = ref<string | undefined>(undefined);
 
-const reviewPeriods = ref([
-  'Q1-2024', 'Q2-2024', 'Q3-2024', 'Q4-2024',
-  'Q1-2025', 'Q2-2025', 'Q3-2025', 'Q4-2025'
-]);
+const quarterMap: Record<string, string> = {
+  Q1: t('dashboard.quarter_1'),
+  Q2: t('dashboard.quarter_2'),
+  Q3: t('dashboard.quarter_3'),
+  Q4: t('dashboard.quarter_4'),
+};
+
+const generateReviewPeriods = (startYear: number, endYear: number): string[] => {
+  const quarters = ['Q1', 'Q2', 'Q3', 'Q4'];
+  const result: string[] = [];
+  for (let year = startYear; year <= endYear; year++) {
+    for (const q of quarters) {
+      result.push(`${q}-${year}`);
+    }
+  }
+  return result;
+};
+
+const currentYear = new Date().getFullYear();
+const reviewPeriods = ref<string[]>(generateReviewPeriods(currentYear, currentYear + 5));
 
 const reviewPeriodOptions = computed<SelectOption[]>(() => {
-  return reviewPeriods.value.map(period => ({
-    value: period,
-    label: period
-  }));
+  return reviewPeriods.value.map(period => {
+    const [quarter, year] = period.split('-');
+    const label = `${quarterMap[quarter] || quarter} - ${year}`;
+    return {
+      value: period,
+      label,
+    };
+  });
 });
 
 const openReviewDialog = () => {
