@@ -50,7 +50,7 @@
         <!-- dynamic-table component -->
         <dynamic-table :items="filteredPerformance" :columns="tableColumns" :has-edit="true" :has-delete="true"
           :has-view="true" v-model:selectedItems="selectedItems" @update:selectedItems="handleSelectedItemsUpdate"
-          @edit="handleEditReview" @delete="handleDeleteReview" />
+          @edit="handleEditReview" @delete="handleDeleteReview" @view="handleViewEmployee" />
       </div>
 
       <!-- pagination component -->
@@ -228,6 +228,14 @@ const skeletonHeaders = ref<TableHeader[]>([
   { type: 'text', loaderWidth: 'w-32' },
   { type: 'action', loaderWidth: 'w-48' },
 ]);
+
+const router = useRouter();
+
+// Add this handler function
+const handleViewEmployee = (review: PerformanceReview) => {
+  // Navigate to employee performance details page
+  router.push(`/admin/performance-reviews/${review.id}`);
+};
 
 onMounted(async () => {
   await employeesPerformanceStore.fetchPerformanceReviews();
