@@ -130,7 +130,12 @@
     "overall_rating": "التقييم العام",
     "delete_review_title": "هل أنت متأكد أنك تريد حذف هذا؟",
     "delete_review_confirmation_01": "أنت على وشك حذف سجل {name}.",
-    "delete_review_confirmation_02": "لا يمكن التراجع عن هذا الإجراء."
+    "delete_review_confirmation_02": "لا يمكن التراجع عن هذا الإجراء.",
+    "employee_performance_details": "تفاصيل أداء الموظف",
+     "performance_reviews": "مراجعات الأداء",
+    "kpi_tracker": "متتبع مؤشرات الأداء",
+    "goals": "الأهداف",
+    "recent_feedback": "التعليقات الأخيرة"
   },
   "btn": {
     "go_back_home": "العودة إلى الصفحه الرئيسيه",
@@ -354,7 +359,8 @@
     "payroll_management": "إدارة الرواتب",
     "task_management": "إدارة المهام",
     "employees_performance_reviews": "مراجعات أداء الموظفين",
-    "admin_teams_employees_employeeid": "تفاصيل الموظف"
+    "admin_teams_employees_employeeid": "تفاصيل الموظف",
+    "admin_performance_reviews_employeeid": "تفاصيل أداء الموظف"
   },
   "error_page": {
     "you_are_all_alone_here": "أنت وحدك هنا 😁"
@@ -497,7 +503,8 @@
     "admin_payroll_management": "إدارة الرواتب",
     "admin_payroll_management_recordid": "تفاصيل الموظف",
     "task_management": "إدارة المهام",
-    "admin_performance_reviews": "مراجعات أداء الموظفين"
+    "admin_performance_reviews": "مراجعات أداء الموظفين",
+    "admin_performance_reviews_employeeid": "تفاصيل أداء الموظف"
   },
   "days": {
     "sun": "الأحد",

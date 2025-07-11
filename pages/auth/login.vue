@@ -36,14 +36,14 @@
             </ClientOnly>
 
             <div class="flex flex-wrap items-center justify-between gap-4">
-              <div class="flex items-center">
+              <!-- <div class="flex items-center">
                 <input id="remember-me" name="remember-me" type="checkbox"
                   class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 rounded" />
                 <label for="remember-me" class="ms-3 block text-sm text-slate-500">
                   {{ t('form.remember_me') }}
                 </label>
-              </div>
-              <div class="text-sm">
+              </div> -->
+              <div class="text-sm ms-auto">
                 <nuxt-link-locale to="/auth/forget-password" class="text-blue-600 hover:text-blue-500 font-medium">
                   {{ t('form.forgot_your_password') }}
                 </nuxt-link-locale>

@@ -52,7 +52,7 @@
                     :rules="'required|minLength:7'" :required="true" v-model="password" />
                 </div>
 
-                <div class="mb-6 flex items-start">
+                <!-- <div class="mb-6 flex items-start">
                   <div class="flex items-center h-5">
                     <input id="terms" type="checkbox"
                       class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 rounded" v-model="termsAccepted"
@@ -68,7 +68,7 @@
                     <span v-if="termsError" class="font-medium text-red-600 block">{{ termsError
                     }}</span>
                   </div>
-                </div>
+                </div> -->
               </ClientOnly>
             </div>
 
@@ -107,16 +107,17 @@ const errorMessage = ref('');
 const { triggerToast } = useToast();
 const { isLoading: loading, startLoading } = useLoading(3000)
 
-const { value: termsAccepted, errorMessage: termsError } = useField<boolean>(
-  'terms',
-  (value) => {
-    if (!value) return t('form.terms_required');
-    return true;
-  }
-);
+// const { value: termsAccepted, errorMessage: termsError } = useField<boolean>(
+//   'terms',
+//   (value) => {
+//     if (!value) return t('form.terms_required');
+//     return true;
+//   }
+// );
 
 const handleSignup = async () => {
-  if (!email.value || !password.value || !firstName.value || !lastName.value || !termsAccepted.value) {
+  // if (!email.value || !password.value || !firstName.value || !lastName.value || !termsAccepted.value) {
+  if (!email.value || !password.value || !firstName.value || !lastName.value) {
     errorMessage.value = t('toast.all_fields_are_required')
     return
   }

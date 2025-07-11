@@ -30,9 +30,8 @@
                 </div>
 
                 <div class="sm:col-span-1">
-                  <!-- select-input component -->
-                  <select-input v-model="formValues.reviewer_id" :options="reviewerOptions" :label="t('form.reviewer')"
-                    :placeholder="t('form.select_reviewer')" />
+                  <dynamic-inputs :label="t('form.reviewer')" type="text" :name="t('form.reviewer')" readonly
+                    :disbled="true" :model-value="currentReviewerName" />
                 </div>
 
                 <div class="sm:col-span-1">
@@ -190,6 +189,7 @@ watch(() => props.modelValue, (newVal) => {
     if (props.isEditing && props.reviewData) {
       // Pre-fill form for editing
       Object.assign(formValues, props.reviewData);
+      formValues.overall_score = overallScore.value;
     } else {
       // Set default values for new review
       resetForm();
@@ -198,8 +198,21 @@ watch(() => props.modelValue, (newVal) => {
   }
 });
 
+watch(
+  () => formValues.ratings,
+  () => {
+    formValues.overall_score = overallScore.value;
+  },
+  { deep: true, immediate: true } // Run immediately on mount
+);
+
 // Fetch data when component is mounted
 onMounted(async () => {
+  await authStore.init();
+  if (!authStore.user?.uid) {
+    throw new Error('User ID not available');
+  }
+
   await employeeStore.fetchEmployees();
   await managerStore.fetchManagers();
 
@@ -211,34 +224,15 @@ onMounted(async () => {
     employeeId: e.employeeId
   }));
 
-  // Set reviewers (managers + current user if admin)
-  reviewers.value = managerStore.managers.map(m => ({
-    id: m.id,
-    firstName: m.firstName,
-    lastName: m.lastName,
-    position: m.position
-  }));
-
-  // Add current user if admin
-  if (authStore.user?.role === 'admin') {
-    reviewers.value.push({
-      id: authStore.user.id,
-      firstName: authStore.user.firstName,
-      lastName: authStore.user.lastName,
-      position: 'Admin'
-    });
-  }
-  // Set default reviewer to current user
-  if (!authStore.user?.id) return;
-  formValues.reviewer_id = authStore.user.id;
+  // Set reviewer_id if user is already available
+  formValues.reviewer_id = authStore.user.uid;
 });
 
 const resetForm = () => {
   formValues.employee_id = '';
   formValues.employee_name = '';
-  formValues.review_period = '';
-  formValues.review_period = reviewPeriods.value[reviewPeriods.value.length - 1];
-  formValues.reviewer_id = authStore.user?.id || '';
+  formValues.review_period = getCurrentQuarter(); // Set to current quarter instead
+  formValues.reviewer_id = authStore.user?.uid ?? '';
   formValues.ratings = {
     communication: 3,
     productivity: 3,
@@ -248,16 +242,17 @@ const resetForm = () => {
   formValues.comments = '';
   formValues.strengths = '';
   formValues.improvements = '';
-  formValues.overall_score = 0;
+  formValues.overall_score = overallScore.value;
   formValues.created_at = new Date();
 }
 
 const submitForm = () => {
-  if (!formValues.reviewer_id) {
-    formValues.reviewer_id = authStore.user?.id || '';
-  }
+  if (!authStore.user?.uid) return
+
+  formValues.reviewer_id = authStore.user.uid;
   const reviewData: PerformanceReview = {
     ...formValues,
+    overall_score: overallScore.value,
     created_at: new Date()
   };
   // const reviewData = { ...formValues };
@@ -280,17 +275,9 @@ const handleEmployeeSelected = (selectedEmployee: Employee | undefined) => {
   }
 };
 
-const reviewerOptions = computed<SelectOption[]>(() => {
-  return reviewers.value.map(reviewer => {
-    // Format the label: "FirstName LastName (Position)" or just "FirstName LastName" if no position
-    const baseName = `${reviewer.firstName || ''} ${reviewer.lastName || ''}`.trim();
-    const label = reviewer.position
-      ? `${baseName} (${reviewer.position})`
-      : baseName;
-    return {
-      value: reviewer.id,
-      label: label
-    };
-  });
+const currentReviewerName = computed(() => {
+  if (!authStore.user) return;
+  const { firstName, lastName, position } = authStore.user;
+  return `${firstName} ${lastName}` + (position ? ` (${position})` : '');
 });
 </script>
