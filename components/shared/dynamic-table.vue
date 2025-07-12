@@ -90,43 +90,60 @@
             <td v-if="hasView || hasBlock || hasDelete || hasEdit || hasMarkPaid || hasMarkFailed"
               class="px-6 py-4 text-end">
               <div class="flex items-center gap-3.5 justify-end">
-                <button v-if="hasView" class="rounded-full text-blue-500 hover:text-blue-700 transition"
-                  :title="t('tooltip.view')" @click="$emit('view', item)">
-                  <icon name="tabler:eye" class="w-7 h-7 text-blue-500 hover:text-blue-700" />
-                </button>
-                <button v-if="hasBlock" class="rounded-full text-green-500 hover:text-green-700 transition"
-                  :title="item.status === 'blocked' ? t('tooltip.unblock') : t('tooltip.block')"
-                  @click="$emit('block', item)">
-                  <icon name="material-symbols:block" class="w-6 h-6"
-                    :class="[item.status === 'blocked' ? 'text-green-500 hover:text-green-700' : 'text-red-500 hover:text-red-700']" />
-                </button>
-                <button v-if="hasDelete && actionConditions?.delete && actionConditions.delete(item)"
-                  class="rounded-full text-red-500 hover:text-red-700 transition" :title="t('tooltip.delete')"
-                  @click="$emit('delete', item)">
-                  <icon name="material-symbols:delete-sharp" class="w-6 h-6 text-red-500 hover:text-red-700" />
-                </button>
-                <button v-if="hasEdit && actionConditions?.edit && actionConditions.edit(item)"
-                  class="rounded-full text-indigo-500 hover:text-indigo-700 transition" :title="t('tooltip.edit')"
-                  @click="$emit('edit', item)">
-                  <icon name="heroicons-outline:pencil-alt"
-                    class="w-5 h-5 sm:w-6 sm:h-6 text-indigo-600 hover:text-indigo-800" />
-                </button>
+                <!-- dynamic-tooltips component -->
+                <dynamic-tooltips :text="t('tooltip.view')" :position="'bottom'">
+                  <button v-if="hasView" class="rounded-full text-blue-500 hover:text-blue-700 transition"
+                    @click="$emit('view', item)">
+                    <icon name="tabler:eye" class="w-7 h-7 text-blue-500 hover:text-blue-700" />
+                  </button>
+                </dynamic-tooltips>
 
-                <!-- Mark Paid Action (NEW for Payroll) -->
-                <button v-if="hasMarkPaid && actionConditions?.markPaid && actionConditions.markPaid(item)"
-                  class="rounded-full text-green-500 hover:text-green-700 transition" :title="t('tooltip.mark_paid')"
-                  @click="$emit('markPaid', item)">
-                  <icon name="heroicons-outline:check-circle"
-                    class="w-5 h-5 sm:w-6 sm:h-6 text-green-600 hover:text-green-800" />
-                </button>
+                <!-- dynamic-tooltips component -->
+                <dynamic-tooltips :text="item.status === 'blocked' ? t('tooltip.unblock') : t('tooltip.block')"
+                  :position="'bottom'">
+                  <button v-if="hasBlock" class="rounded-full text-green-500 hover:text-green-700 transition"
+                    @click="$emit('block', item)">
+                    <icon name="material-symbols:block" class="w-6 h-6"
+                      :class="[item.status === 'blocked' ? 'text-green-500 hover:text-green-700' : 'text-red-500 hover:text-red-700']" />
+                  </button>
+                </dynamic-tooltips>
 
-                <!-- Mark Failed Action (NEW for Payroll) -->
-                <button v-if="hasMarkFailed && actionConditions?.markFailed && actionConditions.markFailed(item)"
-                  class="rounded-full text-yellow-500 hover:text-yellow-700 transition"
-                  :title="t('tooltip.mark_failed')" @click="$emit('markFailed', item)">
-                  <icon name="heroicons-outline:x-circle"
-                    class="w-5 h-5 sm:w-6 sm:h-6 text-yellow-500 hover:text-yellow-700" />
-                </button>
+                <!-- dynamic-tooltips component -->
+                <dynamic-tooltips :text="t('tooltip.delete')" :position="'bottom'">
+                  <button v-if="hasDelete && actionConditions?.delete && actionConditions.delete(item)"
+                    class="rounded-full text-red-500 hover:text-red-700 transition" @click="$emit('delete', item)">
+                    <icon name="material-symbols:delete-sharp" class="w-6 h-6 text-red-500 hover:text-red-700" />
+                  </button>
+                </dynamic-tooltips>
+
+                <!-- dynamic-tooltips component -->
+                <dynamic-tooltips :text="t('tooltip.edit')" :position="'bottom'">
+                  <button v-if="hasEdit && actionConditions?.edit && actionConditions.edit(item)"
+                    class="rounded-full text-indigo-500 hover:text-indigo-700 transition" @click="$emit('edit', item)">
+                    <icon name="heroicons-outline:pencil-alt"
+                      class="w-5 h-5 sm:w-6 sm:h-6 text-indigo-600 hover:text-indigo-800" />
+                  </button>
+                </dynamic-tooltips>
+
+                <!-- dynamic-tooltips component -->
+                <dynamic-tooltips :text="t('tooltip.mark_paid')" :position="'bottom'">
+                  <button v-if="hasMarkPaid && actionConditions?.markPaid && actionConditions.markPaid(item)"
+                    class="rounded-full text-green-500 hover:text-green-700 transition"
+                    @click="$emit('markPaid', item)">
+                    <icon name="heroicons-outline:check-circle"
+                      class="w-5 h-5 sm:w-6 sm:h-6 text-green-600 hover:text-green-800" />
+                  </button>
+                </dynamic-tooltips>
+
+                <!-- dynamic-tooltips component -->
+                <dynamic-tooltips :text="t('tooltip.mark_failed')" :position="'bottom'">
+                  <button v-if="hasMarkFailed && actionConditions?.markFailed && actionConditions.markFailed(item)"
+                    class="rounded-full text-yellow-500 hover:text-yellow-700 transition"
+                    @click="$emit('markFailed', item)">
+                    <icon name="heroicons-outline:x-circle"
+                      class="w-5 h-5 sm:w-6 sm:h-6 text-yellow-500 hover:text-yellow-700" />
+                  </button>
+                </dynamic-tooltips>
               </div>
             </td>
           </tr>
