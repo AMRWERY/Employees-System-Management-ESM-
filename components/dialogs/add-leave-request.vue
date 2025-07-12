@@ -7,7 +7,7 @@
 
     <div v-if="showModal"
       class="fixed inset-0 flex flex-wrap justify-center items-center w-full h-full z-[1000] before:fixed before:inset-0 before:w-full before:h-full before:bg-[rgba(0,0,0,0.5)] overflow-auto">
-      <div class="w-full max-w-xl bg-white shadow-lg rounded-lg p-4 relative">
+      <div class="w-full max-w-2xl bg-white shadow-lg rounded-lg p-4 relative">
         <div class="flex items-center pb-3 border-b border-gray-300">
           <h3 class="text-slate-900 text-xl font-semibold flex-1">{{ t('form.leave_request_form') }}</h3>
           <button role="button" @click="showModal = false">
@@ -56,7 +56,7 @@
 
               <div class="sm:col-span-full">
                 <dynamic-inputs :label="t('form.total_days_requested')" :placeholder="t('form.enter_number_of_days')"
-                  type="number" :name="t('form.total_days_requested')" :rules="'required'" :required="true"
+                  type="number" :name="t('form.total_days_requested')" :rules="'required|max_value:15'" :required="true"
                   v-model="form.duration" />
               </div>
 

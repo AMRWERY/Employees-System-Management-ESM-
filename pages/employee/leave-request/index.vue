@@ -9,17 +9,8 @@
       </div>
     </div>
 
-    <!-- Tabs -->
-    <ul class="flex gap-5 w-max bg-gray-100 p-1 rounded-full mx-auto">
-      <li v-for="tab in tabs" :key="tab.id" @click="activeTab = tab.id" :class="[
-        'tab font-semibold w-full text-center text-[15px] py-2.5 px-5 tracking-wide rounded-full cursor-pointer transition-all duration-300 max-w-fit border border-gray-200',
-        activeTab === tab.id
-          ? 'bg-blue-600 text-white'
-          : 'text-slate-600 bg-white hover:bg-blue-600 hover:text-white'
-      ]">
-        {{ tab.label }}
-      </li>
-    </ul>
+    <!-- dynamic-tabs component -->
+    <dynamic-tabs :tabs="tabs" v-model:activeTab="activeTab" />
 
     <div v-if="loading" key="skeleton">
       <!-- table-skeleton-loader component -->

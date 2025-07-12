@@ -13,7 +13,7 @@
         </div>
 
         <!-- Calendar dropdown -->
-        <div v-if="showCalendar" class="absolute z-10 w-64 mt-1 bg-gray-50 rounded-xl shadow-2xl">
+        <div v-if="showCalendar" class="absolute z-10 w-[300px] mt-1 bg-gray-50 rounded-xl shadow-2xl">
           <!-- Calendar header -->
           <div class="flex items-center justify-between p-2 border-b">
             <button @click="previousMonth" class="p-1 rounded-full hover:bg-gray-100">
@@ -35,8 +35,9 @@
           <!-- Calendar days -->
           <div class="grid grid-cols-7 gap-1 p-2">
             <button v-for="{ date, isCurrentMonth, isToday } in calendarDays" :key="date.toISOString()"
-              @click="selectDate(date)" :class="[
+              @click="selectDate(date)" :disabled="isDateDisabled(date)" :class="[
                 'w-8 h-8 text-sm rounded-full flex items-center justify-center',
+                isDateDisabled(date) ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer',
                 isCurrentMonth ? 'text-gray-700' : 'text-gray-400',
                 isToday ? 'bg-indigo-100' : '',
                 isSelected(date) ? 'bg-indigo-600 text-white hover:bg-indigo-700' : 'hover:bg-gray-100',
@@ -67,7 +68,7 @@ const showCalendar = ref(false);
 const currentDate = ref(props.modelValue || new Date());
 
 // Days of week
-const daysOfWeek = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
+const daysOfWeek = [t('days.sun'), t('days.mon'), t('days.tue'), t('days.wed'), t('days.thu'), t('days.fri'), t('days.sat')];
 
 // Format date for display
 const dateValue = computed({
@@ -96,7 +97,25 @@ const selectDate = (date: Date) => {
 // Current month and year display
 const currentMonthYear = computed(() => {
   const date = typeof currentDate.value === 'string' ? new Date(currentDate.value) : currentDate.value;
-  return date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+  const year = date.getFullYear();
+  const monthIndex = date.getMonth();
+  // Map month index to translation keys
+  const monthKeys = [
+    'months.january',
+    'months.february',
+    'months.march',
+    'months.april',
+    'months.may',
+    'months.june',
+    'months.july',
+    'months.august',
+    'months.september',
+    'months.october',
+    'months.november',
+    'months.december'
+  ];
+  const translatedMonth = t(monthKeys[monthIndex]);
+  return `${translatedMonth} ${year}`;
 });
 
 // Calendar days
@@ -195,4 +214,10 @@ onMounted(() => {
 onUnmounted(() => {
   document.removeEventListener('click', handleClickOutside);
 });
+
+const isDateDisabled = (date: Date): boolean => {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0); // Set to start of day
+  return date < today;
+};
 </script>
