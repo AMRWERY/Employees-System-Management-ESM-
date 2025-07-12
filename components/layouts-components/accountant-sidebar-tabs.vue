@@ -100,12 +100,29 @@ const { hasAnyRole } = useUserRoles()
 
 type DropdownNames = 'payroll'
 
-// Track which dropdowns are open
-const openDropdowns = reactive<Record<DropdownNames, boolean>>({
-  payroll: true, // Open by default
-})
+const dropdownStates = ref({
+  payroll: true,
+});
+
+onMounted(() => {
+  const savedStates = localStorage.getItem('sidebarDropdowns');
+  if (savedStates) {
+    try {
+      const parsed = JSON.parse(savedStates);
+      dropdownStates.value = {
+        ...dropdownStates.value,
+        ...parsed
+      };
+    } catch (e) {
+      console.error('Error parsing dropdown states:', e);
+    }
+  }
+});
+
+const openDropdowns = computed(() => dropdownStates.value);
 
 const toggleDropdown = (name: DropdownNames) => {
-  openDropdowns[name] = !openDropdowns[name]
+  dropdownStates.value[name] = !dropdownStates.value[name];
+  localStorage.setItem('sidebarDropdowns', JSON.stringify(dropdownStates.value));
 }
 </script>
