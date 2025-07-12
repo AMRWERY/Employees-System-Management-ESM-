@@ -17,4 +17,5 @@ export interface LeaveRequest {
   decisionAt?: Date;
   decisionBy?: string;
   rejectionReason?: string;
+  availableBalance?: number | null;
 }

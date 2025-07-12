@@ -9,6 +9,7 @@ import {
   updateDoc,
   serverTimestamp,
   getDoc,
+  getDocs,
   deleteDoc,
   type QuerySnapshot,
   type DocumentData,
@@ -16,6 +17,8 @@ import {
 import { db, auth } from "~/firebase";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import type { LeaveRequest } from "@/types/leaveRequest";
+
+const maxVacationDays = 21;
 
 export const useLeaveRequestsStore = defineStore("leave-requests", {
   state: () => ({
@@ -166,12 +169,100 @@ export const useLeaveRequestsStore = defineStore("leave-requests", {
       }
     },
 
+    // Add this action to your store
+    async calculateVacationBalance(userId: string): Promise<number> {
+      try {
+        const year = new Date().getFullYear();
+        const q = query(
+          collection(db, "ems-leave-requests"),
+          where("userId", "==", userId),
+          where("type", "==", "vacation"),
+          where("status", "in", ["approved", "pending"]),
+          where("startDate", ">=", new Date(`${year}-01-01`)),
+          where("startDate", "<=", new Date(`${year}-12-31`))
+        );
+        const querySnapshot = await getDocs(q);
+        let totalUsedDays = 0;
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          totalUsedDays += data.durationDays;
+        });
+        return maxVacationDays - totalUsedDays;
+      } catch (error) {
+        console.error("Error calculating vacation balance:", error);
+        return maxVacationDays; // Fallback to max days
+      }
+    },
+
+    // Update submitRequest action
     async submitRequest(requestData: Omit<LeaveRequest, "id">) {
-      const docRef = await addDoc(collection(db, "ems-leave-requests"), {
-        ...requestData,
-        submittedAt: serverTimestamp(),
-      });
-      return docRef.id;
+      try {
+        let availableBalance = maxVacationDays;
+        // Always calculate balance for all request types
+        availableBalance = await this.calculateVacationBalance(
+          requestData.userId
+        );
+        // Set availableBalance for all request types
+        const requestWithBalance = {
+          ...requestData,
+          availableBalance,
+          submittedAt: serverTimestamp(),
+        };
+        // For vacation: validate balance
+        if (requestData.type === "vacation") {
+          if (requestData.durationDays > availableBalance) {
+            throw new Error(
+              `Exceeds available vacation days. Max: ${availableBalance}`
+            );
+          }
+          // Update balance after deduction
+          requestWithBalance.availableBalance =
+            availableBalance - requestData.durationDays;
+        }
+        const docRef = await addDoc(
+          collection(db, "ems-leave-requests"),
+          requestWithBalance
+        );
+        return docRef.id;
+      } catch (error) {
+        console.error("Error submitting leave request:", error);
+        throw error;
+      }
+    },
+
+    // Fix approveRequest action
+    async approveRequest(id: string) {
+      try {
+        this.loading = true;
+        const ref = doc(db, "ems-leave-requests", id);
+        const docSnap = await getDoc(ref);
+
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          // For approved vacation requests, maintain the available balance
+          if (data.type === "vacation" && data.status === "pending") {
+            // Use the calculated availableBalance if exists, otherwise preserve existing value
+            const currentBalance = data.availableBalance ?? maxVacationDays;
+            await updateDoc(ref, {
+              status: "approved",
+              availableBalance: currentBalance, // Keep the same balance
+              decisionAt: serverTimestamp(),
+              decisionBy: auth.currentUser?.uid,
+            });
+          } else {
+            // For non-vacation or already processed requests
+            await updateDoc(ref, {
+              status: "approved",
+              decisionAt: serverTimestamp(),
+              decisionBy: auth.currentUser?.uid,
+            });
+          }
+        }
+      } catch (error) {
+        throw error;
+      } finally {
+        this.loading = false;
+      }
     },
 
     async uploadAttachment(file: File) {
@@ -182,22 +273,6 @@ export const useLeaveRequestsStore = defineStore("leave-requests", {
       );
       const snapshot = await uploadBytes(storageRef, file);
       return getDownloadURL(snapshot.ref);
-    },
-
-    async approveRequest(id: string) {
-      try {
-        this.loading = true;
-        const ref = doc(db, "ems-leave-requests", id);
-        await updateDoc(ref, {
-          status: "approved",
-          decisionAt: serverTimestamp(),
-          decisionBy: auth.currentUser?.uid,
-        });
-      } catch (error) {
-        throw error;
-      } finally {
-        this.loading = false;
-      }
     },
 
     async rejectRequest(id: string, reason?: string) {
@@ -365,9 +440,11 @@ export const useLeaveRequestsStore = defineStore("leave-requests", {
 
     totalPages(): number {
       // Use the combined filter and search getter for total pages
-      return Math.ceil(this.filteredAndSearchedRequests.length / this.requestsPerPage);
+      return Math.ceil(
+        this.filteredAndSearchedRequests.length / this.requestsPerPage
+      );
     },
-    
+
     // totalPages(): number {
     //   return Math.ceil(this.filteredRequests.length / this.requestsPerPage);
     // },

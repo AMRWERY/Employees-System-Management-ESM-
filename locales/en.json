@@ -338,7 +338,9 @@
     "communication": "Communication",
     "productivity": "Productivity",
     "teamwork": "Teamwork",
-    "problem_solving": "Problem Solving"
+    "problem_solving": "Problem Solving",
+    "available_balance": "Available balance",
+    "days": "Days"
   },
   "head": {
     "sign_in": "Sign in",
