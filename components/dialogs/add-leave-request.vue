@@ -58,6 +58,19 @@
                 <dynamic-inputs :label="t('form.total_days_requested')" :placeholder="t('form.enter_number_of_days')"
                   type="number" :name="t('form.total_days_requested')" :rules="'required|max_value:15'" :required="true"
                   v-model="form.duration" />
+
+                <div class="mt-2 text-sm text-purple-600 font-semibold">
+                  <p>{{ t('form.available_balance') }}:
+                    <span class="underline">
+                      <span v-if="isBalanceLoading">
+                        <icon name="svg-spinners:90-ring-with-bg" class="w-4 h-4 inline-block" />
+                      </span>
+                      <span v-else>
+                        {{ vacationBalance }} {{ t('form.days') }}
+                      </span>
+                    </span>
+                  </p>
+                </div>
               </div>
 
               <div class="sm:col-span-full">
@@ -235,7 +248,6 @@ const resetForm = () => {
   // Keep the employeeId from sessionStorage
   const savedEmployeeId = form.employeeId
   const savedEmployeeName = form.employeeName
-
   // Reset all fields
   form.leaveType = ''
   form.startDate = null
@@ -243,11 +255,37 @@ const resetForm = () => {
   form.duration = ''
   form.reason = ''
   attachments.value = []
-
   // Restore employee info
   form.employeeId = savedEmployeeId
   form.employeeName = savedEmployeeName
 }
+
+const vacationBalance = ref(0);
+const insufficientBalance = ref(false);
+const isBalanceLoading = ref(false);
+
+watchEffect(async () => {
+  if (parsedUserData?.uid) {
+    isBalanceLoading.value = true;
+    try {
+      vacationBalance.value = await leaveStore.calculateVacationBalance(parsedUserData.uid);
+    } catch (error) {
+      console.error('Error fetching vacation balance:', error);
+      vacationBalance.value = 21;
+    } finally {
+      isBalanceLoading.value = false;
+    }
+  }
+});
+
+watch([() => form.leaveType, () => form.duration], () => {
+  if (form.leaveType === 'vacation') {
+    const requestedDays = parseInt(form.duration) || 0;
+    insufficientBalance.value = requestedDays > vacationBalance.value;
+  } else {
+    insufficientBalance.value = false;
+  }
+});
 
 onUnmounted(() => {
   previews.value.forEach(url => URL.revokeObjectURL(url));

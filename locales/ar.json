@@ -338,7 +338,9 @@
     "communication": "التواصل",
     "productivity": "إنتاجية",
     "teamwork": "العمل الجماعي",
-    "problem_solving": "حل المشكلات"
+    "problem_solving": "حل المشكلات",
+    "available_balance": "الرصيد المتاح",
+    "days": "أيام"
   },
   "head": {
     "sign_in": "تسجيل الدخول",
