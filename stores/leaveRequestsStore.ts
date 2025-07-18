@@ -1,16 +1,17 @@
 import {
   collection,
   query,
-  where,
   orderBy,
   onSnapshot,
-  addDoc,
   doc,
   updateDoc,
   serverTimestamp,
+  setDoc,
   getDoc,
-  getDocs,
   deleteDoc,
+  arrayUnion,
+  getDocs,
+  where,
   type QuerySnapshot,
   type DocumentData,
 } from "firebase/firestore";
@@ -34,9 +35,58 @@ export const useLeaveRequestsStore = defineStore("leave-requests", {
   }),
 
   actions: {
-    async getRequestById(id: string) {
-      let request = this.allRequests.find((request) => request.id === id);
-      if (!request) {
+    async getRequestFromUserDocument(
+      requestId: string
+    ): Promise<LeaveRequest | null> {
+      try {
+        if (!auth.currentUser?.uid) return null;
+        const userDocRef = doc(db, "ems-users", auth.currentUser.uid);
+        const userDocSnap = await getDoc(userDocRef);
+        if (userDocSnap.exists()) {
+          const userData = userDocSnap.data();
+          const requestInArray = userData.requests?.find(
+            (r: any) => r.id === requestId
+          );
+          if (requestInArray) {
+            return {
+              id: requestInArray.id,
+              userId: auth.currentUser.uid,
+              employeeId: userData.employeeId,
+              employeeName: userData.employeeName,
+              startDate: requestInArray.startDate?.toDate?.(),
+              endDate: requestInArray.endDate?.toDate?.(),
+              type: requestInArray.type,
+              reason: requestInArray.reason || "",
+              status: requestInArray.status,
+              submittedAt: requestInArray.submittedAt?.toDate?.(),
+              durationDays: requestInArray.durationDays,
+              managerId: userData.managerId,
+              teamId: userData.teamId,
+              attachments: requestInArray.attachments || [],
+              manager: undefined,
+              rejectionReason: undefined,
+              decisionAt: undefined,
+              decisionBy: undefined,
+              availableBalance: undefined,
+            };
+          }
+        }
+        return null;
+      } catch (error) {
+        console.error("Error fetching request from user document:", error);
+        return null;
+      }
+    },
+
+    async getRequestById(id: string): Promise<LeaveRequest | null> {
+      // First try to find in store
+      let request: LeaveRequest | null =
+        this.allRequests.find((r) => r.id === id) ||
+        this.myRequests.find((r) => r.id === id) ||
+        null;
+      if (request) return request;
+      // Try main collection
+      try {
         const docRef = doc(db, "ems-leave-requests", id);
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
@@ -49,21 +99,26 @@ export const useLeaveRequestsStore = defineStore("leave-requests", {
             startDate: data.startDate?.toDate(),
             endDate: data.endDate?.toDate(),
             type: data.type,
-            reason: data.reason,
+            reason: data.reason || "",
             status: data.status,
             submittedAt: data.submittedAt?.toDate(),
             durationDays: data.durationDays,
-            manager: data.manager,
-            managerId: data.managerId,
-            teamId: data.teamId,
+            manager: data.manager || undefined,
+            managerId: data.managerId || undefined,
+            teamId: data.teamId || undefined,
             attachments: data.attachments || [],
-            rejectionReason: data.rejectionReason,
-            decisionAt: data.decisionAt?.toDate(),
-            decisionBy: data.decisionBy,
-          };
+            rejectionReason: data.rejectionReason || undefined,
+            decisionAt: data.decisionAt?.toDate() || undefined,
+            decisionBy: data.decisionBy || undefined,
+            availableBalance: data.availableBalance ?? undefined,
+          } as LeaveRequest;
+          return request;
         }
+      } catch (error) {
+        console.error("Error fetching from ems-leave-requests:", error);
       }
-      return request;
+      const userDocRequest = await this.getRequestFromUserDocument(id);
+      return userDocRequest;
     },
 
     async fetchAllRequests() {
@@ -116,117 +171,119 @@ export const useLeaveRequestsStore = defineStore("leave-requests", {
       }
     },
 
-    fetchMyRequests() {
+    async fetchMyRequests() {
       try {
         this.loading = true;
-        if (!auth.currentUser?.uid) {
-          throw new Error("User not authenticated");
+        const uid = auth.currentUser?.uid;
+        if (!uid) throw new Error("User not authenticated");
+        const docRef = doc(db, "ems-leave-requests", uid);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          const requests = data.requests || [];
+          // Convert timestamps to JS Date
+          this.myRequests = requests.map((req: any) => ({
+            ...req,
+            startDate: req.startDate?.toDate?.() || new Date(req.startDate),
+            endDate: req.endDate?.toDate?.() || new Date(req.endDate),
+            submittedAt:
+              req.submittedAt?.toDate?.() || new Date(req.submittedAt),
+          }));
+        } else {
+          this.myRequests = [];
         }
-        const q = query(
-          collection(db, "ems-leave-requests"),
-          where("userId", "==", auth.currentUser.uid),
-          orderBy("submittedAt", "desc")
-        );
-        const unsubscribe = onSnapshot(
-          q,
-          (snapshot: QuerySnapshot<DocumentData>) => {
-            this.myRequests = snapshot.docs.map((d) => {
-              const data = d.data();
-              return {
-                id: d.id,
-                userId: data.userId,
-                employeeId: data.employeeId,
-                employeeName: data.employeeName,
-                startDate: data.startDate?.toDate(),
-                endDate: data.endDate?.toDate(),
-                type: data.type,
-                reason: data.reason,
-                status: data.status,
-                submittedAt: data.submittedAt?.toDate(),
-                durationDays: data.durationDays,
-                manager: data.manager,
-                managerId: data.managerId,
-                teamId: data.teamId,
-                attachments: data.attachments || [],
-                rejectionReason: data.rejectionReason,
-                decisionAt: data.decisionAt?.toDate(),
-                decisionBy: data.decisionBy,
-              };
-            });
-            this.loading = false;
-          },
-          (error: Error) => {
-            this.error = error.message;
-            this.loading = false;
-          }
-        );
-        return unsubscribe;
       } catch (error) {
+        this.error = error instanceof Error ? error.message : String(error);
+      } finally {
         this.loading = false;
-        if (error instanceof Error) {
-          this.error = error.message;
-        }
       }
     },
 
-    // Add this action to your store
-    async calculateVacationBalance(userId: string): Promise<number> {
+    async calculateLeaveBalance(userId: string): Promise<number> {
       try {
-        const year = new Date().getFullYear();
+        const now = new Date();
+        const yearStart = new Date(now.getFullYear(), 0, 1);
+        const yearEnd = new Date(now.getFullYear(), 11, 31);
+
         const q = query(
           collection(db, "ems-leave-requests"),
           where("userId", "==", userId),
-          where("type", "==", "vacation"),
           where("status", "in", ["approved", "pending"]),
-          where("startDate", ">=", new Date(`${year}-01-01`)),
-          where("startDate", "<=", new Date(`${year}-12-31`))
+          where("startDate", ">=", yearStart),
+          where("startDate", "<=", yearEnd)
         );
+
         const querySnapshot = await getDocs(q);
         let totalUsedDays = 0;
+
         querySnapshot.forEach((doc) => {
           const data = doc.data();
           totalUsedDays += data.durationDays;
         });
+
         return maxVacationDays - totalUsedDays;
       } catch (error) {
         console.error("Error calculating vacation balance:", error);
-        return maxVacationDays; // Fallback to max days
+        return maxVacationDays;
       }
     },
 
-    // Update submitRequest action
     async submitRequest(requestData: Omit<LeaveRequest, "id">) {
       try {
-        let availableBalance = maxVacationDays;
-        // Always calculate balance for all request types
-        availableBalance = await this.calculateVacationBalance(
+        this.loading = true;
+        const userBalanceRef = doc(
+          db,
+          "ems-leave-requests",
           requestData.userId
         );
-        // Set availableBalance for all request types
-        const requestWithBalance = {
-          ...requestData,
-          availableBalance,
-          submittedAt: serverTimestamp(),
-        };
-        // For vacation: validate balance
-        if (requestData.type === "vacation") {
-          if (requestData.durationDays > availableBalance) {
-            throw new Error(
-              `Exceeds available vacation days. Max: ${availableBalance}`
-            );
-          }
-          // Update balance after deduction
-          requestWithBalance.availableBalance =
-            availableBalance - requestData.durationDays;
-        }
-        const docRef = await addDoc(
-          collection(db, "ems-leave-requests"),
-          requestWithBalance
+        const userBalanceSnap = await getDoc(userBalanceRef);
+        // 1. Calculate available balance first
+        const availableBalance = await this.calculateLeaveBalance(
+          requestData.userId
         );
-        return docRef.id;
+        // 2. Validate vacation balance
+        if (
+          requestData.type === "vacation" &&
+          requestData.durationDays > availableBalance
+        ) {
+          throw new Error(
+            `Exceeds available vacation days. Max: ${availableBalance}`
+          );
+        }
+        // 3. Prepare request data
+        const requestSummary = {
+          id: crypto.randomUUID(),
+          startDate: requestData.startDate,
+          endDate: requestData.endDate,
+          type: requestData.type,
+          durationDays: requestData.durationDays,
+          status: "pending",
+          submittedAt: new Date(),
+          attachments: requestData.attachments || [],
+        };
+        // 4. Create or update user leave balance doc
+        if (!userBalanceSnap.exists()) {
+          await setDoc(userBalanceRef, {
+            userId: requestData.userId,
+            employeeId: requestData.employeeId,
+            employeeName: requestData.employeeName,
+            managerId: requestData.managerId || null,
+            teamId: requestData.teamId || null,
+            availableBalance: availableBalance - requestData.durationDays,
+            requests: [requestSummary],
+          });
+        } else {
+          await updateDoc(userBalanceRef, {
+            requests: arrayUnion(requestSummary),
+            availableBalance: availableBalance - requestData.durationDays,
+          });
+        }
+        return requestSummary.id;
       } catch (error) {
         console.error("Error submitting leave request:", error);
         throw error;
+      } finally {
+        this.loading = false;
       }
     },
 
@@ -236,7 +293,6 @@ export const useLeaveRequestsStore = defineStore("leave-requests", {
         this.loading = true;
         const ref = doc(db, "ems-leave-requests", id);
         const docSnap = await getDoc(ref);
-
         if (docSnap.exists()) {
           const data = docSnap.data();
           // For approved vacation requests, maintain the available balance

@@ -5,8 +5,8 @@
 </template>
 
 <script lang="ts" setup>
-const authStore = useAuthStore()
 const { t } = useI18n()
+const authStore = useAuthStore()
 const { triggerToast } = useToast();
 
 onMounted(() => {
