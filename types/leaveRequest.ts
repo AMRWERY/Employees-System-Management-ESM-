@@ -14,7 +14,7 @@ export interface LeaveRequest {
   manager?: string;
   managerId?: string;
   teamId?: string;
-  decisionAt?: Date;
+  decisionAt?: Date | null;
   decisionBy?: string;
   rejectionReason?: string;
   availableBalance?: number | null;

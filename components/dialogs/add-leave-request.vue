@@ -268,7 +268,7 @@ watchEffect(async () => {
   if (parsedUserData?.uid) {
     isBalanceLoading.value = true;
     try {
-      vacationBalance.value = await leaveStore.calculateVacationBalance(parsedUserData.uid);
+      vacationBalance.value = await leaveStore.calculateLeaveBalance(parsedUserData.uid);
     } catch (error) {
       console.error('Error fetching vacation balance:', error);
       vacationBalance.value = 21;

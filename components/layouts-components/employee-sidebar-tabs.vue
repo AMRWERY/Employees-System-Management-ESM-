@@ -29,8 +29,7 @@
           </li>
           <li>
             <nuxt-link-locale to="/employee/leave-request"
-              class="flex items-center p-2 text-white rounded-lg group ps-7"
-              exact-active-class="bg-gray-400 text-white hover:bg-gray-500">
+              :class="['flex items-center p-2 text-white rounded-lg group ps-7', isActive('/employee/leave-request') ? 'bg-gray-400 text-white hover:bg-gray-500' : '']">
               {{ t('layouts.my_leave_requests') }}
             </nuxt-link-locale>
           </li>

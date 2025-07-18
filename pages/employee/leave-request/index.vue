@@ -25,7 +25,7 @@
 
       <!-- dynamic-table component -->
       <dynamic-table v-else :items="filteredRequests" :columns="tableColumns" :has-view="true"
-        @view="(item: LeaveRequest) => openDetailsModal(item)" v-model:selectedItems="selectedItems"
+        @view="(item: LeaveRequest) => navigateToDetailsPage(item)" v-model:selectedItems="selectedItems"
         @update:selectedItems="handleSelectedItemsUpdate" />
     </div>
   </div>
@@ -63,7 +63,7 @@ const tableColumns = computed(() => {
     </div>
   `,
     },
-    { key: 'employeeId', label: t('dashboard.employee_id') },
+    // { key: 'employeeId', label: t('dashboard.employee_id') },
     {
       key: 'managerId',
       label: t('dashboard.manager'),
@@ -123,9 +123,11 @@ onMounted(async () => {
 
 const selectedRequest = ref<LeaveRequest | null>(null)
 
-const openDetailsModal = (request: LeaveRequest) => {
+const navigateToDetailsPage = (request: LeaveRequest) => {
   selectedRequest.value = request
-  navigateTo(`./leave-request/${request.id}`)
+  if (!request?.id) return;
+  navigateTo(`/employee/leave-request/${request.id}`);
+  // navigateTo(`/leave-request/${request.id}`)
 }
 
 // Update filtered requests calculation
@@ -140,7 +142,7 @@ const filteredRequests = computed(() => {
 const skeletonHeaders = ref<TableHeader[]>([
   { type: 'text', loaderWidth: 'w-32' }, // Index
   { type: 'text', loaderWidth: 'w-64' }, // Dates
-  { type: 'text', loaderWidth: 'w-48' }, // Employee ID
+  // { type: 'text', loaderWidth: 'w-48' }, // Employee ID
   { type: 'text', loaderWidth: 'w-48' }, // Manager
   { type: 'text', loaderWidth: 'w-48' }, // Department / Team
   { type: 'text', loaderWidth: 'w-48' }, // Type

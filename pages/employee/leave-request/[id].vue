@@ -122,11 +122,13 @@ onMounted(async () => {
     if (teamsStore.teams.length === 0) {
       await teamsStore.fetchAll();
     }
-    const request = await leaveStore.getRequestById(route.params.id as string)
+    // Use store method to get the request
+    const request = await leaveStore.getRequestById(route.params.id as string);
     if (request) {
-      leaveRequest.value = request
+      leaveRequest.value = request;
     }
   } catch (error) {
+    console.error('Failed to load request:', error);
     showError({ statusCode: 500, message: 'Failed to load request' })
   }
 })
