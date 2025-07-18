@@ -182,7 +182,8 @@
     "comment": "Comment",
     "reply": "Reply",
     "new_review": "New Review",
-    "save": "Save"
+    "save": "Save",
+    "back": "Back"
   },
   "tooltip": {
     "view": "View",

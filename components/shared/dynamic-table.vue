@@ -91,7 +91,7 @@
               class="px-6 py-4 text-end">
               <div class="flex items-center gap-3.5 justify-end">
                 <!-- dynamic-tooltips component -->
-                <dynamic-tooltips :text="t('tooltip.view')" :position="'bottom'">
+                <dynamic-tooltips :text="t('tooltip.view')" :position="'top'">
                   <button v-if="hasView" class="rounded-full text-blue-500 hover:text-blue-700 transition"
                     @click="$emit('view', item)">
                     <icon name="tabler:eye" class="w-7 h-7 text-blue-500 hover:text-blue-700" />
@@ -100,7 +100,7 @@
 
                 <!-- dynamic-tooltips component -->
                 <dynamic-tooltips :text="item.status === 'blocked' ? t('tooltip.unblock') : t('tooltip.block')"
-                  :position="'bottom'">
+                  :position="'top'">
                   <button v-if="hasBlock" class="rounded-full text-green-500 hover:text-green-700 transition"
                     @click="$emit('block', item)">
                     <icon name="material-symbols:block" class="w-6 h-6"
@@ -109,7 +109,7 @@
                 </dynamic-tooltips>
 
                 <!-- dynamic-tooltips component -->
-                <dynamic-tooltips :text="t('tooltip.delete')" :position="'bottom'">
+                <dynamic-tooltips :text="t('tooltip.delete')" :position="'top'">
                   <button v-if="hasDelete && actionConditions?.delete && actionConditions.delete(item)"
                     class="rounded-full text-red-500 hover:text-red-700 transition" @click="$emit('delete', item)">
                     <icon name="material-symbols:delete-sharp" class="w-6 h-6 text-red-500 hover:text-red-700" />
@@ -117,7 +117,7 @@
                 </dynamic-tooltips>
 
                 <!-- dynamic-tooltips component -->
-                <dynamic-tooltips :text="t('tooltip.edit')" :position="'bottom'">
+                <dynamic-tooltips :text="t('tooltip.edit')" :position="'top'">
                   <button v-if="hasEdit && actionConditions?.edit && actionConditions.edit(item)"
                     class="rounded-full text-indigo-500 hover:text-indigo-700 transition" @click="$emit('edit', item)">
                     <icon name="heroicons-outline:pencil-alt"
@@ -126,7 +126,7 @@
                 </dynamic-tooltips>
 
                 <!-- dynamic-tooltips component -->
-                <dynamic-tooltips :text="t('tooltip.mark_paid')" :position="'bottom'">
+                <dynamic-tooltips :text="t('tooltip.mark_paid')" :position="'top'">
                   <button v-if="hasMarkPaid && actionConditions?.markPaid && actionConditions.markPaid(item)"
                     class="rounded-full text-green-500 hover:text-green-700 transition"
                     @click="$emit('markPaid', item)">
@@ -136,7 +136,7 @@
                 </dynamic-tooltips>
 
                 <!-- dynamic-tooltips component -->
-                <dynamic-tooltips :text="t('tooltip.mark_failed')" :position="'bottom'">
+                <dynamic-tooltips :text="t('tooltip.mark_failed')" :position="'top'">
                   <button v-if="hasMarkFailed && actionConditions?.markFailed && actionConditions.markFailed(item)"
                     class="rounded-full text-yellow-500 hover:text-yellow-700 transition"
                     @click="$emit('markFailed', item)">
