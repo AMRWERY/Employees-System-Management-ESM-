@@ -182,7 +182,8 @@
     "comment": "تعليق",
     "reply": "رد",
     "new_review": "مراجعة جديدة",
-    "save": "حفظ"
+    "save": "حفظ",
+    "back": "رجوع"
   },
   "tooltip": {
     "view": "عرض",
