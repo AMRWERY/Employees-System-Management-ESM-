@@ -1,6 +1,14 @@
 <template>
   <div>
-    <button :class="buttonClasses" :title="title" :type="type">
+    <nuxt-link v-if="route && to" :to="to" :class="buttonClasses" :title="title" :type="type">
+      <slot></slot>
+      <slot name="icon">
+        <icon v-if="defaultIcon" name="heroicons-solid:plus-sm" class="w-5 h-5 ms-2" />
+        <icon v-else-if="appendIcon" :name="appendIcon" class="w-5 h-5 ms-2" />
+      </slot>
+    </nuxt-link>
+
+    <button v-else :class="buttonClasses" :title="title" :type="type">
       <slot></slot>
       <slot name="icon">
         <icon v-if="defaultIcon" name="heroicons-solid:plus-sm" class="ms-2 w-5 h-5" />
@@ -28,7 +36,11 @@ const props = defineProps({
     type: Boolean,
     default: false
   },
-  title: {
+  inline: {
+    type: Boolean,
+    default: false
+  },
+  title: { // for tooltip
     type: String,
     default: 'title'
   },
@@ -61,12 +73,24 @@ const props = defineProps({
     type: Boolean,
     default: false
   },
+  to: {
+    type: String,
+    default: ''
+  },
+  route: {
+    type: Boolean,
+    default: false
+  },
 });
 
 const buttonClasses = computed(() => {
+  const inlineClass = props.inline ? 'inline-flex' : 'flex';
+
   if (props.link) {
     return [
-      'font-medium rounded-lg text-sm px-5 py-2.5 text-center flex items-center justify-center',
+      'font-medium rounded-lg text-sm px-5 py-2.5 text-center',
+      inlineClass,  // Use here
+      'items-center justify-center',
       'text-blue-600 dark:text-blue-500 hover:underline',
       props.block ? 'w-full' : ''
     ]

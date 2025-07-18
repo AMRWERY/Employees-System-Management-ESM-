@@ -365,7 +365,7 @@
     "admin_performance_reviews_employeeid": "Employee performance details"
   },
   "error_page": {
-    "you_are_all_alone_here": "You are all alone here 😁"
+    "sorry_we_couldnt_find_what_you_are_looking_for": "Sorry, We couldn't find what you are looking for 😁!"
   },
   "menu": {
     "download": "Download",
