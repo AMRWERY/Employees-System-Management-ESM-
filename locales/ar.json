@@ -132,7 +132,7 @@
     "delete_review_confirmation_01": "أنت على وشك حذف سجل {name}.",
     "delete_review_confirmation_02": "لا يمكن التراجع عن هذا الإجراء.",
     "employee_performance_details": "تفاصيل أداء الموظف",
-     "performance_reviews": "مراجعات الأداء",
+    "performance_reviews": "مراجعات الأداء",
     "kpi_tracker": "متتبع مؤشرات الأداء",
     "goals": "الأهداف",
     "recent_feedback": "التعليقات الأخيرة"
@@ -365,7 +365,7 @@
     "admin_performance_reviews_employeeid": "تفاصيل أداء الموظف"
   },
   "error_page": {
-    "you_are_all_alone_here": "أنت وحدك هنا 😁"
+    "sorry_we_couldnt_find_what_you_are_looking_for": "نأسف، لم نتمكن من العثور على ما تبحث عنه 😁!"
   },
   "menu": {
     "download": "تحميل",
